@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Readable API
+Globals:
+  Function:
+    Environment:
+      Variables:
+        GOOGLE_CLIENT_ID: '/parameterStore/googleClientId'
+        GOOGLE_CLIENT_SECRET: '/parameterStore/googleClientSecret'
+        GOOGLE_REDIRECT_URL: 'https://localhost'
+Parameters:
+  GoogleClientIdParameter:
+    Description: Google client id.
+    Type: String
+    Default: 'parameterStore/googleClientId'
+  GoogleClientSecretParameter:
+    Description: Google client secret.
+    Type: String
+    Default: 'parameterStore/googleClientSecret'
+Resources:
+  ReadableApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: ReadableApiStage
+      Cors: #"'*'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowMethods: "'GET,PUT,POST,OPTIONS'"
+        AllowOrigin: "'*'"
+  GoogleApisLambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: googleApisLambdaLayer
+      ContentUri: layers/googleApisLambdaLayer
+      Description: googleapis lambda layer
+      RetentionPolicy: Delete
+  CloneGoogleFolder:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/cloneGoogleFolder.js
+      Handler: cloneGoogleFolder.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Layers: 
+        - !Ref GoogleApisLambdaLayer
+      Policies:
+        - SSMParameterReadPolicy:
+            ParameterName: !Ref GoogleClientIdParameter
+        - SSMParameterReadPolicy:
+            ParameterName: !Ref GoogleClientSecretParameter
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /copyTemplateFolder
+            Method: get
+            RestApiId:
+              Ref: ReadableApiGateway
