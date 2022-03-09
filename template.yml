@@ -18,6 +18,18 @@ Parameters:
     Type: String
     Default: 'parameterStore/googleClientSecret'
 Resources:
+  FacilitatorsTable:
+    Type: AWS::DynamoDB::Table
+    BillingMode: PAY_PER_REQUEST 
+    DeletionPolicy: Retain
+    Properties:
+      TableName: facilitator
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
   ReadableApiGateway:
     Type: AWS::Serverless::Api
     Properties:
