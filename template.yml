@@ -33,6 +33,51 @@ Resources:
       KeySchema: 
         - AttributeName: id
           KeyType: HASH
+SemestersTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: semesters
+      BillingMode: PAY_PER_REQUEST
+      ProvisionedThroughput:
+        ReadCapacityUnits: 0
+        WriteCapacityUnits: 0
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
+  ParticipantsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: participants
+      BillingMode: PAY_PER_REQUEST
+      ProvisionedThroughput:
+        ReadCapacityUnits: 0
+        WriteCapacityUnits: 0
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
+  GroupsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: groups
+      BillingMode: PAY_PER_REQUEST
+      ProvisionedThroughput:
+        ReadCapacityUnits: 0
+        WriteCapacityUnits: 0
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
   ReadableApiGateway:
     Type: AWS::Serverless::Api
     Properties:
@@ -79,6 +124,26 @@ Resources:
           Type: Api
           Properties:
             Path: /facilitator/list
+            Method: get
+            # Auth:
+            #   Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  GetFacilitator:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getFacilitator.js
+      Handler: getFacilitator.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /facilitator
             Method: get
             # Auth:
             #   Authorizer: ReadableApiCognitoAuthorizer
