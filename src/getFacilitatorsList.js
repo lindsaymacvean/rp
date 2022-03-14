@@ -12,7 +12,7 @@ exports.handler = async(event, context) => {
 
         //TODO check if current user is Lead Facilitator.
 
-        var facilitators = await dynamo.query(params).promise();
+        var facilitators = await dynamo.scan(params).promise();
 
         response = {
             'statusCode': 200,
