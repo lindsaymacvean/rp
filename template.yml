@@ -80,8 +80,8 @@ Resources:
           Properties:
             Path: /facilitator/list
             Method: get
-            Auth:
-              Authorizer: ReadableApiCognitoAuthorizer
+            # Auth:
+            #   Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
   CloneGoogleFolder:
