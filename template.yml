@@ -81,7 +81,7 @@ Resources:
             Path: /facilitator/list
             Method: get
             Auth:
-              Authorizer: MyCognitoAuthorizer
+              Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
   CloneGoogleFolder:
