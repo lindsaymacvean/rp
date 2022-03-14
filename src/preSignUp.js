@@ -2,13 +2,13 @@ const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const crypto = require("crypto")
 
-exports.handler = async(event, context) => {
+exports.handler = async(event, context, callback) => {
 
     console.log(JSON.stringify(event));
 
     const item = {
         'email': event.request.userAttributes.email,
-        'id': crypto.randomUUID() 
+        'id': crypto.randomUUID()
     }
 
     var params = {
@@ -18,7 +18,5 @@ exports.handler = async(event, context) => {
 
     var body = await dynamo.put(params).promise();
 
-    return {
-        'statusCode': 200,
-    }
+    callback(null, event);
 };
