@@ -8,6 +8,9 @@ exports.handler = async(event, context, callback) => {
 
     const item = {
         'email': event.request.userAttributes.email,
+        'name': event.request.userAttributes.name,
+        'given_name': event.request.userAttributes.given_name,
+        'family_name': event.request.userAttributes.family_name,
         'id': crypto.randomUUID()
     }
 
