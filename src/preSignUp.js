@@ -18,5 +18,9 @@ exports.handler = async(event, context, callback) => {
 
     var body = await dynamo.put(params).promise();
 
+    // Set the user pool autoConfirmUser flag
+    event.response.autoConfirmUser = true;
+    event.response.autoVerifyEmail = true;
+
     callback(null, event);
 };
