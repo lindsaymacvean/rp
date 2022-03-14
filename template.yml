@@ -41,6 +41,11 @@ Resources:
         AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
         AllowMethods: "'GET,PUT,POST,OPTIONS'"
         AllowOrigin: "'*'"
+      Auth:
+        Authorizers:
+          ReadableApiCognitoAuthorizer:
+            UserPoolArn: 
+              - arn:aws:cognito-idp:eu-west-1:284308473359:userpool/eu-west-1_YvNAb35rJ
   GoogleApisLambdaLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -59,6 +64,26 @@ Resources:
       Policies: 
          - DynamoDBWritePolicy:
             TableName: !Ref FacilitatorsTable
+  GetFacilitatorsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getFacilitatorsList.js
+      Handler: getFacilitatorsList.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /facilitator/list
+            Method: get
+            Auth:
+              Authorizer: MyCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
   CloneGoogleFolder:
     Type: AWS::Serverless::Function
     Properties:
