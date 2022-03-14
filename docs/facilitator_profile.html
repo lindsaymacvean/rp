@@ -33,25 +33,17 @@
             </div>
         </template>
         <div id="facilitatorData"></div>
-
-        <div class="row text-center mt-2">
-            <div class="col-10">
-                <a href="#" class="w-100 ms-5 p-2"><button id="groups-btn" class="btn btn-primary w-100 p-2">Groups they
-                        are in</button></a>
-            </div>
-        </div>
-        <div class="row text-center mt-2">
-            <div class="col-10">
-                <a href="#" class="w-100 ms-5 p-2"><button class="btn btn-primary w-100 p-2">Groups they are
-                        in</button></a>
-            </div>
-        </div>
-        <div class="row text-center mt-2">
-            <div class="col-10">
-                <a href="#" class="w-100 ms-5 p-2"><button class="btn btn-primary w-100 p-2">Groups they are
-                        in</button></a>
-            </div>
-        </div>
+        
+        <template id="groupTemplate">
+            {{#each groups}}
+                <div class="row text-center mt-2">
+                    <div class="col-10">
+                        <a href="#" class="w-100 ms-5 p-2"><button class="btn btn-primary w-100 p-2">{{name}}</button></a>
+                    </div>
+                </div>
+            {{/each}}
+        </template>
+        <div id="groupOutput"></div>
 
     </div>
 
