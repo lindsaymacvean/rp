@@ -18,6 +18,21 @@ Parameters:
     Type: String
     Default: 'parameterStore/googleClientSecret'
 Resources:
+  FacilitatorsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: facilitator
+      BillingMode: PAY_PER_REQUEST
+      ProvisionedThroughput:
+        ReadCapacityUnits: 0
+        WriteCapacityUnits: 0
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
   ReadableApiGateway:
     Type: AWS::Serverless::Api
     Properties:
@@ -33,6 +48,17 @@ Resources:
       ContentUri: layers/googleApisLambdaLayer
       Description: googleapis lambda layer
       RetentionPolicy: Delete
+  PreSignUpFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      FunctionName: PreSignUpFunction
+      CodeUri: src/preSignUp.js
+      Handler: preSignUp.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies: 
+         - DynamoDBWritePolicy:
+            TableName: !Ref FacilitatorsTable
   CloneGoogleFolder:
     Type: AWS::Serverless::Function
     Properties:
