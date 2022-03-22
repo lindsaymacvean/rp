@@ -90,7 +90,7 @@ Resources:
         Authorizers:
           ReadableApiCognitoAuthorizer:
             UserPoolArn: 
-              - arn:aws:cognito-idp:eu-west-1:284308473359:userpool/eu-west-1_YvNAb35rJ
+              - arn:aws:cognito-idp:eu-west-2:284308473359:userpool/eu-west-2_WklEKrptO
   GoogleApisLambdaLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -125,8 +125,8 @@ Resources:
           Properties:
             Path: /facilitator/list
             Method: get
-            # Auth:
-            #   Authorizer: ReadableApiCognitoAuthorizer
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
   GetGroupsList:
@@ -147,8 +147,8 @@ Resources:
           Properties:
             Path: /group/list
             Method: get
-            # Auth:
-            #   Authorizer: ReadableApiCognitoAuthorizer
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
   GetFacilitator:
@@ -167,8 +167,8 @@ Resources:
           Properties:
             Path: /facilitator
             Method: get
-            # Auth:
-            #   Authorizer: ReadableApiCognitoAuthorizer
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
   CloneGoogleFolder:
