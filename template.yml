@@ -90,7 +90,7 @@ Resources:
         Authorizers:
           ReadableApiCognitoAuthorizer:
             UserPoolArn: 
-              - arn:aws:cognito-idp:eu-west-2:284308473359:userpool/eu-west-2_WklEKrptO
+              - arn:aws:cognito-idp:eu-west-1:284308473359:userpool/eu-west-1_YvNAb35rJ
   GoogleApisLambdaLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
