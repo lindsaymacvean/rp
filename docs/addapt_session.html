@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js" integrity="sha512-RNLkV3d+aLtfcpEyFG8jRbnWHxUqVZozacROI4J2F1sTaDqo1dPQYs01OMi1t1w9Y2FdbSCDSQ2ZVdAC8bzgAg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body style="background-color: rgb(221, 238, 232);">
+
+    <div style="max-width: 1200px; margin: auto;" class="conainer  mt-3">
+        <div class="row ">
+            <!-- <div class="col-10  ms-4">
+                <p id="p_groups" class="fs-5">Groups</p>
+            </div>
+            <div class="col">
+                <a href="#"><button id="groups-btn" class="btn btn-success  w-20 h-20">Create new</button></a>
+            </div> -->
+        </div>
+
+
+        <div class="row text-center mt-2">
+            <div class="col-10">
+                <input type="text" class="form-control ms-5" id="exampleFormControlInput1" placeholder="Search">
+            </div>
+        </div>
+
+        <div class="row text-center mt-5 ">
+            <div class="col-10 ms-5" style="background-color: white; border-radius: 5px;">
+                <template type="text/x-handlebars-template" id="documentsTemplate">
+                    <div class="row mt-2 mb-2">
+                        {{#each documents}}
+                        <div class="col-2 mt-2">
+                            <div style="height: 150px; width:150px; background-color: white; border-radius: 5px; border: solid 1px; border-color: lightblue;">
+                                <input class="form-check-input" type="checkbox" value="">
+                                <a href="#">{{name}}</a>
+                            </div>
+                        </div>
+                        {{/each}}
+                    </div>
+                </template>
+                <div id="documentsList"></div>
+            </div>
+        </div>
+
+        <div class="row text-center mt-2">
+            <div class="col-10 ms-5">
+                <div class="row">
+                    <div class="col-3">
+                        <a href="addapt_session.html"><button  class="btn btn-primary w-100">Create new session plan from template</button></a>
+                    </div>
+                    <div class="col-6">
+                    </div>
+                    <div class="col-3 text-right">
+                        <a href="addapt_session.html"><button  class="btn btn-primary w-100">Adapt to my Group's google directory</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- <script src="scripts/index.js"></script> -->
+    <script src="scripts/documents_list.js"></script>
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+
+</html>
