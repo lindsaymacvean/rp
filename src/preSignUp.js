@@ -4,8 +4,6 @@ const crypto = require("crypto")
 
 exports.handler = async(event, context, callback) => {
 
-    console.log(JSON.stringify(event));
-
     const item = {
         'email': event.request.userAttributes.email,
         'name': event.request.userAttributes.name,

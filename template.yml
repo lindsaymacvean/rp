@@ -193,3 +193,27 @@ Resources:
             Method: get
             RestApiId:
               Ref: ReadableApiGateway
+  GetDocumentsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getDocumentsList.js
+      Handler: getDocumentsList.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Layers: 
+        - !Ref GoogleApisLambdaLayer
+      Policies:
+        - SSMParameterReadPolicy:
+            ParameterName: !Ref GoogleClientIdParameter
+        - SSMParameterReadPolicy:
+            ParameterName: !Ref GoogleClientSecretParameter
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /documents
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
