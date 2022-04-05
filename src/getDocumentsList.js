@@ -20,7 +20,7 @@ exports.handler = async(event, context) => {
         const drive = google.drive({ version: 'v3', auth: oAuth2Client });
 
         var files = (await drive.files.list({
-            q: "",
+            q: "'root' in parents and mimeType = 'application/vnd.google-apps.folder' and name='Golden Session Plan Library' and trashed = false",
             pageSize: 10,
             fields: 'nextPageToken, files(id, name, mimeType, thumbnailLink)',
         }));
