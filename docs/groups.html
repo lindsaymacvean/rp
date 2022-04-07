@@ -13,29 +13,35 @@
 
 <body style="background-color: rgb(221, 238, 232);">
 
-    <div style="max-width: 1100px; margin: auto;" class="conainer  mt-5">
-
-        <div class="row text-center  mt-2">
-            <div class="col-6">
-                <p id="p_groups" class="fs-5 w-100 ms-5">Groups</p>
-            </div>
-            <div class="col-6">
-                <a href="create_group.html?semesterId={{semesterId}}" id="groups-btn"><button  class="btn btn-success  w-50">Create new</button></a>
-            </div>
-        </div>
-
-        <template type="text/x-handlebars-template" id="groupTemplate">
-            {{#each groups}}
-                <div class="row text-center mt-2">
-                    <div class="col-8">
-                    <a href="student_list.html?groupId={{id}}" class="w-100 ms-5"><button class="btn btn-primary w-100">{{name}}</button></a>
+    <div class="conainer  mt-5">
+        <div class="row">
+            <div class="col-lg-3"></div>
+            <div class="col-lg-6">
+                <div class="row text-center ">
+                    <div class="col-6">
+                        <p id="p_groups" class="fs-5 w-100">Groups</p>
+                    </div>
+                    <div class="col-6">
+                        <a href="create_group.html?semesterId={{semesterId}}" id="groups-btn"><button
+                                class="btn btn-success  w-100">Create new</button></a>
                     </div>
                 </div>
-            {{/each}}
-        </template>
 
-        <div id="groupsList"></div>
+                <template type="text/x-handlebars-template" id="groupTemplate">
+                    {{#each groups}}
+                    <div class="row text-center mt-2">
+                        <div class="col-12">
+                            <a href="student_list.html?groupId={{id}}" class="w-100"><button
+                                    class="btn btn-primary w-100">{{name}}</button></a>
+                        </div>
+                    </div>
+                    {{/each}}
+                </template>
 
+                <div id="groupsList"></div>
+
+            </div>
+        </div>
     </div>
 
     <script type="module" src="scripts/index.js"></script>
