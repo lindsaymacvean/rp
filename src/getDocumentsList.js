@@ -17,10 +17,12 @@ exports.handler = async(event, context) => {
             access_token: accessToken
         });
 
+        const searchString = event.queryStringParameters.searchString;
+
         const drive = google.drive({ version: 'v3', auth: oAuth2Client });
 
         var files = (await drive.files.list({
-            q: "'root' in parents and mimeType = 'application/vnd.google-apps.folder' and name='Golden Session Plan Library' and trashed = false",
+            q: `'Golden Session Plan Library' in parents and mimeType = 'application/vnd.google-apps.folder' and name contains '${searchString}' and trashed = false`,
             pageSize: 10,
             fields: 'nextPageToken, files(id, name, mimeType, thumbnailLink)',
         }));
