@@ -1,9 +1,11 @@
+import { api_url } from "./utils/configs.js"
+
 (function() {
 
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
 
-    axios.get(`https://hzk5v7sv55.execute-api.eu-west-1.amazonaws.com/ReadableApiStage/facilitator?id=${id}`, {
+    axios.get(`${api_url}/facilitator?id=${id}`, {
             headers: {
                 'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
             }
@@ -13,7 +15,7 @@
             document.querySelector("#facilitatorData").innerHTML = template(resp.data.Item);
         })
 
-    axios.get(`https://hzk5v7sv55.execute-api.eu-west-1.amazonaws.com/ReadableApiStage/group/list?facilitatorId=${id}`, {
+    axios.get(`${api_url}/group/list?facilitatorId=${id}`, {
             headers: {
                 'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
             }
