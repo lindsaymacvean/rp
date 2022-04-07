@@ -9,6 +9,46 @@ exports.handler = async(event, context, callback) => {
     //TODO check if current user is Lead Facilitator.
     //TODO validate data
 
+    var semester = (await getSemester(data.semesterId)).Item;
+    console.log(semester);
+    var facilitator = await getFacilitator(data.facilitatorId);
+    //TODO if semester of facilitator is not found return error.
+
+    var group = await createGroup(data);
+    await addGroupToSemester(semester, group);
+
+    response = {
+        'statusCode': 200,
+        'body': JSON.stringify(group),
+        'headers': {
+            'Access-Control-Allow-Origin': '*',
+        }
+    }
+};
+
+const getSemester = async(semesterId) => {
+    var params = {
+        TableName: 'semester',
+        Key: {
+            'id': semesterId
+        }
+    };
+
+    return await dynamo.get(params).promise();
+};
+
+const getFacilitator = async(facilitatorId) => {
+    var params = {
+        TableName: 'facilitator',
+        Key: {
+            'id': facilitatorId
+        }
+    };
+
+    return await dynamo.get(params).promise();
+};
+
+const createGroup = async(data) => {
     const item = {
         'name': data.name,
         'dayOfWeek': data.dayOfWeek,
@@ -25,13 +65,21 @@ exports.handler = async(event, context, callback) => {
         Item: item
     };
 
-    var body = await dynamo.put(params).promise();
+    await dynamo.put(params).promise();
+    return item;
+};
 
-    response = {
-        'statusCode': 200,
-        'body': JSON.stringify(body),
-        'headers': {
-            'Access-Control-Allow-Origin': '*',
-        }
-    }
+const addGroupToSemester = async(semester, group) => {
+
+    if (!semester.groupsIds)
+        semester.groupsIds = [];
+
+    semester.groupsIds.push(group.id);
+
+    var params = {
+        TableName: 'semester',
+        Item: semester
+    };
+
+    await dynamo.put(params).promise();
 };

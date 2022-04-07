@@ -12,7 +12,7 @@ exports.handler = async(event, context) => {
             TableName: 'semester'
         };
 
-        var semesters = await dynamo.get(params).promise();
+        var semesters = await dynamo.scan(params).promise();
 
         response = {
             'statusCode': 200,

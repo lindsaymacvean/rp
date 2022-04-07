@@ -32,7 +32,7 @@ exports.handler = async(event, context) => {
 
         response = {
             'statusCode': 200,
-            'body': JSON.stringify(groups),
+            'body': JSON.stringify(groups.Responses.group),
             'headers': {
                 'Access-Control-Allow-Origin': '*',
             }

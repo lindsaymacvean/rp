@@ -4,14 +4,18 @@ import { api_url } from "./utils/configs.js"
 
     globalThis.createNewGroup = function(e) {
         e.preventDefault();
-        console.log(api_url);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const semesterId = urlParams.get('semesterId');
+
         var form = document.forms.namedItem("newGroup");
         var formData = new FormData(form);
 
-        var data = JSON.stringify(Object.fromEntries(formData));
-        console.log(data);
+        var groupData = Object.fromEntries(formData);
+        groupData.semesterId = semesterId;
+        // var data = JSON.stringify(Object.fromEntries(formData));
 
-        axios.post(`${api_url}/group/create`, data, {
+        axios.post(`${api_url}/group/create`, groupData, {
                 headers: {
                     'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
                 }
