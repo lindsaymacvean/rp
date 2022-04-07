@@ -67,7 +67,7 @@ async function cloneTemplateFolder(auth) {
     const drive = google.drive({ version: 'v3', auth });
 
     var templateFolder = (await drive.files.list({
-            q: "'root' in parents and mimeType = 'application/vnd.google-apps.folder' and name='Template Files' and trashed = false",
+            q: "'root' in parents and mimeType = 'application/vnd.google-apps.folder' and name='Golden Session Plan Library' and trashed = false",
             pageSize: 10,
             fields: 'nextPageToken, files(id, name)',
     })).data.files[0];
