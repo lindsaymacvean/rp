@@ -153,6 +153,30 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
+  GetGroup:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getGroup.js
+      Handler: getGroup.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref SemestersTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /group
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
   GetFacilitatorGroupsList:
     Type: AWS::Serverless::Function
     Properties:
