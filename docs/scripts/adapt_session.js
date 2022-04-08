@@ -21,8 +21,12 @@ import { api_url, google_client_id } from "./utils/configs.js"
                 discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
             })
             .then(checkSession)
-            .then(getTemplateFolder)
-            .then((files) => getFiles(files));
+            .then(function() {
+                return getTemplateFolder();
+            })
+            .then(function(folder) {
+                return getFiles(folder);
+            });
     });
 
     function checkSession() {
