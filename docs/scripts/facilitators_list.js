@@ -1,5 +1,7 @@
+import { api_url } from "./utils/configs.js"
+
 (function() {
-    axios.get('https://hzk5v7sv55.execute-api.eu-west-1.amazonaws.com/ReadableApiStage/facilitator/list', {
+    axios.get(`${api_url}/facilitator/list`, {
             headers: {
                 'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
             }
