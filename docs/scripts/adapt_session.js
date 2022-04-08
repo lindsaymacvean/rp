@@ -7,7 +7,7 @@ import { api_url, google_client_id } from "./utils/configs.js"
         clearTimeout(globalThis.searchTimeout);
 
         globalThis.searchTimeout = setTimeout(() => {
-            getTempalteFolder()
+            getTemplateFolder()
                 .then(searchFiles)
         }, 1000)
 
@@ -21,8 +21,8 @@ import { api_url, google_client_id } from "./utils/configs.js"
                 discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
             })
             .then(checkSession)
-            .then(getTempalteFolder)
-            .then(getFiles);
+            .then(getTemplateFolder)
+            .then((files) => getFiles(files));
     });
 
     function checkSession() {
@@ -31,7 +31,7 @@ import { api_url, google_client_id } from "./utils/configs.js"
         }
     }
 
-    function getTempalteFolder() {
+    function getTemplateFolder() {
         return gapi.client.drive.files.list({
             q: "'root' in parents and mimeType = 'application/vnd.google-apps.folder' and name='Golden Session Plan Library' and trashed = false",
             pageSize: 10,
