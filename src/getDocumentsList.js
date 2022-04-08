@@ -17,7 +17,9 @@ exports.handler = async(event, context) => {
             access_token: accessToken
         });
 
-        const searchString = event.queryStringParameters.searchString;
+        const searchString = event.queryStringParameters ?
+            event.queryStringParameters.searchString :
+            null;
 
         const drive = google.drive({ version: 'v3', auth: oAuth2Client });
 
@@ -27,11 +29,19 @@ exports.handler = async(event, context) => {
             fields: 'nextPageToken, files(id, name)',
         })).data.files[0];
 
-        var files = (await drive.files.list({
-            q: `1DVgRECL8X2ZOTp7qGZQ9LYJ-Zh9-21y6 in parents and mimeType = 'application/vnd.google-apps.folder' and name contains '${searchString}' and trashed = false`,
-            pageSize: 10,
-            fields: 'nextPageToken, files(id, name, mimeType, thumbnailLink)',
-        }));
+        console.log(goldenSessionPlanFolder);
+
+        var files = searchString ?
+            (await drive.files.list({
+                q: `'${goldenSessionPlanFolder.id}' in parents and name contains '${searchString}' and trashed = false`,
+                pageSize: 10,
+                fields: 'nextPageToken, files(id, name, mimeType, thumbnailLink)',
+            })) :
+            (await drive.files.list({
+                q: `'${goldenSessionPlanFolder.id}' in parents and trashed = false`,
+                pageSize: 10,
+                fields: 'nextPageToken, files(id, name, mimeType, thumbnailLink)',
+            }));
 
         response = {
             'statusCode': 200,

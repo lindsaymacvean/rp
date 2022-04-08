@@ -5,8 +5,8 @@ import { api_url } from "./utils/configs.js"
     const urlParams = new URLSearchParams(window.location.search);
     const groupId = urlParams.get('groupId');
 
-    var template = Handlebars.compile(document.querySelector("#addapt_session_button").outerHTML);
-    document.querySelector("#addapt_session_button").outerHTML = template({ groupId });
+    var template = Handlebars.compile(document.querySelector("#adapt_session_button").outerHTML);
+    document.querySelector("#adapt_session_button").outerHTML = template({ groupId });
 
     axios.get(`${api_url}/group?id=${groupId}`, {
             headers: {
