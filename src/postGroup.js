@@ -10,20 +10,22 @@ exports.handler = async(event, context, callback) => {
     //TODO validate data
 
     var semester = (await getSemester(data.semesterId)).Item;
-    console.log(semester);
-    var facilitator = await getFacilitator(data.facilitatorId);
-    //TODO if semester of facilitator is not found return error.
+    var facilitator = (await getFacilitator(data.facilitatorId)).Item;
+    //TODO if semester or facilitator is not found return error.
 
     var group = await createGroup(data);
     await addGroupToSemester(semester, group);
+    await addGroupToFacilitator(facilitator, group);
 
     response = {
         'statusCode': 200,
-        'body': JSON.stringify(group),
+        'body': 'ok',
         'headers': {
             'Access-Control-Allow-Origin': '*',
         }
     }
+
+    return response;
 };
 
 const getSemester = async(semesterId) => {
@@ -79,6 +81,21 @@ const addGroupToSemester = async(semester, group) => {
     var params = {
         TableName: 'semester',
         Item: semester
+    };
+
+    await dynamo.put(params).promise();
+};
+
+const addGroupToFacilitator = async(facilitator, group) => {
+
+    if (!facilitator.groupsIds)
+        facilitator.groupsIds = [];
+
+    facilitator.groupsIds.push(group.id);
+
+    var params = {
+        TableName: 'facilitator',
+        Item: facilitator
     };
 
     await dynamo.put(params).promise();

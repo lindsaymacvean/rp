@@ -16,12 +16,19 @@ import { api_url } from "./utils/configs.js"
         })
 
     globalThis.createNewGroup = function(e) {
-        e.preventDefault();
+        var form = document.forms.namedItem("newGroup");
+
+        if (form.checkValidity())
+            e.preventDefault();
+        else
+            return true;
 
         const urlParams = new URLSearchParams(window.location.search);
         const semesterId = urlParams.get('semesterId');
 
-        var form = document.forms.namedItem("newGroup");
+
+        form.checkValidity();
+
         var formData = new FormData(form);
 
         var groupData = Object.fromEntries(formData);
@@ -32,6 +39,8 @@ import { api_url } from "./utils/configs.js"
             headers: {
                 'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
             }
+        }).then(() => {
+            window.location.replace(`/groups.html?semesterId=${semesterId}`);
         });
     }
 

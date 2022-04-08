@@ -1,22 +1,22 @@
-AWSTemplateFormatVersion : '2010-09-09'
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Readable API
 Globals:
   Function:
     Environment:
       Variables:
-        GOOGLE_CLIENT_ID: '/parameterStore/googleClientId'
-        GOOGLE_CLIENT_SECRET: '/parameterStore/googleClientSecret'
-        GOOGLE_REDIRECT_URL: 'https://localhost'
+        GOOGLE_CLIENT_ID: /parameterStore/googleClientId
+        GOOGLE_CLIENT_SECRET: /parameterStore/googleClientSecret
+        GOOGLE_REDIRECT_URL: https://localhost
 Parameters:
   GoogleClientIdParameter:
     Description: Google client id.
     Type: String
-    Default: 'parameterStore/googleClientId'
+    Default: parameterStore/googleClientId
   GoogleClientSecretParameter:
     Description: Google client secret.
     Type: String
-    Default: 'parameterStore/googleClientSecret'
+    Default: parameterStore/googleClientSecret
 Resources:
   FacilitatorsTable:
     Type: AWS::DynamoDB::Table
@@ -27,12 +27,14 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 0
         WriteCapacityUnits: 0
-      AttributeDefinitions: 
-        - AttributeName: id
-          AttributeType: S
-      KeySchema: 
-        - AttributeName: id
-          KeyType: HASH
+      AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+      KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+    Metadata:
+      SamResourceId: FacilitatorsTable
   SemestersTable:
     Type: AWS::DynamoDB::Table
     DeletionPolicy: Retain
@@ -42,12 +44,14 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 0
         WriteCapacityUnits: 0
-      AttributeDefinitions: 
-        - AttributeName: id
-          AttributeType: S
-      KeySchema: 
-        - AttributeName: id
-          KeyType: HASH
+      AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+      KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+    Metadata:
+      SamResourceId: SemestersTable
   ParticipantsTable:
     Type: AWS::DynamoDB::Table
     DeletionPolicy: Retain
@@ -57,12 +61,14 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 0
         WriteCapacityUnits: 0
-      AttributeDefinitions: 
-        - AttributeName: id
-          AttributeType: S
-      KeySchema: 
-        - AttributeName: id
-          KeyType: HASH
+      AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+      KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+    Metadata:
+      SamResourceId: ParticipantsTable
   GroupsTable:
     Type: AWS::DynamoDB::Table
     DeletionPolicy: Retain
@@ -72,57 +78,67 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 0
         WriteCapacityUnits: 0
-      AttributeDefinitions: 
-        - AttributeName: id
-          AttributeType: S
-        - AttributeName: facilitatorId
-          AttributeType: S
-        - AttributeName: semesterId
-          AttributeType: S
-      KeySchema: 
-        - AttributeName: id
-          KeyType: HASH
+      AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+      - AttributeName: facilitatorId
+        AttributeType: S
+      - AttributeName: semesterId
+        AttributeType: S
+      KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+    Metadata:
+      SamResourceId: GroupsTable
   ReadableApiGateway:
     Type: AWS::Serverless::Api
     Properties:
       StageName: ReadableApiStage
-      Cors: #"'*'"
-        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-        AllowMethods: "'GET,PUT,POST,OPTIONS'"
-        AllowOrigin: "'*'"
+      Cors:
+        AllowHeaders: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'''
+        AllowMethods: '''GET,PUT,POST,OPTIONS'''
+        AllowOrigin: '''*'''
       Auth:
         Authorizers:
           ReadableApiCognitoAuthorizer:
-            UserPoolArn: 
-              - arn:aws:cognito-idp:eu-west-2:284308473359:userpool/eu-west-2_WklEKrptO
+            UserPoolArn:
+            - arn:aws:cognito-idp:eu-west-2:284308473359:userpool/eu-west-2_WklEKrptO
+    Metadata:
+      SamResourceId: ReadableApiGateway
   GoogleApisLambdaLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
       LayerName: googleApisLambdaLayer
-      ContentUri: layers/googleApisLambdaLayer
+      ContentUri: s3://readable-stage-depl-bucket-a/0292b5fb7a082962582f9ee3859ec82a
       Description: googleapis lambda layer
       RetentionPolicy: Delete
+    Metadata:
+      SamResourceId: GoogleApisLambdaLayer
   PreSignUpFunction:
-    Type: AWS::Serverless::Function 
+    Type: AWS::Serverless::Function
     Properties:
       FunctionName: PreSignUpFunction
-      CodeUri: src/preSignUp.js
+      CodeUri: s3://readable-stage-depl-bucket-a/79356d2dc38c250fcf64c819c558698a
       Handler: preSignUp.handler
       Runtime: nodejs14.x
       Timeout: 60
-      Policies: 
-         - DynamoDBWritePolicy:
-            TableName: !Ref FacilitatorsTable
+      Policies:
+      - DynamoDBWritePolicy:
+          TableName:
+            Ref: FacilitatorsTable
+    Metadata:
+      SamResourceId: PreSignUpFunction
   GetFacilitatorsList:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/getFacilitatorsList.js
+      CodeUri: s3://readable-stage-depl-bucket-a/e02c4437ba611f71a2b2eda448ac0fa9
       Handler: getFacilitatorsList.handler
       Runtime: nodejs14.x
       Timeout: 60
       Policies:
-         - DynamoDBReadPolicy:
-            TableName: !Ref FacilitatorsTable
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: FacilitatorsTable
       Events:
         ApiEvent:
           Type: Api
@@ -133,16 +149,19 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
+    Metadata:
+      SamResourceId: GetFacilitatorsList
   GetFacilitator:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/getFacilitator.js
+      CodeUri: s3://readable-stage-depl-bucket-a/bacf8ee7c975b752055fcc762327d331
       Handler: getFacilitator.handler
       Runtime: nodejs14.x
       Timeout: 60
       Policies:
-         - DynamoDBReadPolicy:
-            TableName: !Ref FacilitatorsTable
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: FacilitatorsTable
       Events:
         ApiEvent:
           Type: Api
@@ -153,20 +172,25 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
+    Metadata:
+      SamResourceId: GetFacilitator
   GetGroup:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/getGroup.js
+      CodeUri: s3://readable-stage-depl-bucket-a/1becc58545245758069fb9806257c615
       Handler: getGroup.handler
       Runtime: nodejs14.x
       Timeout: 60
       Policies:
-         - DynamoDBReadPolicy:
-            TableName: !Ref FacilitatorsTable
-         - DynamoDBReadPolicy:
-            TableName: !Ref GroupsTable
-         - DynamoDBReadPolicy:
-            TableName: !Ref SemestersTable
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: FacilitatorsTable
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: GroupsTable
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: SemestersTable
       Events:
         ApiEvent:
           Type: Api
@@ -177,18 +201,22 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
+    Metadata:
+      SamResourceId: GetGroup
   GetFacilitatorGroupsList:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/getFacilitatorGroupsList.js
+      CodeUri: s3://readable-stage-depl-bucket-a/962296da2fa5523b68f0b82807a4d307
       Handler: getGroupsList.handler
       Runtime: nodejs14.x
       Timeout: 60
       Policies:
-         - DynamoDBReadPolicy:
-            TableName: !Ref FacilitatorsTable
-         - DynamoDBReadPolicy:
-            TableName: !Ref GroupsTable
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: FacilitatorsTable
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: GroupsTable
       Events:
         ApiEvent:
           Type: Api
@@ -199,18 +227,22 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
+    Metadata:
+      SamResourceId: GetFacilitatorGroupsList
   GetSemesterGroupsList:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/getSemesterGroupsList.js
+      CodeUri: s3://readable-stage-depl-bucket-a/4f4bb5d92ff5662850deda4a3b3176ab
       Handler: getSemesterGroupsList.handler
       Runtime: nodejs14.x
       Timeout: 60
       Policies:
-         - DynamoDBReadPolicy:
-            TableName: !Ref SemestersTable
-         - DynamoDBReadPolicy:
-            TableName: !Ref GroupsTable
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: SemestersTable
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: GroupsTable
       Events:
         ApiEvent:
           Type: Api
@@ -221,26 +253,31 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
+    Metadata:
+      SamResourceId: GetSemesterGroupsList
   PostGroup:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/postGroup.js
+      CodeUri: s3://readable-stage-depl-bucket-a/b5b45f7032db0f6ed954c3de6c890b4f
       Handler: postGroup.handler
       Runtime: nodejs14.x
       Timeout: 60
       Policies:
-         - DynamoDBWritePolicy:
-            TableName: !Ref GroupsTable
-         - DynamoDBWritePolicy:
-            TableName: !Ref SemestersTable
-         - DynamoDBWritePolicy:
-            TableName: !Ref FacilitatorsTable
-         - DynamoDBReadPolicy:
-            TableName: !Ref FacilitatorsTable
-         - DynamoDBReadPolicy:
-            TableName: !Ref GroupsTable
-         - DynamoDBReadPolicy:
-            TableName: !Ref SemestersTable
+      - DynamoDBWritePolicy:
+          TableName:
+            Ref: GroupsTable
+      - DynamoDBWritePolicy:
+          TableName:
+            Ref: SemestersTable
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: FacilitatorsTable
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: GroupsTable
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: SemestersTable
       Events:
         ApiEvent:
           Type: Api
@@ -251,18 +288,22 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
+    Metadata:
+      SamResourceId: PostGroup
   GetSemestersList:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/getSemestersList.js
+      CodeUri: s3://readable-stage-depl-bucket-a/0117e5e2fb3bae4a3dd45818614aa479
       Handler: getSemestersList.handler
       Runtime: nodejs14.x
       Timeout: 60
       Policies:
-         - DynamoDBReadPolicy:
-            TableName: !Ref FacilitatorsTable
-         - DynamoDBReadPolicy:
-            TableName: !Ref SemestersTable
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: FacilitatorsTable
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: SemestersTable
       Events:
         ApiEvent:
           Type: Api
@@ -273,22 +314,28 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
+    Metadata:
+      SamResourceId: GetSemestersList
   PostSemester:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/postSemester.js
+      CodeUri: s3://readable-stage-depl-bucket-a/fea948f1495c0011bcbd97c9667a7715
       Handler: postSemester.handler
       Runtime: nodejs14.x
       Timeout: 60
       Policies:
-         - DynamoDBWritePolicy:
-            TableName: !Ref SemestersTable
-         - DynamoDBReadPolicy:
-            TableName: !Ref SemestersTable
-         - DynamoDBReadPolicy:
-            TableName: !Ref FacilitatorsTable
-         - DynamoDBReadPolicy:
-            TableName: !Ref SemestersTable
+      - DynamoDBWritePolicy:
+          TableName:
+            Ref: SemestersTable
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: SemestersTable
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: FacilitatorsTable
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: SemestersTable
       Events:
         ApiEvent:
           Type: Api
@@ -299,20 +346,24 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
+    Metadata:
+      SamResourceId: PostSemester
   CloneGoogleFolder:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/cloneGoogleFolder.js
+      CodeUri: s3://readable-stage-depl-bucket-a/85161eaa63ddf2d70532e29bd9352c42
       Handler: cloneGoogleFolder.handler
       Runtime: nodejs14.x
       Timeout: 60
-      Layers: 
-        - !Ref GoogleApisLambdaLayer
+      Layers:
+      - Ref: GoogleApisLambdaLayer
       Policies:
-        - SSMParameterReadPolicy:
-            ParameterName: !Ref GoogleClientIdParameter
-        - SSMParameterReadPolicy:
-            ParameterName: !Ref GoogleClientSecretParameter
+      - SSMParameterReadPolicy:
+          ParameterName:
+            Ref: GoogleClientIdParameter
+      - SSMParameterReadPolicy:
+          ParameterName:
+            Ref: GoogleClientSecretParameter
       Events:
         ApiEvent:
           Type: Api
@@ -321,3 +372,5 @@ Resources:
             Method: get
             RestApiId:
               Ref: ReadableApiGateway
+    Metadata:
+      SamResourceId: CloneGoogleFolder

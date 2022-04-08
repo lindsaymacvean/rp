@@ -16,9 +16,7 @@ import { api_url } from "./utils/configs.js"
                 }
             })
             .then(resp => {
-                console.log(resp);
-                // var template = Handlebars.compile(document.querySelector("#facilitatorTemplate").innerHTML);
-                // document.querySelector("#facilitatorsList").innerHTML = template({ facilitators: resp.data.Items });
+                window.location.replace("/terms-semester.html");
             })
 
     }

@@ -19,13 +19,15 @@ exports.handler = async(event, context, callback) => {
         Item: item
     };
 
-    var body = await dynamo.put(params).promise();
+    await dynamo.put(params).promise();
 
     response = {
         'statusCode': 200,
-        'body': 'JSON.stringify(body)',
+        'body': 'ok',
         'headers': {
             'Access-Control-Allow-Origin': '*',
         }
     }
+
+    return response;
 };
