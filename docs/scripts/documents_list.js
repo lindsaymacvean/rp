@@ -1,4 +1,4 @@
-import { api_url } from "./utils/configs.js"
+import { api_url, google_client_id } from "./utils/configs.js"
 
 (function() {
 
@@ -7,27 +7,66 @@ import { api_url } from "./utils/configs.js"
         clearTimeout(globalThis.searchTimeout);
 
         globalThis.searchTimeout = setTimeout(() => {
-            axios.get(`${api_url}/documents?searchString=${document.getElementById("search_input").value}`, {
-                    headers: {
-                        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
-                    }
-                })
-                .then(resp => {
-                    var template = Handlebars.compile(document.querySelector("#documentsTemplate").innerHTML);
-                    document.querySelector("#documentsList").innerHTML = template({ documents: resp.data.data.files });
-                })
-
+            getTempalteFolder()
+                .then(searchFiles)
         }, 1000)
 
     }
 
-    axios.get(`${api_url}/documents`, {
-            headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
-            }
-        })
-        .then(resp => {
+
+    gapi.load('client:auth2', (aa) => {
+        gapi.client.init({
+                client_id: google_client_id,
+                scope: 'https://www.googleapis.com/auth/drive',
+                discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+            })
+            .then(checkSession)
+            .then(getTempalteFolder)
+            .then(getFiles);
+    });
+
+    function checkSession() {
+        if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
+            return gapi.auth2.getAuthInstance().signIn();
+        }
+    }
+
+    function getTempalteFolder() {
+        return gapi.client.drive.files.list({
+            q: "'root' in parents and mimeType = 'application/vnd.google-apps.folder' and name='Golden Session Plan Library' and trashed = false",
+            pageSize: 10,
+            fields: 'nextPageToken, files(id, name)',
+        }).then(function(response) {
+            console.log(response);
+            return response.result.files[0];
+        });
+    }
+
+    function getFiles(templateFolder) {
+        return gapi.client.drive.files.list({
+            q: `'${templateFolder.id}' in parents and trashed = false`,
+            pageSize: 10,
+            fields: 'nextPageToken, files(id, name, mimeType, thumbnailLink)',
+        }).then(function(response) {
+            console.log(response);
             var template = Handlebars.compile(document.querySelector("#documentsTemplate").innerHTML);
-            document.querySelector("#documentsList").innerHTML = template({ documents: resp.data.data.files });
-        })
+            document.querySelector("#documentsList").innerHTML = template({ documents: response.result.files });
+
+            return response.result.files;
+        });
+    }
+
+    function searchFiles(templateFolder) {
+        return gapi.client.drive.files.list({
+            q: `'${templateFolder.id}' in parents and name contains '${document.getElementById("search_input").value}' and trashed = false`,
+            pageSize: 10,
+            fields: 'nextPageToken, files(id, name, mimeType, thumbnailLink)',
+        }).then(function(response) {
+            console.log(response);
+            var template = Handlebars.compile(document.querySelector("#documentsTemplate").innerHTML);
+            document.querySelector("#documentsList").innerHTML = template({ documents: response.result.files });
+
+            return response.result.files;
+        });
+    }
 })();
