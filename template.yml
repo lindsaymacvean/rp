@@ -233,6 +233,8 @@ Resources:
             TableName: !Ref GroupsTable
          - DynamoDBWritePolicy:
             TableName: !Ref SemestersTable
+         - DynamoDBWritePolicy:
+            TableName: !Ref FacilitatorsTable
          - DynamoDBReadPolicy:
             TableName: !Ref FacilitatorsTable
          - DynamoDBReadPolicy:
