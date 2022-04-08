@@ -75,6 +75,10 @@ Resources:
       AttributeDefinitions: 
         - AttributeName: id
           AttributeType: S
+        - AttributeName: facilitatorId
+          AttributeType: S
+        - AttributeName: semesterId
+          AttributeType: S
       KeySchema: 
         - AttributeName: id
           KeyType: HASH
@@ -129,28 +133,6 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
-  GetGroupsList:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: src/getGroupsList.js
-      Handler: getGroupsList.handler
-      Runtime: nodejs14.x
-      Timeout: 60
-      Policies:
-         - DynamoDBReadPolicy:
-            TableName: !Ref FacilitatorsTable
-         - DynamoDBReadPolicy:
-            TableName: !Ref GroupsTable
-      Events:
-        ApiEvent:
-          Type: Api
-          Properties:
-            Path: /group/list
-            Method: get
-            Auth:
-              Authorizer: ReadableApiCognitoAuthorizer
-            RestApiId:
-              Ref: ReadableApiGateway
   GetFacilitator:
     Type: AWS::Serverless::Function
     Properties:
@@ -167,6 +149,150 @@ Resources:
           Properties:
             Path: /facilitator
             Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  GetGroup:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getGroup.js
+      Handler: getGroup.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref SemestersTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /group
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  GetFacilitatorGroupsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getFacilitatorGroupsList.js
+      Handler: getGroupsList.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /group/facilitator
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  GetSemesterGroupsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getSemesterGroupsList.js
+      Handler: getSemesterGroupsList.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref SemestersTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /group/semester
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  PostGroup:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/postGroup.js
+      Handler: postGroup.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBWritePolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBWritePolicy:
+            TableName: !Ref SemestersTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref SemestersTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /group/create
+            Method: post
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  GetSemestersList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getSemestersList.js
+      Handler: getSemestersList.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref SemestersTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /semester/list
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  PostSemester:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/postSemester.js
+      Handler: postSemester.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBWritePolicy:
+            TableName: !Ref SemestersTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref SemestersTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref SemestersTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /semester/create
+            Method: post
             Auth:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
@@ -191,29 +317,5 @@ Resources:
           Properties:
             Path: /copyTemplateFolder
             Method: get
-            RestApiId:
-              Ref: ReadableApiGateway
-  GetDocumentsList:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: src/getDocumentsList.js
-      Handler: getDocumentsList.handler
-      Runtime: nodejs14.x
-      Timeout: 60
-      Layers: 
-        - !Ref GoogleApisLambdaLayer
-      Policies:
-        - SSMParameterReadPolicy:
-            ParameterName: !Ref GoogleClientIdParameter
-        - SSMParameterReadPolicy:
-            ParameterName: !Ref GoogleClientSecretParameter
-      Events:
-        ApiEvent:
-          Type: Api
-          Properties:
-            Path: /documents
-            Method: get
-            Auth:
-              Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
