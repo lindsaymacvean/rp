@@ -1,4 +1,4 @@
-import { redable_google_auth_url, google_client_id } from "./utils/configs.js"
+import { readable_cognito_auth_url, readable_cognito_logout_url, google_client_id } from "./utils/configs.js"
 
 (function() {
 
@@ -11,8 +11,12 @@ import { redable_google_auth_url, google_client_id } from "./utils/configs.js"
     if (id_token) {
         sessionStorage.setItem('id_token', id_token);
     } else {
-        window.location.href = redable_google_auth_url;
+        window.location.href = readable_cognito_auth_url;
     }
 
-
 })();
+
+globalThis.logout = function logout(e) {
+    e.preventDefault();
+    window.location.href = readable_cognito_logout_url;
+}

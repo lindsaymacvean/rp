@@ -15,6 +15,7 @@ import { api_url } from "./utils/configs.js"
                 'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
             }
         })
+        // Fill out students in the Group
         .then(resp => {
             if (document.querySelector("#p_student_list")) {
                 var template = Handlebars.compile(document.querySelector("#p_student_list").outerHTML);
@@ -35,6 +36,14 @@ import { api_url } from "./utils/configs.js"
             if (document.querySelector("#groupBreadcrumb")) {
                 var template = Handlebars.compile(document.querySelector("#groupBreadcrumb").innerHTML);
                 document.querySelector("#groupBreadcrumb").innerHTML = template({ groupId, groupName: resp.data.name });
+            }
+            return resp;
+        })
+        // Fill title on Group page
+        .then(resp => {
+            if (document.querySelector("#groupName")) {
+                var template = Handlebars.compile(document.querySelector("#groupName").innerHTML);
+                document.querySelector("#groupName").innerHTML = template({ groupId, groupName: resp.data.name });
             }
         });
 })();

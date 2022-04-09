@@ -5,8 +5,8 @@ import { api_url } from "./utils/configs.js"
     const urlParams = new URLSearchParams(window.location.search);
     const semesterId = urlParams.get('semesterId');
 
-    var template = Handlebars.compile(document.querySelector("#groups-btn").outerHTML);
-    document.querySelector("#groups-btn").outerHTML = template({ semesterId });
+    var template = Handlebars.compile(document.querySelector("#groups-btn").innerHTML);
+    document.querySelector("#groups-btn").innerHTML = template({ semesterId });
 
     axios.get(`${api_url}/group/semester?semesterId=${semesterId}`, {
             headers: {
