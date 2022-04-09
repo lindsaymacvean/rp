@@ -2,6 +2,13 @@ import { api_url, google_client_id } from "./utils/configs.js"
 
 (function() {
 
+          // Use the API Loader script to load google.picker and gapi.auth.
+          function onApiLoad() {
+            gapi.load('auth2', onAuthApiLoad);
+            gapi.load('picker', onPickerApiLoad);
+          }
+        
+
     globalThis.search = (event) => {
 
         clearTimeout(globalThis.searchTimeout);
@@ -12,6 +19,16 @@ import { api_url, google_client_id } from "./utils/configs.js"
         }, 1000)
 
     }
+
+    document.getElementById('search_input').addEventListener("keyup", function(event) {
+        // Number 13 is the "Enter" key on the keyboard
+        var key = event.key || event.keyCode;
+        if (key === 13) {
+          // Cancel the default action, if needed
+          event.preventDefault();
+          search(event);
+        }
+    });
 
 
     gapi.load('client:auth2', (aa) => {
@@ -37,7 +54,7 @@ import { api_url, google_client_id } from "./utils/configs.js"
 
     function getTemplateFolder() {
         return gapi.client.drive.files.list({
-            q: "'root' in parents and mimeType = 'application/vnd.google-apps.folder' and name='Golden Session Plan Library' and trashed = false",
+            q: "mimeType = 'application/vnd.google-apps.folder' and name = 'Golden Session Plan Library' and trashed = false",
             pageSize: 10,
             fields: 'nextPageToken, files(id, name)',
         }).then(function(response) {
@@ -62,7 +79,7 @@ import { api_url, google_client_id } from "./utils/configs.js"
 
     function searchFiles(templateFolder) {
         return gapi.client.drive.files.list({
-            q: `'${templateFolder.id}' in parents and name contains '${document.getElementById("search_input").value}' and trashed = false`,
+            q: `'${templateFolder.id}' in parents and fullText contains '${document.getElementById("search_input").value}' and trashed = false`,
             pageSize: 10,
             fields: 'nextPageToken, files(id, name, mimeType, thumbnailLink)',
         }).then(function(response) {
