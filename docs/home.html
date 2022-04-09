@@ -17,19 +17,28 @@
 
     <div class="conainer mt-5 ">
         <div class="row">
-            <div class="col-lg-3"></div>
+            <div class="col-lg-3">
+            </div>
             <div class="col-lg-6">
-                <div class="row text-center  mt-2 ">
-                    <div class="col-7">
-                        <p class="fs-5">Terms/Semester</p>
-                    </div>
-                    <div class="col-5">
-                        <a href="create_semester.html"><button class="btn btn-success w-100">Create new</button></a>
+                <div class="row text-center  mt-5 ">
+                    <div class="col-12">
+                        <h1>Home</h1>
                     </div>
                 </div>
 
-                <div class="row" style="height: 5vh"></div>
+                <div class="row text-center  mt-5">
+                    <div class="col-7">
+                    </div>
+                    <div class="col-5">
+                        <a href="create_semester.html"><button class="btn btn-success w-100">Create New Semester</button></a>
+                    </div>
+                </div>
 
+                <div class="row text-center  mt-5 ">
+                    <div class="col-12">
+                        <p class="fs-5 w-100">Terms / Semesters</p>
+                    </div>
+                </div>
                 <template type="text/x-handlebars-template" id="semesterTemplate">
                     {{#each semesters}}
                     <div class="row text-center mt-2">
@@ -42,6 +51,7 @@
                 </template>
 
                 <div id="semestersList"></div>
+                <div class="row" style="height: 5vh"></div>
 
                 <div class="row text-center  mt-5 ">
                     <div class="col-12">
