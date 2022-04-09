@@ -16,7 +16,7 @@ import { api_url } from "./utils/configs.js"
                 }
             })
             .then(resp => {
-                window.location.replace("/terms-semester.html");
+                window.location.replace("/home.html");
             })
 
     }
