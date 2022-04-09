@@ -5,8 +5,10 @@ import { api_url } from "./utils/configs.js"
     const urlParams = new URLSearchParams(window.location.search);
     const groupId = urlParams.get('groupId');
 
-    var template = Handlebars.compile(document.querySelector("#adapt_session_button").outerHTML);
-    document.querySelector("#adapt_session_button").outerHTML = template({ groupId });
+    if (document.querySelector("#adapt_session_button")) {
+        var template = Handlebars.compile(document.querySelector("#adapt_session_button").outerHTML);
+        document.querySelector("#adapt_session_button").outerHTML = template({ groupId });
+    }
 
     axios.get(`${api_url}/group?id=${groupId}`, {
             headers: {
@@ -14,9 +16,25 @@ import { api_url } from "./utils/configs.js"
             }
         })
         .then(resp => {
-            var data = resp.data;
-            var template = Handlebars.compile(document.querySelector("#p_student_list").outerHTML);
-            document.querySelector("#p_student_list").outerHTML = template({ facilitatorName: resp.data.facilitator.name, semesterName: resp.data.semester.name });
-
+            if (document.querySelector("#p_student_list")) {
+                var template = Handlebars.compile(document.querySelector("#p_student_list").outerHTML);
+                document.querySelector("#p_student_list").outerHTML = template({ facilitatorName: resp.data.facilitator.name, semesterName: resp.data.semester.name });
+            }
+            return resp;            
         })
+        // Fill in the semester breadcrumb
+        .then(resp => {
+            if (document.querySelector('#semesterBreadcrumb')) {
+                var template = Handlebars.compile(document.querySelector("#semesterBreadcrumb").innerHTML);
+                document.querySelector("#semesterBreadcrumb").innerHTML = template({ semesterId: resp.data.semester.id, semesterName: resp.data.semester.name });
+            }
+            return resp;
+        })
+        // Fill in the Group breadcrumb
+        .then(resp => {
+            if (document.querySelector("#groupBreadcrumb")) {
+                var template = Handlebars.compile(document.querySelector("#groupBreadcrumb").innerHTML);
+                document.querySelector("#groupBreadcrumb").innerHTML = template({ groupId, groupName: resp.data.name });
+            }
+        });
 })();

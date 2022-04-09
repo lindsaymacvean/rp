@@ -40,7 +40,7 @@ import { api_url } from "./utils/configs.js"
                 'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
             }
         }).then(() => {
-            window.location.replace(`/groups.html?semesterId=${semesterId}`);
+            window.location.replace(`/semester.html?semesterId=${semesterId}`);
         });
     }
 
