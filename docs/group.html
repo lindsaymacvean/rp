@@ -28,7 +28,7 @@
                     </ul>
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="">Logout</a>
+                            <a class="nav-link" href="#" onclick="logout(event)">Logout</a>
                         </li>
                     </ul>
                 </div>
@@ -61,7 +61,7 @@
                 <a href="empty_page.html "><button id="student_list-btn" class="btn btn-primary  w-50  ">Issue Calendar Invites</button></a>
             </div>
             <div class="col-6 text-center ">
-                <a id="adapt_session_button" href="adapt_session.html?groupId={{groupId}}"><button  class="btn btn-primary  w-50">Adapt a session</button></a>
+                <a id="adapt_session_button" href="manage-session-plans.html?groupId={{groupId}}"><button  class="btn btn-primary  w-50">Adapt or Create a Session Plan</button></a>
             </div>
         </div>
 
@@ -70,9 +70,6 @@
         <div class="row text-center  mt-2 ">
             <div class="col-8">
                 <p class="fs-5 w-100 ms-5">Group Student List</p>
-            </div>
-            <div class="col-4 ">
-                <a href="#" class="w-50 p-3"><button id="group_student-btn" class="btn btn-success  w-50 p-2">Add a student</button></a>
             </div>
         </div>
 
@@ -102,6 +99,13 @@
             <div class="col-4">
                 <a href="#"><button class="btn btn-secondary w-50">Remove </button></a>
             </div>
+        </div>
+
+        <div class="row text-center mt-2">
+            <div class="col-8">
+                <a href="#" class="w-100 ms-5"><button id="group_student-btn" class="btn btn-success w-100">Add a student</button></a>
+            </div>
+            <div class="col-4"></div>
         </div>
     </div>
 
