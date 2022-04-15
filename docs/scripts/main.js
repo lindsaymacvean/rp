@@ -1,5 +1,5 @@
 import { readable_cognito_auth_url, readable_cognito_logout_url, frontend_url } from "./utils/configs.js"
-import { IsLeadFacilitator } from "./utils/utils.js"
+// import { google_client_id } from "./utils/utils.js"
 
 (function() {
 
@@ -20,5 +20,6 @@ import { IsLeadFacilitator } from "./utils/utils.js"
 
 globalThis.logout = function logout(e) {
     e.preventDefault();
+    sessionStorage.removeItem('id_token');
     window.location.href = readable_cognito_logout_url;
 }
