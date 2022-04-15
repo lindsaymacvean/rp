@@ -7,11 +7,10 @@ exports.handler = async(event, context) => {
     try {
 
         //TODO check if current user is Lead Facilitator.
-        
         var params = {
             TableName: 'facilitator',
             Key: {
-                'id': event.request.userAttributes.sub
+                'id': event.requestContext.authorizer.claims.sub
             }
         };
 
