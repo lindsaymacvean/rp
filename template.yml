@@ -110,6 +110,14 @@ Resources:
       Handler: preSignUp.handler
       Runtime: nodejs14.x
       Timeout: 60
+  PostConfirmationFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      FunctionName: PostConfirmationFunction
+      CodeUri: src/postConfirmation.js
+      Handler: postConfirmation.handler
+      Runtime: nodejs14.x
+      Timeout: 60
       Policies: 
          - DynamoDBWritePolicy:
             TableName: !Ref FacilitatorsTable
