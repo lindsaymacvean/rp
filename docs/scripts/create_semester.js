@@ -1,4 +1,4 @@
-import { api_url } from "./utils/configs.js"
+import { api_url, frontend_url } from "./utils/configs.js"
 
 (function() {
 
@@ -16,7 +16,7 @@ import { api_url } from "./utils/configs.js"
                 }
             })
             .then(resp => {
-                window.location.replace("/home.html");
+                window.location.href = `${frontend_url}/home.html`;
             })
 
     }

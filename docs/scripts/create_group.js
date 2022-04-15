@@ -1,4 +1,4 @@
-import { api_url } from "./utils/configs.js"
+import { api_url, frontend_url } from "./utils/configs.js"
 
 (function() {
 
@@ -40,7 +40,7 @@ import { api_url } from "./utils/configs.js"
                 'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
             }
         }).then(() => {
-            window.location.replace(`/semester.html?semesterId=${semesterId}`);
+            window.location.href = `${frontend_url}/semester.html?semesterId=${semesterId}`;
         });
     }
 
