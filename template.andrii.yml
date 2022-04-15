@@ -102,6 +102,13 @@ Resources:
       ContentUri: layers/googleApisLambdaLayer
       Description: googleapis lambda layer
       RetentionPolicy: Delete
+  DyslexiaServiceLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: DyslexiaService
+      ContentUri: src/layers/dyslexiaService
+      Description: Dyslexia general code layer
+      RetentionPolicy: Delete
   PreSignUpFunction:
     Type: AWS::Serverless::Function 
     Properties:
