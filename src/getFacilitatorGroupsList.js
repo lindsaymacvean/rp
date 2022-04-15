@@ -11,7 +11,7 @@ exports.handler = async(event, context) => {
         var params = {
             TableName: 'facilitator',
             Key: {
-                'id': event.queryStringParameters.facilitatorId
+                'id': event.request.userAttributes.sub
             }
         };
 
