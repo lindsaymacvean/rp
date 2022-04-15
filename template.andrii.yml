@@ -106,7 +106,7 @@ Resources:
     Type: AWS::Serverless::LayerVersion
     Properties:
       LayerName: DyslexiaService
-      ContentUri: src/layers/dyslexiaService
+      ContentUri: layers/dyslexiaService
       Description: Dyslexia general code layer
       RetentionPolicy: Delete
   PreSignUpFunction:
@@ -196,7 +196,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/getFacilitatorGroupsList.js
-      Handler: getGroupsList.handler
+      Handler: getFacilitatorGroupsList.handler
       Runtime: nodejs14.x
       Timeout: 60
       Policies:
