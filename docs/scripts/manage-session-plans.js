@@ -1,4 +1,5 @@
 import { api_url, google_client_id } from "./utils/configs.js"
+import { CurrentUserEmail } from "./utils/utils.js"
 
 (function() {
 
@@ -30,12 +31,12 @@ import { api_url, google_client_id } from "./utils/configs.js"
         }
     });
 
-
     gapi.load('client:auth2', (aa) => {
         gapi.client.init({
                 client_id: google_client_id,
                 scope: 'https://www.googleapis.com/auth/drive',
                 discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+                login_hint: CurrentUserEmail()
             })
             .then(checkSession)
             .then(function() {

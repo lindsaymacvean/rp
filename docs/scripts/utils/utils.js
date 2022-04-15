@@ -4,6 +4,13 @@ export const IsLeadFacilitator = () => {
     return jsonToken["cognito:groups"].includes("LeadFacilitators");
 }
 
+export const CurrentUserEmail = () => {
+    let token = sessionStorage.getItem('id_token')
+    let jsonToken = parseJwt(token);
+    console.log(jsonToken["email"]);
+    return jsonToken["email"];
+}
+
 export const parseJwt  = (token) => {
     var base64Url = token.split('.')[1];
     var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
