@@ -75,10 +75,6 @@ Resources:
       AttributeDefinitions: 
         - AttributeName: id
           AttributeType: S
-        - AttributeName: facilitatorId
-          AttributeType: S
-        - AttributeName: semesterId
-          AttributeType: S
       KeySchema: 
         - AttributeName: id
           KeyType: HASH
