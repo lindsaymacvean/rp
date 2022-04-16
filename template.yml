@@ -82,6 +82,12 @@ Resources:
       KeySchema: 
         - AttributeName: id
           KeyType: HASH
+  LeadFacilitatorsCognitoGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties: 
+      Description: "List of lead facilitators"
+      GroupName: LeadFacilitators
+      UserPoolId: eu-west-1_YvNAb35rJ
   ReadableApiGateway:
     Type: AWS::Serverless::Api
     Properties:
