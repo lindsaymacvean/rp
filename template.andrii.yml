@@ -266,6 +266,28 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
+  GetSemester:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getSemester.js
+      Handler: getSemester.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref SemestersTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /semester
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
   GetSemestersList:
     Type: AWS::Serverless::Function
     Properties:

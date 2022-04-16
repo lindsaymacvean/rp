@@ -1,3 +1,4 @@
+import { getSemester } from "./utils/api.js";
 import { api_url } from "./utils/configs.js"
 
 (function() {
@@ -22,18 +23,12 @@ import { api_url } from "./utils/configs.js"
             return resp;
         });
 
-        axios.get(`${api_url}/semester?id=${semesterId}`, {
-            headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
-            }
-        })
-        // Fill in the semester breadcrumb
-        .then(resp => {
-            //console.log(resp);
-            if (document.querySelector('#semesterBreadcrumb')) {
-                var template = Handlebars.compile(document.querySelector("#semesterBreadcrumb").innerHTML);
-                document.querySelector("#semesterBreadcrumb").innerHTML = template({ semesterId: resp.data.id, semesterName: resp.data.name });
-            }
-            return resp;
-        });
+        getSemester(semesterId)
+            .then(resp => {
+                if (document.querySelector('#semesterBreadcrumb')) {
+                    var template = Handlebars.compile(document.querySelector("#semesterBreadcrumb").innerHTML);
+                    document.querySelector("#semesterBreadcrumb").innerHTML = template({ semesterId: resp.data.id, semesterName: resp.data.name });
+                }
+                return resp;
+            });
 })();

@@ -40,6 +40,10 @@
                         <input type="text" class="form-control" id="themes" name="themes" required>
                     </div>
                     <div>
+                        <label for="themes" class="form-label">Student Year:</label>
+                        <input type="text" class="form-control" id="studentYear" name="studentYear" required>
+                    </div>
+                    <div>
                         <label for="facilitatorId" class="form-label">Facilitator:</label>
                         <select type="text" class="form-control" id="facilitatorId" name="facilitatorId" list="facilitatorsDatalist" autocomplete="off">
                             {{#each facilitators}}
@@ -57,6 +61,7 @@
             </div>
         </div>
 
+        <script src="https://apis.google.com/js/api.js"></script>
         <script type="module" src="scripts/main.js"></script>
         <script type="module" src="scripts/create_group.js"></script>
 
