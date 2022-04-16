@@ -342,6 +342,30 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
+  PostFacilitator:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/postFacilitator.js
+      Handler: postFacilitator.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBWritePolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /facilitator
+            Method: post
+            RestApiId:
+              Ref: ReadableApiGateway
   CloneGoogleFolder:
     Type: AWS::Serverless::Function
     Properties:

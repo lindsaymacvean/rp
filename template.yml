@@ -351,13 +351,13 @@ Resources:
       Timeout: 60
       Policies:
          - DynamoDBWritePolicy:
-            TableName: !Ref FacilitatorTable
+            TableName: !Ref FacilitatorsTable
          - DynamoDBReadPolicy:
-            TableName: !Ref FacilitatorTable
+            TableName: !Ref FacilitatorsTable
          - DynamoDBReadPolicy:
-            TableName: !Ref FacilitatorTable
+            TableName: !Ref FacilitatorsTable
          - DynamoDBReadPolicy:
-            TableName: !Ref FacilitatorTable
+            TableName: !Ref FacilitatorsTable
       Events:
         ApiEvent:
           Type: Api
