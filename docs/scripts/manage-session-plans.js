@@ -1,5 +1,6 @@
 import { api_url, google_client_id } from "./utils/configs.js"
 import { CurrentUserEmail } from "./utils/utils.js"
+import { getTemplateFolder } from "./utils/drive.js"
 
 (function() {
 
@@ -53,16 +54,7 @@ import { CurrentUserEmail } from "./utils/utils.js"
         }
     }
 
-    function getTemplateFolder() {
-        return gapi.client.drive.files.list({
-            q: "mimeType = 'application/vnd.google-apps.folder' and name = 'Golden Session Plan Library' and trashed = false",
-            pageSize: 10,
-            fields: 'nextPageToken, files(id, name)',
-        }).then(function(response) {
-            console.log(response);
-            return response.result.files[0];
-        });
-    }
+
 
     function getFiles(templateFolder) {
         return gapi.client.drive.files.list({

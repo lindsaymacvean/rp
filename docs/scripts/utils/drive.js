@@ -18,7 +18,7 @@ export const initDrive = () => {
     });
 }
 
-export const shareFile = (fileId, email) => {
+export const shareFile = (fileId, email, permission) => {
 
     var permission = {
           'type': 'user',
@@ -32,6 +32,22 @@ export const shareFile = (fileId, email) => {
         fields: 'id',
     });
 
+}
+
+export const shareTemplateFolder = (email) => {
+    return getTemplateFolder()
+        .then((tempateFolder) => shareFile(tempateFolder.id, email, "reader"));
+}
+
+export const getTemplateFolder = () => {
+    return gapi.client.drive.files.list({
+        q: "mimeType = 'application/vnd.google-apps.folder' and name = 'Golden Session Plan Library' and trashed = false",
+        pageSize: 10,
+        fields: 'nextPageToken, files(id, name)',
+    }).then(function(response) {
+        console.log(response);
+        return response.result.files[0];
+    });
 }
 
 function checkSession() {

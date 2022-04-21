@@ -1,6 +1,6 @@
 import { getSemester } from "./utils/api.js";
 import { api_url, frontend_url } from "./utils/configs.js"
-import { createGroupFolder, initDrive, shareFile } from "./utils/drive.js"
+import { createGroupFolder, initDrive, shareFile, shareTemplateFolder } from "./utils/drive.js"
 
 (function () {
 
@@ -47,9 +47,9 @@ import { createGroupFolder, initDrive, shareFile } from "./utils/drive.js"
             initDrive()
                 .then(() => getSemester(groupData.semesterId))
                 .then((semesterResponse) => createGroupFolder(semesterResponse.data.name, groupData.name, groupData.themes, groupData.studentYear, groupData.facilitatorId, groupData.year, facilitatorEmail))
-                .then((parentFolderId) => shareFile(parentFolderId, facilitatorEmail))
+                .then((parentFolderId) => shareFile(parentFolderId, facilitatorEmail, "writer"))
+                .then(() => shareTemplateFolder(facilitatorEmail))
                 .then(() => window.location.href = `${frontend_url}/semester.html?semesterId=${semesterId}`);
-
         });
     }
 })();
