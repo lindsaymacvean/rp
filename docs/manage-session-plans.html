@@ -67,7 +67,7 @@
                         {{#if documents.length}}
                             {{#each documents}}
                             <div class="col-2 mt-2">
-                                <div style="height: 200px; width:150px; background-color: white; border-radius: 5px; border: solid 1px; border-color: lightblue;">
+                                <div onclick="preview('{{webViewLink}}')" style="height: 200px; width:150px; background-color: white; border-radius: 5px; border: solid 1px; border-color: lightblue;">
                                     <img style="height: 150px; width:150px;" src="{{thumbnailLink}}" />
                                     <input class="form-check-input" type="checkbox" value="">
                                     <a href="#">{{name}}</a>

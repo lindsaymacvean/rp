@@ -22,7 +22,9 @@ import { getTemplateFolder } from "./utils/drive.js"
 
     }
 
-    document.getElementById('search_input').addEventListener("keyup", function(event) {
+    globalThis.preview = (fileUrl) => {
+        window.open(fileUrl, '_blank', 'popup').focus();
+    }
         // Number 13 is the "Enter" key on the keyboard
         var key = event.key || event.keyCode;
         if (key === 13) {
@@ -60,8 +62,8 @@ import { getTemplateFolder } from "./utils/drive.js"
         return gapi.client.drive.files.list({
             q: `'${templateFolder.id}' in parents and trashed = false`,
             pageSize: 10,
-            fields: 'nextPageToken, files(id, name, mimeType, thumbnailLink)',
-        }).then(function(response) {
+            fields: 'nextPageToken, files(id, name, mimeType, thumbnailLink, webViewLink)',
+        }).then(function (response) {
             console.log(response);
             var template = Handlebars.compile(document.querySelector("#documentsTemplate").innerHTML);
             document.querySelector("#documentsList").innerHTML = template({ documents: response.result.files });
