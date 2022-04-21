@@ -19,7 +19,7 @@ exports.handler = async(event, context, callback) => {
 
     response = {
         'statusCode': 200,
-        'body': 'ok',
+        'body': JSON.stringify(group),
         'headers': {
             'Access-Control-Allow-Origin': '*',
         }

@@ -17,6 +17,20 @@ import { createGroupFolder, initDrive, shareFile, shareTemplateFolder } from "./
         document.querySelector("#facilitatorId").outerHTML = template({ facilitators });
     })
 
+    const saveFolderIdToGroup = (folderId, groupData) => {
+        const data = {
+            id: groupData.id,
+            folderId
+        }
+
+        return axios.put(`${api_url}/group/update`, data, {
+            headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+            }
+        }).then(() => folderId);
+
+    }
+
     globalThis.createNewGroup = function (e) {
         var form = document.forms.namedItem("newGroup");
 
@@ -40,13 +54,14 @@ import { createGroupFolder, initDrive, shareFile, shareTemplateFolder } from "./
             headers: {
                 'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
             }
-        }).then(() => {
+        }).then((groupResponse) => {
             const facilitatorEmailSelect = document.getElementById("facilitatorId");
             var facilitatorEmail= facilitatorEmailSelect.options[facilitatorEmailSelect.selectedIndex].text;
 
             initDrive()
                 .then(() => getSemester(groupData.semesterId))
                 .then((semesterResponse) => createGroupFolder(semesterResponse.data.name, groupData.name, groupData.themes, groupData.studentYear, groupData.facilitatorId, groupData.year, facilitatorEmail))
+                .then((parentFolderId) => saveFolderIdToGroup(parentFolderId, groupResponse.data))
                 .then((parentFolderId) => shareFile(parentFolderId, facilitatorEmail, "writer"))
                 .then(() => shareTemplateFolder(facilitatorEmail))
                 .then(() => window.location.href = `${frontend_url}/semester.html?semesterId=${semesterId}`);
