@@ -2,6 +2,7 @@ import { api_url, google_client_id } from "./utils/configs.js"
 import { CurrentUserEmail } from "./utils/utils.js"
 import { getTemplateFolder, getWeeksFiles, getFolderFiles, copyFile } from "./utils/drive.js"
 import { getGroup } from "./utils/api.js";
+import { setLoading, stopLoading } from "./utils/loader.js";
 
 (function () {
 
@@ -10,7 +11,8 @@ import { getGroup } from "./utils/api.js";
 
     let group = null;
     let weeks = [];
-   
+    // setLoading();
+
     globalThis.search = (event) => {
 
         clearTimeout(globalThis.searchTimeout);
@@ -23,9 +25,8 @@ import { getGroup } from "./utils/api.js";
 
     globalThis.preview = (fileUrl) => {
         document.getElementById("preview-iframe").setAttribute("src", fileUrl);
-
-        var myModal = new bootstrap.Modal(document.getElementById('exampleModal'))
-        myModal.show()
+        var previewModal = new bootstrap.Modal(document.getElementById('previewModal'))
+        previewModal.show()
     }
 
     globalThis.dragover_handler = (ev) => {
@@ -64,7 +65,7 @@ import { getGroup } from "./utils/api.js";
         }
     });
 
-    gapi.load('client:auth2:picker', (aa) => {
+    gapi.load('client:auth2', (aa) => {
         gapi.client.init({
             client_id: google_client_id,
             scope: 'https://www.googleapis.com/auth/drive',
@@ -82,34 +83,8 @@ import { getGroup } from "./utils/api.js";
             // .then(() => getGroup(groupId))   
             .then((groupResponse) => getFolderFiles(groupResponse.data.folderId))
             .then((weekFolders) => getWeeksFiles(weekFolders))
-            .then((weeks) => { weeks = weeks; setWeeksView(weeks) } );
+            .then((weeks) => { weeks = weeks; setWeeksView(weeks); stopLoading() } );
     });
-
-    function createPicker() {
-        if (gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token) {
-            var view = new google.picker.DocsView()
-                // .setParent('PUT YOUR FOLDER ID')
-                .setIncludeFolders(true);
-
-            var picker = new google.picker.PickerBuilder().
-                addView(view).
-                setOAuthToken(gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token).
-                //   setDeveloperKey('AIzaSyA3NSksANfrgDTQDrSduZZIU17R2udcbRo').
-                setCallback(pickerCallback).
-                build();
-            picker.setVisible(false);
-        }
-    }
-
-    function pickerCallback(data) {
-        var url = 'nothing';
-        if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
-            var doc = data[google.picker.Response.DOCUMENTS][0];
-            url = doc[google.picker.Document.URL];
-        }
-        var message = 'You picked: ' + url;
-        document.getElementById('result').innerHTML = message;
-    }
 
     function checkSession(resp) {
         if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
