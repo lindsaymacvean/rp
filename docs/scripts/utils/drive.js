@@ -22,7 +22,7 @@ export const shareFile = (fileId, email, permission) => {
 
     var permission = {
           'type': 'user',
-          'role': 'reader',
+          'role': permission,
           'emailAddress': email
     };
 
@@ -77,6 +77,42 @@ export const createFolder = (folderName, parentFolderId) => {
     })
 }
 
+export const copyFile = (fileId, parentFolderId) => {
+    return gapi.client.drive.files.copy({
+        fileId: fileId,
+        parents: [parentFolderId]
+      });
+}
+
+export const getFolderFiles = (parentId) => {
+    return gapi.client.drive.files.list({
+        q: `'${parentId}' in parents and trashed = false`,
+        pageSize: 10,
+        fields: 'nextPageToken, files(id, name, parents, webViewLink, thumbnailLink)',
+    }).then(function(response) {
+        return response.result.files;
+    });
+}
+
+export const getWeeksFiles = (parents) => {
+
+    var weeks = parents.map(r => {return { name: r.name, id: r.id, files: []}});
+
+    return getFolderFiles(weeks[0].id)
+        .then((weekFiles) => { weeks[0].files = weekFiles; return getFolderFiles(weeks[1].id) })
+        .then((weekFiles) => { weeks[1].files = weekFiles; return getFolderFiles(weeks[2].id) })
+        .then((weekFiles) => { weeks[2].files = weekFiles; return getFolderFiles(weeks[3].id) })
+        .then((weekFiles) => { weeks[3].files = weekFiles; return getFolderFiles(weeks[4].id) })
+        .then((weekFiles) => { weeks[4].files = weekFiles; return getFolderFiles(weeks[5].id) })
+        .then((weekFiles) => { 
+            weeks[5].files = weekFiles; 
+            return weeks.sort(function(a, b){
+                if(a.name < b.name) { return -1; }
+                if(a.name > b.name) { return 1; }
+                return 0;
+            }) 
+        })
+}
 
 export const createGroupSubFolders = (parentFolderId) => {
     return createFolder("week 1", parentFolderId)

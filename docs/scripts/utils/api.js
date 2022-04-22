@@ -8,3 +8,13 @@ export const getSemester = (semesterId) => {
     })
 }
 
+
+export const getGroup = (groupId) => {
+    return axios.get(`${api_url}/group?id=${groupId}`, {
+        headers: {
+            'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+        }
+    })
+ }
+
+
