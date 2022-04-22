@@ -1,22 +1,6 @@
 AWSTemplateFormatVersion : '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Readable API
-Globals:
-  Function:
-    Environment:
-      Variables:
-        GOOGLE_CLIENT_ID: '/parameterStore/googleClientId'
-        GOOGLE_CLIENT_SECRET: '/parameterStore/googleClientSecret'
-        GOOGLE_REDIRECT_URL: 'https://localhost'
-Parameters:
-  GoogleClientIdParameter:
-    Description: Google client id.
-    Type: String
-    Default: 'parameterStore/googleClientId'
-  GoogleClientSecretParameter:
-    Description: Google client secret.
-    Type: String
-    Default: 'parameterStore/googleClientSecret'
 Resources:
   FacilitatorsTable:
     Type: AWS::DynamoDB::Table
@@ -384,27 +368,5 @@ Resources:
           Properties:
             Path: /facilitator
             Method: post
-            RestApiId:
-              Ref: ReadableApiGateway
-  CloneGoogleFolder:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: src/cloneGoogleFolder.js
-      Handler: cloneGoogleFolder.handler
-      Runtime: nodejs14.x
-      Timeout: 60
-      Layers: 
-        - !Ref GoogleApisLambdaLayer
-      Policies:
-        - SSMParameterReadPolicy:
-            ParameterName: !Ref GoogleClientIdParameter
-        - SSMParameterReadPolicy:
-            ParameterName: !Ref GoogleClientSecretParameter
-      Events:
-        ApiEvent:
-          Type: Api
-          Properties:
-            Path: /copyTemplateFolder
-            Method: get
             RestApiId:
               Ref: ReadableApiGateway
