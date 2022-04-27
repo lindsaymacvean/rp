@@ -77,10 +77,13 @@ export const createFolder = (folderName, parentFolderId) => {
     })
 }
 
-export const copyFile = (fileId, parentFolderId) => {
+
+
+export const copyFile = (fileId, parentFolderId, name) => {
     return gapi.client.drive.files.copy({
         fileId: fileId,
-        parents: [parentFolderId]
+        parents: [parentFolderId],
+        name: name
       });
 }
 
