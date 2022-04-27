@@ -51,7 +51,7 @@ import { setLoading, stopLoading } from "./utils/loader.js";
 
         el.appendChild(document.getElementById(sourceId).cloneNode(true));
         
-        copyFile(sourceId, ev.currentTarget.id)
+        copyFile(sourceId, ev.currentTarget.id, document.getElementById(sourceId).getAttribute("docName"))
             .then((result) => {debugger; console.log(result)})
     }
 

@@ -98,7 +98,7 @@
                         {{#if documents.length}}
                         {{#each documents}}
                         <div class="col-2 mt-2">
-                            <div id="{{id}}" draggable="true" ondragstart="dragstart_handler(event)"
+                            <div id="{{id}}" docName="{{name}}" draggable="true" ondragstart="dragstart_handler(event)"
                                 onclick="preview('{{webViewLink}}')"
                                 style="height: 200px; width:150px; background-color: white; border-radius: 5px; border: solid 1px; border-color: lightblue;">
                                 <img draggable="false" style="height: 150px; width:150px; padding: 10px; "
