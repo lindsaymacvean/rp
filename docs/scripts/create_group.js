@@ -51,7 +51,7 @@ import { createGroupFolder, initDrive, shareFile, shareTemplateFolder } from "./
 
     globalThis.createNewGroup = function (e) {
         var form = document.forms.namedItem("newGroup");
-        
+
         if (form.checkValidity())
             e.preventDefault();
         else

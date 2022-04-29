@@ -1,6 +1,8 @@
 const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const crypto = require("crypto");
+const axios = require('axios');
+var ssm = new AWS.SSM();
 
 exports.handler = async(event, context, callback) => {
 
@@ -59,6 +61,7 @@ const createGroup = async(data) => {
         'themes': data.themes,
         'facilitatorId': data.facilitatorId,
         'semesterId': data.semesterId,
+        'eventId': data.eventId,
         'id': crypto.randomUUID()
     }
 
@@ -67,7 +70,9 @@ const createGroup = async(data) => {
         Item: item
     };
 
+    item.participants = await createParticipans(item.id, item.eventId);
     await dynamo.put(params).promise();
+
     return item;
 };
 
@@ -100,3 +105,36 @@ const addGroupToFacilitator = async(facilitator, group) => {
 
     await dynamo.put(params).promise();
 };
+
+const createParticipans = async(groupId, eventId) => {
+    const ticketTailorSk = await ssm.getParameter({
+        Name: process.env.TICKET_TAILOR_SK,
+        WithDecryption: true
+    }).promise();
+
+    var tiketsResponse = await axios.get(`https://api.tickettailor.com/v1/issued_tickets?event_id=${eventId}&status=valid`, 
+            {
+                auth:{
+                    username: ticketTailorSk.Parameter.Value,
+                    password: ""
+                }
+            }
+        );
+
+    for (var participant of tiketsResponse.data.data){
+        participant.groupId = groupId;
+        await createParitcipant(participant)
+    }
+
+    return tiketsResponse.data.data;
+}
+
+const createParitcipant = async (data) => {
+
+    var params = {
+        TableName: 'participant',
+        Item: data
+    };
+
+    await dynamo.put(params).promise();
+}
