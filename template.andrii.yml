@@ -1,6 +1,16 @@
 AWSTemplateFormatVersion : '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Readable API
+Globals:
+  Function:
+    Environment:
+      Variables:
+        TICKET_TAILOR_SK: '/parameterStore/ticketTailorSk'
+Parameters:
+  TicketTailorSecretParameter:
+    Description: TicketTailor client secret.
+    Type: String
+    Default: 'parameterStore/ticketTailorSk'
 Resources:
   FacilitatorsTable:
     Type: AWS::DynamoDB::Table
@@ -86,6 +96,13 @@ Resources:
     Properties:
       LayerName: googleApisLambdaLayer
       ContentUri: layers/googleApisLambdaLayer
+      Description: googleapis lambda layer
+      RetentionPolicy: Delete
+  AxiosLambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: axiosLambdaLayer
+      ContentUri: layers/axiosLayer
       Description: googleapis lambda layer
       RetentionPolicy: Delete
   DyslexiaServiceLayer:
@@ -315,6 +332,28 @@ Resources:
           Type: Api
           Properties:
             Path: /semester/list
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  GetTicketTailorEventsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getTicketTailorEventsList.js
+      Handler: getTicketTailorEventsList.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Layers:
+         - !Ref AxiosLambdaLayer
+      Policies:
+         - SSMParameterReadPolicy:
+            ParameterName: !Ref TicketTailorSecretParameter
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /tickettailor/events
             Method: get
             Auth:
               Authorizer: ReadableApiCognitoAuthorizer

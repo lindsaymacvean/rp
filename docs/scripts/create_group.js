@@ -1,10 +1,12 @@
 import { getSemester } from "./utils/api.js";
+import { getTicketTailorEvents } from "./utils/ticketTailor.js";
 import { api_url, frontend_url } from "./utils/configs.js"
 import { createGroupFolder, initDrive, shareFile, shareTemplateFolder } from "./utils/drive.js"
 
 (function () {
 
     var facilitators = [];
+    var ticketTailorEvents = [];
 
     axios.get(`${api_url}/facilitator/list`, {
         headers: {
@@ -16,6 +18,17 @@ import { createGroupFolder, initDrive, shareFile, shareTemplateFolder } from "./
         var template = Handlebars.compile(document.querySelector("#facilitatorId").outerHTML);
         document.querySelector("#facilitatorId").outerHTML = template({ facilitators });
     })
+
+    getTicketTailorEvents()
+        .then(resp => {
+            ticketTailorEvents = resp.data;
+            var template = Handlebars.compile(document.querySelector("#eventId").outerHTML);
+            document.querySelector("#eventId").outerHTML = template({ ticketTailorEvents });
+
+            document.getElementById("time").value = ticketTailorEvents[0].start.time;
+            document.getElementById("dateOfFirstSession").value = ticketTailorEvents[0].start.date;
+
+        })
 
     const saveFolderIdToGroup = (folderId, groupData) => {
         const data = {
@@ -31,9 +44,14 @@ import { createGroupFolder, initDrive, shareFile, shareTemplateFolder } from "./
 
     }
 
+    globalThis.onTicketTailorEventChange = (ev, el) => {
+        document.getElementById("time").value = ticketTailorEvents[ev.selectedIndex].start.time;
+        document.getElementById("dateOfFirstSession").value = ticketTailorEvents[ev.selectedIndex].start.date;
+    }
+
     globalThis.createNewGroup = function (e) {
         var form = document.forms.namedItem("newGroup");
-
+        
         if (form.checkValidity())
             e.preventDefault();
         else

@@ -28,14 +28,6 @@
                         <input type="text" class="form-control" id="dayOfWeek" name="dayOfWeek" required>
                     </div>
                     <div>
-                        <label for="time" class="form-label">Time:</label>
-                        <input type="time" class="form-control" id="time" name="time" required>
-                    </div>
-                    <div>
-                        <label for="dateOfFirstSession" class="form-label">Time:</label>
-                        <input type="date" class="form-control" id="dateOfFirstSession" name="dateOfFirstSession" required>
-                    </div>
-                    <div>
                         <label for="themes" class="form-label">Themes:</label>
                         <input type="text" class="form-control" id="themes" name="themes" required>
                     </div>
@@ -50,7 +42,22 @@
                                 <option value="{{id}}">{{email}}</option>    
                             {{/each}}
                         </select>
-
+                    </div>
+                    <div>
+                        <label for="eventId" class="form-label">Ticket Tailor Event:</label>
+                        <select onchange="onTicketTailorEventChange(this)" type="text" class="form-control" id="eventId" name="eventId" list="ticketTailorEventsDatalist" autocomplete="off">
+                            {{#each ticketTailorEvents}}
+                                <option value="{{id}}">{{name}}</option>    
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="time" class="form-label">Time:</label>
+                        <input readonly="true" type="time" class="form-control" id="time" name="time" required>
+                    </div>
+                    <div>
+                        <label for="dateOfFirstSession" class="form-label">Date:</label>
+                        <input readonly="true" type="date" class="form-control" id="dateOfFirstSession" name="dateOfFirstSession" required>
                     </div>
                     <div class="mt-3">
                         <a>
