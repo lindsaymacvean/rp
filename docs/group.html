@@ -73,40 +73,16 @@
             </div>
         </div>
 
-
-        <div class="row text-center mt-2">
-            <div class="col-8">
-                <a href="participant_profile.html" class="w-100 ms-5"><button id="terms-btn" class="btn btn-primary w-100">Participant name</button></a>
+        <template id="studentsListTemplate">
+            {{#each participants}}
+            <div class="row text-center mt-2">
+                <div class="col-8">
+                    <a href="participant_profile.html?participantId={{id}}" class="w-100 ms-5"><button id="terms-btn" class="btn btn-primary w-100">{{full_name}}</button></a>
+                </div>
             </div>
-            <div class="col-4">
-                <a href="#"><button id="remove_btn" class="btn btn-secondary w-50 ">Remove </button></a>
-            </div>
-        </div>
-
-        <div class="row text-center mt-2">
-            <div class="col-8">
-                <a href="participant_profile.html" class="w-100 ms-5"><button class="btn btn-primary w-100">Participant name</button></a>
-            </div>
-            <div class="col-4">
-                <a href="#"><button class="btn btn-secondary w-50">Remove </button></a>
-            </div>
-        </div>
-
-        <div class="row text-center mt-2">
-            <div class="col-8">
-                <a href="participant_profile.html" class="w-100 ms-5"><button  class="btn btn-primary w-100">Participant name</button></a>
-            </div>
-            <div class="col-4">
-                <a href="#"><button class="btn btn-secondary w-50">Remove </button></a>
-            </div>
-        </div>
-
-        <div class="row text-center mt-2">
-            <div class="col-8">
-                <a href="#" class="w-100 ms-5"><button id="group_student-btn" class="btn btn-success w-100">Add a student</button></a>
-            </div>
-            <div class="col-4"></div>
-        </div>
+            {{/each}}
+        </template>
+        <div id="studentsList"></div>
     </div>
 
     <script type="module" src="scripts/main.js"></script>

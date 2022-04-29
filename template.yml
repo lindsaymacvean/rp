@@ -195,6 +195,28 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
+  GetParticipant:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getParticipant.js
+      Handler: getParticipant.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /participant
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
   GetFacilitatorGroupsList:
     Type: AWS::Serverless::Function
     Properties:
@@ -245,8 +267,14 @@ Resources:
       CodeUri: src/postGroup.js
       Handler: postGroup.handler
       Runtime: nodejs14.x
-      Timeout: 60
+      Timeout: 120
+      Layers:
+         - !Ref AxiosLambdaLayer
       Policies:
+         - SSMParameterReadPolicy:
+            ParameterName: !Ref TicketTailorSecretParameter
+         - DynamoDBWritePolicy:
+            TableName: !Ref ParticipantsTable
          - DynamoDBWritePolicy:
             TableName: !Ref GroupsTable
          - DynamoDBWritePolicy:

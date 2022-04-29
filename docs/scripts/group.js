@@ -45,5 +45,14 @@ import { api_url } from "./utils/configs.js"
                 var template = Handlebars.compile(document.querySelector("#groupName").innerHTML);
                 document.querySelector("#groupName").innerHTML = template({ groupId, groupName: resp.data.name });
             }
-        });
+            return resp;
+        })
+        // Fill out students list in the Group
+        .then(resp => {
+            if (document.querySelector("#studentsListTemplate")) {
+                var template = Handlebars.compile(document.querySelector("#studentsListTemplate").innerHTML);
+                document.querySelector("#studentsList").outerHTML = template({ participants: resp.data.participants });
+            }
+            return resp;            
+        })
 })();
