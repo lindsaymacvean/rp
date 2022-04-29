@@ -6,11 +6,16 @@ Globals:
     Environment:
       Variables:
         TICKET_TAILOR_SK: '/parameterStore/ticketTailorSk'
+        TICKET_TAILOR_WEBHOOK_SK: '/parameterStore/ticketTailorWebhookSk'
 Parameters:
   TicketTailorSecretParameter:
     Description: TicketTailor client secret.
     Type: String
     Default: 'parameterStore/ticketTailorSk'
+  TicketTailorWebhookSecretParameter:
+    Description: TicketTailor webhook secret.
+    Type: String
+    Default: 'parameterStore/ticketTailorWebhookSk'
 Resources:
   FacilitatorsTable:
     Type: AWS::DynamoDB::Table
@@ -69,9 +74,21 @@ Resources:
       AttributeDefinitions: 
         - AttributeName: id
           AttributeType: S
+        - AttributeName: eventId
+          AttributeType: S
       KeySchema: 
         - AttributeName: id
           KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: gsiGroupEventTable
+          ProvisionedThroughput:
+            ReadCapacityUnits: 0
+            WriteCapacityUnits: 0
+          KeySchema:
+            - AttributeName: eventId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
   LeadFacilitatorsCognitoGroup:
     Type: AWS::Cognito::UserPoolGroup
     Properties: 
@@ -292,6 +309,36 @@ Resources:
           Type: Api
           Properties:
             Path: /group/create
+            Method: post
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  PostTicketTailorWebhook:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/postTicketTailorWebhook.js
+      Handler: postTicketTailorWebhook.handler
+      Runtime: nodejs14.x
+      Timeout: 120
+      Layers:
+         - !Ref AxiosLambdaLayer
+      Policies:
+         - SSMParameterReadPolicy:
+            ParameterName: !Ref TicketTailorWebhookSecretParameter
+         - DynamoDBWritePolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBWritePolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /tickettailor/webhook
             Method: post
             Auth:
               Authorizer: ReadableApiCognitoAuthorizer
