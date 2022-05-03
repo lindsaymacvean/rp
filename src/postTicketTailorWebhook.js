@@ -48,12 +48,13 @@ exports.handler = async(event, context, callback) => {
         if (!group.participants)
             group.participants = [];
     
-        var existingParticipant = group.participants.findIndex(r => r.id == data.payload.id);
+        var existingParticipantIndex = group.participants.findIndex(r => r.id == data.payload.id);
 
-        if (!existingParticipant)
+        if (existingParticipantIndex === -1)
             group.participants.push(data.payload);
-        else
-            group.participants.push(data.payload);
+        else{
+            group.participants[existingParticipantIndex] = data.payload;
+        }
 
         var params = {
             TableName: 'group',
@@ -61,7 +62,8 @@ exports.handler = async(event, context, callback) => {
         };
 
         await dynamo.put(params).promise();
-        await createParitcipant(data.payload);
+
+        await createParitcipant(data.payload, group.id);
     }
 
     response = {
@@ -88,11 +90,12 @@ const getGroupByEventId = async(eventId) => {
     return await dynamo.query(params).promise();
 };
 
-const createParitcipant = async (data) => {
+const createParitcipant = async (participant, groupId) => {
+    participant.groupId = groupId;
 
     var params = {
         TableName: 'participant',
-        Item: data
+        Item: participant
     };
 
     await dynamo.put(params).promise();
