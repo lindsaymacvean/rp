@@ -1,3 +1,9 @@
 body {
     margin: 20px;
 }
+
+#documentsList {
+    background: white !important;
+    padding: 0.25vw !important;
+    border-radius: 0.25rem !important;
+}
