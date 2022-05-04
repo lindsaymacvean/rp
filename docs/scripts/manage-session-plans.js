@@ -46,8 +46,8 @@ import { setLoading, stopLoading } from "./utils/loader.js";
         ev.preventDefault();
         var sourceId = ev.dataTransfer.getData("text");
 
-        if (el.innerHTML.startsWith("<span"))
-            el.innerHTML = "";
+        //if (el.innerHTML.startsWith("<span"))
+        el.innerHTML = "";
 
         el.appendChild(document.getElementById(sourceId).cloneNode(true));
         
@@ -124,4 +124,11 @@ import { setLoading, stopLoading } from "./utils/loader.js";
             return response.result.files;
         });
     }
+
+    globalThis.openTemplate = function (e) {
+        e.preventDefault();
+        window.alert('it worked');
+    }
+    
 })();
+
