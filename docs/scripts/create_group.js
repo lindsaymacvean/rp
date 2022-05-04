@@ -68,6 +68,10 @@ import { createGroupFolder, initDrive, shareFile, shareTemplateFolder } from "./
 
         groupData.semesterId = semesterId;
 
+        var spinner = '<div style="text-align:center;"><div class="lds-dual-ring"></div><br /><strong>Importing Participants from Ticket Tailor</strong></div>';
+        document.getElementsByTagName('body')[0].innerHTML = spinner; 
+
+
         axios.post(`${api_url}/group/create`, groupData, {
             headers: {
                 'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
