@@ -1,5 +1,13 @@
 import { api_url } from "./utils/configs.js"
 
+Handlebars.registerHelper('userId', function (aString) {
+    return aString.replace(/it_/, '')
+});
+
+Handlebars.registerHelper('event', function (aString) {
+    return aString.replace(/ev_/, '')
+});
+
 (function() {
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -17,9 +25,17 @@ import { api_url } from "./utils/configs.js"
         })
         // Fill out students in the Group
         .then(resp => {
-            if (document.querySelector("#p_student_list")) {
-                var template = Handlebars.compile(document.querySelector("#p_student_list").outerHTML);
-                document.querySelector("#p_student_list").outerHTML = template({ facilitatorName: resp.data.facilitator.name, semesterName: resp.data.semester.name });
+            if (document.querySelector("#group_info")) {
+                var template = Handlebars.compile(document.querySelector("#group_info").innerHTML);
+                document.querySelector("#group_info").innerHTML = template({ 
+                    facilitatorName: resp.data.facilitator.name, 
+                    semesterName: resp.data.semester.name,
+                    firstSession: resp.data.dateOfFirstSession,
+                    weekDay: resp.data.dayOfWeek,
+                    time: resp.data.time,
+                    themes: resp.data.themes,
+                    ticketTailorEventId: resp.data.eventId.replace(/ev_/, '')
+            });
             }
             return resp;            
         })

@@ -45,40 +45,48 @@
             </div>
         </div>
 
+        <div class="row" style="height: 5vh"></div>
+
         <div class="row">
-            <div class="col-6 text-center mt-5">
-                <p id="p_student_list" class="fs-5"> {{facilitatorName}} / {{semesterName}}</p>
+            <div class="col-2"></div>
+            <div class="col-4 text-left mt-2" id="group_info">
+                <p class=""><strong>Facilitator Name -</strong> {{facilitatorName}} </p>
+                <p class=""><strong>Semester -</strong> {{semesterName}}</p>
+                <p class=""><strong>Weekly -</strong> {{weekDay}}s at {{time}}</p>
+                <p class=""><strong>Starting -</strong> {{firstSession}}</p>
+                <p class=""><strong>Theme -</strong> {{themes}}</p>
+                <p class=""><strong>Connected to Ticket Tailor Event -</strong> <a target="_blank" href="https://app.tickettailor.com/event/{{ticketTailorEventId}}">{{ticketTailorEventId}}</a></p>
             </div>
-            <div class="col-6 text-center mt-5">
-                <p class="fs-5">Weekly scheduled Time</p>
-            </div>
-        </div>
-
-        <div class="row" style="height: 4vh"></div>
-
-        <div class="row ">
             <div class="col-6 text-center">
+                <div class="row" style="height: 2vh"></div>
                 <a href="empty_page.html "><button id="student_list-btn" class="btn btn-primary  w-50  ">Issue Calendar Invites</button></a>
-            </div>
-            <div class="col-6 text-center ">
+                <div class="row" style="height: 2vh"></div>
                 <a id="adapt_session_button" href="manage-session-plans.html?groupId={{groupId}}"><button  class="btn btn-primary  w-50">Adapt or Create a Session Plan</button></a>
             </div>
+            <div class="col-2 text-center"></div>
         </div>
 
-        <div class="row" style="height: 20vh"></div>
+        <div class="row" style="height: 5vh"></div>
 
         <div class="row text-center  mt-2 ">
+            <div class="col-2"></div>
             <div class="col-8">
                 <p class="fs-5 w-100 ms-5">Group Student List</p>
             </div>
+            <div class="col-2"></div>
         </div>
 
         <template id="studentsListTemplate">
             {{#each participants}}
             <div class="row text-center mt-2">
-                <div class="col-8">
+                <div class="col-3"></div>
+                <div class="col-4">
                     <a href="participant_profile.html?participantId={{id}}" class="w-100 ms-5"><button id="terms-btn" class="btn btn-primary w-100">{{full_name}}</button></a>
                 </div>
+                <div class="col-2">
+                    <a target="_blank" href="https://app.tickettailor.com/event/tickets-issued/{{event event_id}}#dpop=/event/tickets-issued/view/{{userId id}}" class="w-100 ms-5"><button id="terms-btn" class="btn btn-primary w-100">Ticket</button></a>
+                </div>
+                <div class="col-3"></div>
             </div>
             {{/each}}
         </template>
