@@ -68,6 +68,9 @@ import { createGroupFolder, initDrive, shareFile, shareTemplateFolder } from "./
 
         groupData.semesterId = semesterId;
 
+        const facilitatorEmailSelect = document.getElementById("facilitatorId");
+        var facilitatorEmail= facilitatorEmailSelect.options[facilitatorEmailSelect.selectedIndex].text;
+
         var spinner = '<div style="text-align:center;"><div class="lds-dual-ring"></div><br /><strong>Importing Participants from Ticket Tailor</strong></div>';
         document.getElementsByTagName('body')[0].innerHTML = spinner; 
 
@@ -77,9 +80,6 @@ import { createGroupFolder, initDrive, shareFile, shareTemplateFolder } from "./
                 'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
             }
         }).then((groupResponse) => {
-            const facilitatorEmailSelect = document.getElementById("facilitatorId");
-            var facilitatorEmail= facilitatorEmailSelect.options[facilitatorEmailSelect.selectedIndex].text;
-
             initDrive()
                 .then(() => getSemester(groupData.semesterId))
                 .then((semesterResponse) => createGroupFolder(semesterResponse.data.name, groupData.name, groupData.themes, groupData.studentYear, groupData.facilitatorId, groupData.year, facilitatorEmail))
