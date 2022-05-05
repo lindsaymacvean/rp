@@ -71,7 +71,7 @@ const createGroup = async(data) => {
         Item: item
     };
 
-    item.participants = await createParticipans(item.id, item.eventId);
+    item.participants = await createParticipants(item.id, item.eventId);
     await dynamo.put(params).promise();
 
     return item;
@@ -107,13 +107,13 @@ const addGroupToFacilitator = async(facilitator, group) => {
     await dynamo.put(params).promise();
 };
 
-const createParticipans = async(groupId, eventId) => {
+const createParticipants = async(groupId, eventId) => {
     const ticketTailorSk = await ssm.getParameter({
         Name: process.env.TICKET_TAILOR_SK,
         WithDecryption: true
     }).promise();
 
-    var tiketsResponse = await axios.get(`https://api.tickettailor.com/v1/issued_tickets?event_id=${eventId}&status=valid`, 
+    var ticketsResponse = await axios.get(`https://api.tickettailor.com/v1/orders?event_id=${eventId}&status=completed`, 
             {
                 auth:{
                     username: ticketTailorSk.Parameter.Value,
@@ -122,15 +122,15 @@ const createParticipans = async(groupId, eventId) => {
             }
         );
 
-    for (var participant of tiketsResponse.data.data){
+    for (var participant of ticketsResponse.data.data){
         participant.groupId = groupId;
-        await createParitcipant(participant)
+        await createParticipant(participant)
     }
 
-    return tiketsResponse.data.data;
+    return ticketsResponse.data.data;
 }
 
-const createParitcipant = async (data) => {
+const createParticipant = async (data) => {
 
     var params = {
         TableName: 'participant',

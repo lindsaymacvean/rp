@@ -63,7 +63,7 @@ exports.handler = async(event, context, callback) => {
 
         await dynamo.put(params).promise();
 
-        await createParitcipant(data.payload, group.id);
+        await createParticipant(data.payload, group.id);
     }
 
     response = {
@@ -90,7 +90,7 @@ const getGroupByEventId = async(eventId) => {
     return await dynamo.query(params).promise();
 };
 
-const createParitcipant = async (participant, groupId) => {
+const createParticipant = async (participant, groupId) => {
     participant.groupId = groupId;
 
     var params = {
