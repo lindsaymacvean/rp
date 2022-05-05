@@ -53,7 +53,7 @@ import { setLoading, stopLoading } from "./utils/loader.js";
 
         el.appendChild(document.getElementById(sourceId).cloneNode(true));
         
-        copyFile(sourceId, ev.currentTarget.id, document.getElementById(sourceId).getAttribute("docName"))
+        copyFile(sourceId, ev.currentTarget.id, `${semester.name}-${group.studentYear}/${group.themes}-${e.srcElement.getAttribute("name").slice(-1)}/6-${facilitator.email}`)
             .then((result) => {console.log(result)})
     }
 
@@ -140,7 +140,7 @@ import { setLoading, stopLoading } from "./utils/loader.js";
 
         e.srcElement.innerHTML = "Creating from Template ..."
 
-        var name =  `${semester.name} - ${group.studentYear} / ${group.themes} - ${e.srcElement.getAttribute("name").slice(-1)}/6 - ${facilitator.name} F${group.facilitatorId}`;;
+        var name =  `${semester.name}-${group.studentYear}/${group.themes}-${e.srcElement.getAttribute("name").slice(-1)}/6-${facilitator.email}`;;
         console.log(name);
         copyFile(template_file_id, e.srcElement.parentElement.id, name)
             .then((result) => {
