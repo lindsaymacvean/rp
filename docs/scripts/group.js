@@ -1,7 +1,6 @@
 import { api_url } from "./utils/configs.js";
 import { IsLeadFacilitator } from "./utils/utils.js";
 
-
 Handlebars.registerHelper('userId', function (aString) {
     return aString.replace(/it_/, '')
 });
@@ -76,4 +75,18 @@ Handlebars.registerHelper('event', function (aString) {
 
     var template = Handlebars.compile(document.querySelector("#optionsTemplate").innerHTML);
     document.querySelector("#getOptions").outerHTML = template({ LeadFacilitator: IsLeadFacilitator() });
+
+    globalThis.synchronise = function() {
+        // Load Spinner
+    
+        axios.get(`${api_url}/group/synchronise/${groupId}`, {
+            headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+            }
+        })
+        .then((response) => {
+            console.log(response);
+            //remove spinner
+        });
+    }
 })();
