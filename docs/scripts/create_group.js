@@ -87,7 +87,8 @@ import { createGroupFolder, initDrive, shareFile, shareTemplateFolder } from "./
                 .then((parentFolderId) => shareFile(parentFolderId, facilitatorEmail, "writer"))
                 .then((parentFolderId) => shareFile(parentFolderId, 'readableproject@dyslexia.ie', "writer"))
                 .then((parentFolderId) => shareFile(parentFolderId, 'rptrial@dyslexia.ie', "writer"))
-                .then(() => shareTemplateFolder(facilitatorEmail))
+                // Don't need to shareTemplateFolder because template is already shared with organisation
+                //.then(() => shareTemplateFolder(facilitatorEmail))
                 .then(() => window.location.href = `${frontend_url}/semester.html?semesterId=${semesterId}`);
         });
     }

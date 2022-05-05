@@ -131,9 +131,9 @@ const createParticipants = async(groupId, eventId) => {
             parent_last_name: order.issued_tickets[0].last_name,
             type: order.issued_tickets[0].description,
             created_at: order.issued_tickets[0].created_at,
-            county: order.buyer_details.custom_questions[0],
-            child_name: order.buyer_details.custom_questions[2],
-            class: order.buyer_details.custom_questions[3],
+            county: order.buyer_details.custom_questions[0].answer,
+            child_name: order.buyer_details.custom_questions[2].answer,
+            class: order.buyer_details.custom_questions[3].answer,
             email: order.buyer_details.email,
             phone: order.buyer_details.phone
         };
