@@ -83,7 +83,8 @@ export const copyFile = (fileId, parentFolderId, name) => {
     return gapi.client.drive.files.copy({
         fileId: fileId,
         parents: [parentFolderId],
-        name: name
+        name: name,
+        fields: 'id, name, parents, thumbnailLink, webViewLink, iconLink, webContentLink',
       });
 }
 
@@ -91,7 +92,7 @@ export const getFolderFiles = (parentId) => {
     return gapi.client.drive.files.list({
         q: `'${parentId}' in parents and trashed = false`,
         pageSize: 10,
-        fields: 'nextPageToken, files(id, name, parents, webViewLink, thumbnailLink)',
+        fields: 'nextPageToken, files(id, name, parents, thumbnailLink, webViewLink, iconLink, webContentLink)',
     }).then(function(response) {
         return response.result.files;
     });

@@ -103,7 +103,7 @@
                                 onclick="preview('{{webViewLink}}')"
                                 style="height: 200px; width:150px; background-color: white; border-radius: 5px; border: solid 1px; border-color: lightblue;">
                                 <img draggable="false" style="height: 150px; width:150px; padding: 10px; "
-                                    src="{{thumbnailLink}}" />
+                                    src="{{thumbnailLink}}"/>
                                 <a class="text-center" draggable="false" href="#">{{name}}</a>
                             </div>
                         </div>
@@ -157,7 +157,7 @@
                                         {{/each}}
 
                                         {{else}}
-                                        <span weekTemplatePlaceholderAttribute onclick="openTemplate(event)">
+                                        <span style="cursor:default; user-select: none;" name="{{name}}" weekTemplatePlaceholderAttribute onclick="openTemplate(event)">
                                             Click to
                                             create new session plan from template</span>
                                         {{/if }}

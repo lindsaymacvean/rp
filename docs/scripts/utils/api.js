@@ -18,3 +18,12 @@ export const getGroup = (groupId) => {
  }
 
 
+ export const getFacilitator = (facilitatorId) => {
+    return axios.get(`${api_url}/facilitator?id=${facilitatorId}`, {
+       headers: {
+           'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+       }
+   })
+ }
+
+

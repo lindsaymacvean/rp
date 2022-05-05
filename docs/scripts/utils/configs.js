@@ -9,3 +9,5 @@ export const readable_cognito_logout_url = "https://readable.auth.eu-west-1.amaz
 export const api_url = "https://qihx5f0xfa.execute-api.eu-west-1.amazonaws.com/Stage"
 export const google_client_id = "925322795697-i9jr2o8gkqan3cdqvkn7tjog5la33av6.apps.googleusercontent.com"
 export const frontend_url = "https://rp.dyslexia.ie"
+
+export const template_file_id = "1GApizgtsBuUkZMFYkwh5IPbY7m644SvdqDcSp_OgEI0"

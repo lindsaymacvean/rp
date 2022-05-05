@@ -11,6 +11,20 @@ export const CurrentUserEmail = () => {
     return jsonToken["email"];
 }
 
+export const CurrentUserName = () => {
+    let token = sessionStorage.getItem('id_token')
+    let jsonToken = parseJwt(token);
+    console.log(jsonToken["name"]);
+    return jsonToken["name"];
+}
+
+export const CurrentUserId = () => {
+    let token = sessionStorage.getItem('id_token')
+    let jsonToken = parseJwt(token);
+    console.log(jsonToken["sub"]);
+    return jsonToken["sub"];
+}
+
 export const parseJwt  = (token) => {
     var base64Url = token.split('.')[1];
     var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');

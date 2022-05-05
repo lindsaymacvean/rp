@@ -32,4 +32,5 @@ const getSemester = async(semesterId) => {
     };
 
     return await dynamo.get(params).promise();
+    
 };

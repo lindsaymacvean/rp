@@ -1,7 +1,7 @@
-import { api_url, google_client_id } from "./utils/configs.js"
-import { CurrentUserEmail } from "./utils/utils.js"
+import { template_file_id, api_url, google_client_id } from "./utils/configs.js"
+import { CurrentUserEmail, CurrentUserName, CurrentUserId } from "./utils/utils.js"
 import { getTemplateFolder, getWeeksFiles, getFolderFiles, copyFile } from "./utils/drive.js"
-import { getGroup } from "./utils/api.js";
+import { getFacilitator, getGroup, getSemester } from "./utils/api.js";
 import { setLoading, stopLoading } from "./utils/loader.js";
 
 (function () {
@@ -10,6 +10,8 @@ import { setLoading, stopLoading } from "./utils/loader.js";
     const groupId = urlParams.get('groupId');        
 
     let group = null;
+    let semester = null;
+    let facilitator = null;
     let weeks = [];
     // setLoading();
 
@@ -65,26 +67,32 @@ import { setLoading, stopLoading } from "./utils/loader.js";
         }
     });
 
-    gapi.load('client:auth2', (aa) => {
-        gapi.client.init({
-            client_id: google_client_id,
-            scope: 'https://www.googleapis.com/auth/drive',
-            discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
-            login_hint: CurrentUserEmail()
-        })
-            .then(checkSession)
-            .then(function () {
-                return getTemplateFolder();
+    function init(){
+        gapi.load('client:auth2', (aa) => {
+            gapi.client.init({
+                client_id: google_client_id,
+                scope: 'https://www.googleapis.com/auth/drive',
+                discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+                login_hint: CurrentUserEmail()
             })
-            .then(function (folder) {
-                return getFiles(folder);
-            })
-            .then(() => getGroup(groupId))
-            // .then(() => getGroup(groupId))   
-            .then((groupResponse) => getFolderFiles(groupResponse.data.folderId))
-            .then((weekFolders) => getWeeksFiles(weekFolders))
-            .then((weeks) => { weeks = weeks; setWeeksView(weeks); stopLoading() } );
-    });
+                .then(checkSession)
+                .then(function () {
+                    return getTemplateFolder();
+                })
+                .then(function (folder) {
+                    return getFiles(folder);
+                })
+                .then(() => getGroup(groupId))
+                .then((groupResponse) => { group = groupResponse.data; return getFolderFiles(groupResponse.data.folderId)})
+                .then((weekFolders) => getWeeksFiles(weekFolders))
+                .then((weeks) => { weeks = weeks; setWeeksView(weeks); } )
+                .then(() => getSemester(group.semesterId))
+                .then((semesterResponse) => { semester = semesterResponse.data })
+                .then(() => getFacilitator(group.facilitatorId))
+                .then((facilitatorResponse) => { facilitator = facilitatorResponse.data.Item; stopLoading() })
+        });
+    }
+   
 
     function checkSession(resp) {
         if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
@@ -96,7 +104,7 @@ import { setLoading, stopLoading } from "./utils/loader.js";
         return gapi.client.drive.files.list({
             q: `'${templateFolder.id}' in parents and trashed = false`,
             pageSize: 10,
-            fields: 'nextPageToken, files(id, name, mimeType, thumbnailLink, webViewLink)',
+            fields: 'nextPageToken, files(id, name, mimeType, thumbnailLink, webViewLink, iconLink, webContentLink)',
         }).then(function (response) {
             console.log(response);
             var template = Handlebars.compile(document.querySelector("#documentsTemplate").innerHTML);
@@ -115,7 +123,7 @@ import { setLoading, stopLoading } from "./utils/loader.js";
         return gapi.client.drive.files.list({
             q: `'${templateFolder.id}' in parents and fullText contains '${document.getElementById("search_input").value}' and trashed = false`,
             pageSize: 10,
-            fields: 'nextPageToken, files(id, name, mimeType, thumbnailLink)',
+            fields: 'nextPageToken, files(id, name, mimeType, thumbnailLink, webViewLink, iconLink, webContentLink)',
         }).then(function (response) {
             console.log(response);
             var template = Handlebars.compile(document.querySelector("#documentsTemplate").innerHTML);
@@ -127,8 +135,21 @@ import { setLoading, stopLoading } from "./utils/loader.js";
 
     globalThis.openTemplate = function (e) {
         e.preventDefault();
-        window.alert('it worked');
+        if (e.srcElement.innerHTML  === "Copying...")
+            return;
+
+        e.srcElement.innerHTML = "Copying..."
+
+        var name =  `${semester.name} - ${group.studentYear} / ${group.themes} - ${e.srcElement.getAttribute("name").slice(-1)}/6 - ${facilitator.name} F${group.facilitatorId}`;;
+        console.log(name);
+        copyFile(template_file_id, e.srcElement.parentElement.id, name)
+            .then((result) => {
+                window.open(result.result.webViewLink, '_blank').focus();
+                init();
+                console.log(result)
+            })
     }
-    
+
+    init();
 })();
 
