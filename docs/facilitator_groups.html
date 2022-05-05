@@ -50,6 +50,12 @@
                             </a>
                         </div>
                     </div>
+                    {{else}}
+                    <div class="col-12">
+                        <a href="group.html?groupId={{id}}" class="w-100">
+                            Welcome. You do not have any Groups set up yet.
+                        </a>
+                    </div>
                     {{/each}}
                 </template>
                 <div id="groupsList" style="text-align:center;"><div class="lds-dual-ring"></div></div>
