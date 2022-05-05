@@ -56,9 +56,8 @@ function checkSession() {
     }
 }
 
-export const createGroupFolder = (semesterName, groupName, theme, studentYear, facilitatorId, facilitatorEmail) => {
-    return createFolder(`${semesterName}-${groupName}-${studentYear}`)
-        .then((folderResult) => createFolder(`${theme}-${facilitatorId}`, folderResult.result.id))
+export const createGroupFolder = (semesterName, groupName, theme, studentYear, facilitatorId, year, facilitatorEmail) => {
+    return createFolder(`${semesterName}-${groupName}-${studentYear}/${theme}-${facilitatorEmail}`)
         .then((folderResult) => createGroupSubFolders(folderResult.result.id))
 }
 
