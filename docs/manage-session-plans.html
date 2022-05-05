@@ -10,6 +10,7 @@
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link href="/styles/main.css" rel="stylesheet" />
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"
@@ -118,10 +119,11 @@
                 <div id="documentsList"></div>
             </div>
         </div>
-
-
-
+        <div style="position:absolute;color:brown;transform: rotate(30deg);left:50%;">
+            <img style="height:2vw;" src="/assets/investigation-arrow.png" />DRAG
+        </div>
         <div class="row mt-5">
+            
             <div class="col-lg-12">
                 <div class="row text-left">
                     <div class="col-12">
@@ -155,7 +157,8 @@
                                         {{/each}}
 
                                         {{else}}
-                                        <span weekTemplatePlaceholderAttribute style="user-select:none;"> Click to
+                                        <span weekTemplatePlaceholderAttribute onclick="openTemplate(event)">
+                                            Click to
                                             create new session plan from template</span>
                                         {{/if }}
                                     </div>

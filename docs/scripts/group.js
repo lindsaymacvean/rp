@@ -1,4 +1,13 @@
-import { api_url } from "./utils/configs.js"
+import { api_url } from "./utils/configs.js";
+import { IsLeadFacilitator } from "./utils/utils.js";
+
+Handlebars.registerHelper('userId', function (aString) {
+    return aString.replace(/it_/, '')
+});
+
+Handlebars.registerHelper('event', function (aString) {
+    return aString.replace(/ev_/, '')
+});
 
 (function() {
 
@@ -17,9 +26,17 @@ import { api_url } from "./utils/configs.js"
         })
         // Fill out students in the Group
         .then(resp => {
-            if (document.querySelector("#p_student_list")) {
-                var template = Handlebars.compile(document.querySelector("#p_student_list").outerHTML);
-                document.querySelector("#p_student_list").outerHTML = template({ facilitatorName: resp.data.facilitator.name, semesterName: resp.data.semester.name });
+            if (document.querySelector("#group_info")) {
+                var template = Handlebars.compile(document.querySelector("#group_info").innerHTML);
+                document.querySelector("#group_info").innerHTML = template({ 
+                    facilitatorName: resp.data.facilitator.name, 
+                    semesterName: resp.data.semester.name,
+                    firstSession: resp.data.dateOfFirstSession,
+                    weekDay: resp.data.dayOfWeek,
+                    time: resp.data.time,
+                    themes: resp.data.themes,
+                    ticketTailorEventId: resp.data.eventId.replace(/ev_/, '')
+            });
             }
             return resp;            
         })
@@ -55,4 +72,21 @@ import { api_url } from "./utils/configs.js"
             }
             return resp;            
         })
+
+    var template = Handlebars.compile(document.querySelector("#optionsTemplate").innerHTML);
+    document.querySelector("#getOptions").outerHTML = template({ LeadFacilitator: IsLeadFacilitator() });
+
+    globalThis.synchronise = function() {
+        // Load Spinner
+    
+        axios.get(`${api_url}/group/synchronise?id=${groupId}`, {
+            headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+            }
+        })
+        .then((response) => {
+            console.log(response);
+            //remove spinner
+        });
+    }
 })();

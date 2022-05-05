@@ -366,6 +366,30 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
+  GetSynchroniseGroup:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getSynchroniseGroup.js
+      Handler: getSynchroniseGroup.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBWritePolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref ParticipantsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /group/synchronise
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
   GetSemester:
     Type: AWS::Serverless::Function
     Properties:
