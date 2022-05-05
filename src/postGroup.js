@@ -59,6 +59,7 @@ const createGroup = async(data) => {
         'time': data.time,
         'dateOfFirstSession': data.dateOfFirstSession,
         'themes': data.themes,
+        'studentYear': data.studentYear,
         'facilitatorId': data.facilitatorId,
         'semesterId': data.semesterId,
         'eventId': data.eventId,
