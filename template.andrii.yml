@@ -340,8 +340,6 @@ Resources:
           Properties:
             Path: /tickettailor/webhook
             Method: post
-            Auth:
-              Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
   PutGroup:
