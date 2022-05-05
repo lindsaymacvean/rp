@@ -6,6 +6,45 @@ var ssm = new AWS.SSM();
 
 exports.handler = async(event, context) => {
 
+    const getGroup = async(groupId) => {
+        var params = {
+            TableName: 'group',
+            Key: {
+                'id': groupId
+            }
+        };
+    
+        return await dynamo.get(params).promise();
+    };
+    
+    const getParticipants = async(eventId) => {
+        const ticketTailorSk = await ssm.getParameter({
+            Name: process.env.TICKET_TAILOR_SK,
+            WithDecryption: true
+        }).promise();
+    
+        var tiketsResponse = await axios.get(`https://api.tickettailor.com/v1/issued_tickets?event_id=${eventId}&status=valid`, 
+                {
+                    auth:{
+                        username: ticketTailorSk.Parameter.Value,
+                        password: ""
+                    }
+                }
+            );
+    
+        return tiketsResponse.data.data;
+    }
+    
+    const createParticipant = async (data) => {
+    
+        var params = {
+            TableName: 'participant',
+            Item: data
+        };
+    
+        await dynamo.put(params).promise();
+    }
+
     try {
 
         var group = (await getGroup(event.queryStringParameters.id)).Item;
@@ -40,42 +79,3 @@ exports.handler = async(event, context) => {
 
     return response
 };
-
-const getGroup = async(groupId) => {
-    var params = {
-        TableName: 'group',
-        Key: {
-            'id': groupId
-        }
-    };
-
-    return await dynamo.get(params).promise();
-};
-
-const getParticipants = async(eventId) => {
-    const ticketTailorSk = await ssm.getParameter({
-        Name: process.env.TICKET_TAILOR_SK,
-        WithDecryption: true
-    }).promise();
-
-    var tiketsResponse = await axios.get(`https://api.tickettailor.com/v1/issued_tickets?event_id=${eventId}&status=valid`, 
-            {
-                auth:{
-                    username: ticketTailorSk.Parameter.Value,
-                    password: ""
-                }
-            }
-        );
-
-    return tiketsResponse.data.data;
-}
-
-const createParticipant = async (data) => {
-
-    var params = {
-        TableName: 'participant',
-        Item: data
-    };
-
-    await dynamo.put(params).promise();
-}

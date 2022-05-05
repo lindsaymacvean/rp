@@ -373,6 +373,8 @@ Resources:
       Handler: getSynchroniseGroup.handler
       Runtime: nodejs14.x
       Timeout: 60
+      Layers:
+         - !Ref AxiosLambdaLayer
       Policies:
          - DynamoDBReadPolicy:
             TableName: !Ref GroupsTable
