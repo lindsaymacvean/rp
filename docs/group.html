@@ -55,7 +55,7 @@
                 <p class=""><strong>Weekly -</strong> {{weekDay}}s at {{time}}</p>
                 <p class=""><strong>Starting -</strong> {{firstSession}}</p>
                 <p class=""><strong>Theme -</strong> {{themes}}</p>
-                <p class=""><strong>Connected to Ticket Tailor Event -</strong> <a target="_blank" href="https://app.tickettailor.com/event/{{ticketTailorEventId}}">{{ticketTailorEventId}}</a></p>
+                <p class=""><strong>Connected to Ticket Tailor Event -</strong> <a target="_blank" href="https://app.tickettailor.com/event/tickets-issued/{{ticketTailorEventId}}">{{ticketTailorEventId}}</a></p>
             </div>
             <div class="col-6 text-center">
                 <div class="row" style="height: 2vh"></div>
@@ -65,8 +65,6 @@
             </div>
             <div class="col-2 text-center"></div>
         </div>
-
-        <div class="row" style="height: 5vh"></div>
 
         <div class="row text-center  mt-2 ">
             <div class="col-2"></div>
@@ -92,6 +90,39 @@
         </template>
         <div id="studentsList"></div>
     </div>
+
+    <div class="row" style="height: 5vh"></div>
+
+    <template id="optionsTemplate">
+        {{#if LeadFacilitator}}
+            <div class="row text-center  mt-2">
+                <div class="col-2"></div>
+                <div class="col-8">
+                    <p class="fs-5 w-100 ms-5">Options</p>
+                </div>
+                <div class="col-2"></div>
+            </div>
+        
+            <div class="row text-center mt-2">
+                <div class="col-2">
+        
+                </div>
+                <div class="col-2">
+                    <a href="" class="w-100 ms-5"><button class="btn btn-secondary w-100">Synchronise with Ticket Tailor</button></a>
+                </div>
+                <div class="col-2">
+                    <a href="" class="w-100 ms-5"><button class="btn btn-secondary w-100">Archive Group</button></a>
+                </div>
+                <div class="col-2">
+                    
+                </div>
+                <div class="col-4"></div>
+            </div>
+        {{/if}}
+    </template>
+    <div id="getOptions"></div>
+
+    
 
     <script type="module" src="scripts/main.js"></script>
     <script type="module" src="scripts/group.js"></script>

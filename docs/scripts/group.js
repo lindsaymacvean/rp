@@ -1,4 +1,6 @@
-import { api_url } from "./utils/configs.js"
+import { api_url } from "./utils/configs.js";
+import { IsLeadFacilitator } from "./utils/utils.js";
+
 
 Handlebars.registerHelper('userId', function (aString) {
     return aString.replace(/it_/, '')
@@ -71,4 +73,7 @@ Handlebars.registerHelper('event', function (aString) {
             }
             return resp;            
         })
+
+    var template = Handlebars.compile(document.querySelector("#optionsTemplate").innerHTML);
+    document.querySelector("#getOptions").outerHTML = template({ LeadFacilitator: IsLeadFacilitator() });
 })();
