@@ -6,7 +6,7 @@ var ssm = new AWS.SSM();
 
 exports.handler = async(event, context, callback) => {
 
-    var data = JSON.parse(event);
+    var data = JSON.parse(event.body);
 
     console.log(data);
 
