@@ -135,10 +135,10 @@ import { setLoading, stopLoading } from "./utils/loader.js";
 
     globalThis.openTemplate = function (e) {
         e.preventDefault();
-        if (e.srcElement.innerHTML  === "Copying...")
+        if (e.srcElement.innerHTML  === "Creating from Template ...")
             return;
 
-        e.srcElement.innerHTML = "Copying..."
+        e.srcElement.innerHTML = "Creating from Template ..."
 
         var name =  `${semester.name} - ${group.studentYear} / ${group.themes} - ${e.srcElement.getAttribute("name").slice(-1)}/6 - ${facilitator.name} F${group.facilitatorId}`;;
         console.log(name);
