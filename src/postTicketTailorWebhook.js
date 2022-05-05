@@ -6,7 +6,7 @@ var ssm = new AWS.SSM();
 
 exports.handler = async(event, context, callback) => {
 
-    var data = JSON.parse(event.body);
+    var data = JSON.parse(event);
 
     console.log(data);
 
@@ -15,7 +15,7 @@ exports.handler = async(event, context, callback) => {
         WithDecryption: true
     }).promise();
 
-    headerParts = event.headers['TicketTailor-Webhook-Signature'].split(',')
+    headerParts = event.headers['tickettailor-webhook-signature'].split(',')
     timestamp = headerParts[0].split('=')[1]
     signature = headerParts[1].split('=')[1]
 
