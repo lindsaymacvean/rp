@@ -26,11 +26,13 @@ export const shareFile = (fileId, email, permission) => {
           'emailAddress': email
     };
 
-    return gapi.client.drive.permissions.create({
+    gapi.client.drive.permissions.create({
         resource: permission,
         fileId: fileId,
         fields: 'id',
     });
+
+    return fileId;
 
 }
 
