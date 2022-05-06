@@ -143,7 +143,7 @@
                                 {{#each weeks}}
                                 <div class="col-4">
                                     {{name}}
-                                    <div id="{{id}}" ondrop="drop_handler(event, this);"
+                                    <div id="{{id}}" name="{{name}}" ondrop="drop_handler(event, this);"
                                         ondragover="dragover_handler(event);"
                                         style="border: solid 1px; height: 200px;border-radius: 5px;border-color: lightblue; background-color: white;">
                                         {{#if files}}
