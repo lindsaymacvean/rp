@@ -21,11 +21,40 @@ import { createGroupFolder, initDrive, shareFile, shareTemplateFolder } from "./
 
     getTicketTailorEvents()
         .then(resp => {
-            ticketTailorEvents = resp.data;
+            var pattern = /^readable.*/i;
+            for (var key in resp.data) {
+                if (pattern.test(resp.data[key].name)) {
+                    ticketTailorEvents.push(resp.data[key]);
+                }
+            }
+            // Fill list of events
             var template = Handlebars.compile(document.querySelector("#eventId").outerHTML);
             document.querySelector("#eventId").outerHTML = template({ ticketTailorEvents });
 
+            // Name
+            document.getElementById("name").value = ticketTailorEvents[0].name; 
+
+            // Themes
+            var theme_pattern = /.*- (.*)/g;
+            var theme_name = theme_pattern.exec(ticketTailorEvents[0].name);
+            document.getElementById("themes").value = theme_name[1];
+
+            // Student Year
+            var class_pattern = /.*\((.*)\).*/g;
+            var class_name = class_pattern.exec(ticketTailorEvents[0].name);
+            document.getElementById("studentYear").value = class_name[1];
+
+            // Time
             document.getElementById("time").value = ticketTailorEvents[0].start.time;
+
+            // Day of the Week
+            var weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+            var dateObj = new Date(ticketTailorEvents[0].start.iso);
+            var day_of_the_week = weekday[dateObj.getDay()];
+            document.getElementById("dayOfWeek").value = day_of_the_week;
+
+
+            // Start Date
             document.getElementById("dateOfFirstSession").value = ticketTailorEvents[0].start.date;
 
         })
@@ -45,7 +74,30 @@ import { createGroupFolder, initDrive, shareFile, shareTemplateFolder } from "./
     }
 
     globalThis.onTicketTailorEventChange = (ev, el) => {
+        // Name
+        document.getElementById("name").value = ticketTailorEvents[ev.selectedIndex].name; 
+
+        // Themes
+        var theme_pattern = /.*- (.*)/g;
+        var theme_name = theme_pattern.exec(ticketTailorEvents[ev.selectedIndex].name);
+        document.getElementById("themes").value = theme_name[1];
+
+        // Student Year
+        var class_pattern = /.*\((.*)\).*/g;
+        var class_name = class_pattern.exec(ticketTailorEvents[ev.selectedIndex].name);
+        document.getElementById("studentYear").value = class_name[1];
+
+        // Time
         document.getElementById("time").value = ticketTailorEvents[ev.selectedIndex].start.time;
+
+        // Day of the Week
+        var weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+        var dateObj = new Date(ticketTailorEvents[ev.selectedIndex].start.iso);
+        var day_of_the_week = weekday[dateObj.getDay()];
+        document.getElementById("dayOfWeek").value = day_of_the_week;
+
+
+        // Start Date
         document.getElementById("dateOfFirstSession").value = ticketTailorEvents[ev.selectedIndex].start.date;
     }
 
@@ -87,6 +139,7 @@ import { createGroupFolder, initDrive, shareFile, shareTemplateFolder } from "./
                 .then((parentFolderId) => shareFile(parentFolderId, facilitatorEmail, "writer"))
                 .then((parentFolderId) => shareFile(parentFolderId, 'readableproject@dyslexia.ie', "writer"))
                 .then((parentFolderId) => shareFile(parentFolderId, 'rptrial@dyslexia.ie', "writer"))
+                .then((parentFolderId) => shareFile(parentFolderId, 'maureendunne@dyslexia.ie', "writer"))
                 // Don't need to shareTemplateFolder because template is already shared with organisation
                 //.then(() => shareTemplateFolder(facilitatorEmail))
                 .then(() => window.location.href = `${frontend_url}/semester.html?semesterId=${semesterId}`);

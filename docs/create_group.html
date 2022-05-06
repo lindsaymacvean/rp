@@ -20,20 +20,12 @@
             <div class="col-lg-6">
                 <form name="newGroup" class="needs-validation">
                     <div>
-                        <label for="name" class="form-label">Name:</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
-                    </div>
-                    <div>
-                        <label for="dayOfWeek" class="form-label">Day of the Week (Mon/Tue etc.):</label>
-                        <input type="text" class="form-control" id="dayOfWeek" name="dayOfWeek" required>
-                    </div>
-                    <div>
-                        <label for="themes" class="form-label">Themes:</label>
-                        <input type="text" class="form-control" id="themes" name="themes" required>
-                    </div>
-                    <div>
-                        <label for="themes" class="form-label">Student Year:</label>
-                        <input type="text" class="form-control" id="studentYear" name="studentYear" required>
+                        <label for="eventId" class="form-label">Ticket Tailor Event:</label>
+                        <select onchange="onTicketTailorEventChange(this)" type="text" class="form-control" id="eventId" name="eventId" list="ticketTailorEventsDatalist" autocomplete="off">
+                            {{#each ticketTailorEvents}}
+                                <option value="{{id}}">{{name}}</option>    
+                            {{/each}}
+                        </select>
                     </div>
                     <div>
                         <label for="facilitatorId" class="form-label">Facilitator:</label>
@@ -44,16 +36,24 @@
                         </select>
                     </div>
                     <div>
-                        <label for="eventId" class="form-label">Ticket Tailor Event:</label>
-                        <select onchange="onTicketTailorEventChange(this)" type="text" class="form-control" id="eventId" name="eventId" list="ticketTailorEventsDatalist" autocomplete="off">
-                            {{#each ticketTailorEvents}}
-                                <option value="{{id}}">{{name}}</option>    
-                            {{/each}}
-                        </select>
+                        <label for="name" class="form-label">Name:</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div>
+                        <label for="themes" class="form-label">Themes:</label>
+                        <input type="text" class="form-control" id="themes" name="themes" required>
+                    </div>
+                    <div>
+                        <label for="themes" class="form-label">Student Year:</label>
+                        <input type="text" class="form-control" id="studentYear" name="studentYear" required>
                     </div>
                     <div>
                         <label for="time" class="form-label">Time:</label>
                         <input readonly="true" type="time" class="form-control" id="time" name="time" required>
+                    </div>
+                    <div>
+                        <label for="dayOfWeek" class="form-label">Day of the Week (Mon/Tue etc.):</label>
+                        <input type="text" class="form-control" id="dayOfWeek" name="dayOfWeek" required>
                     </div>
                     <div>
                         <label for="dateOfFirstSession" class="form-label">Date:</label>
