@@ -10,16 +10,9 @@ export const api_url = "https://qihx5f0xfa.execute-api.eu-west-1.amazonaws.com/S
 export const google_client_id = "925322795697-i9jr2o8gkqan3cdqvkn7tjog5la33av6.apps.googleusercontent.com"
 export const frontend_url = "https://rp.dyslexia.ie"
 
-<<<<<<< Updated upstream
 export const template_file_id = "1GApizgtsBuUkZMFYkwh5IPbY7m644SvdqDcSp_OgEI0"
-=======
->>>>>>> Stashed changes
 // export const readable_cognito_auth_url = "https://readable.auth.eu-west-1.amazoncognito.com/login?client_id=651p7go9kkj4j3fr78qph3j96t&response_type=token&scope=email+openid+profile&redirect_uri=http://localhost:8080";
 // export const readable_cognito_logout_url = "https://readable.auth.eu-west-1.amazoncognito.com/login?client_id=651p7go9kkj4j3fr78qph3j96t&response_type=token&redirect_uri=http://localhost:8080";
 // export const api_url = "https://qihx5f0xfa.execute-api.eu-west-1.amazonaws.com/Stage"
 // export const google_client_id = "925322795697-i9jr2o8gkqan3cdqvkn7tjog5la33av6.apps.googleusercontent.com"
-<<<<<<< Updated upstream
 // export const frontend_url = "http://localhost:8080"
-=======
-// export const frontend_url = "http://localhost:8080"
->>>>>>> Stashed changes
