@@ -18,13 +18,17 @@ export const initDrive = () => {
     });
 }
 
-export const shareFile = (fileId, email, permission) => {
+export const shareFile = (fileId, permission, email, type='user') => {
+
+    console.log(`Sharing ${fileId} with `)
 
     var permission = {
-          'type': 'user',
-          'role': permission,
-          'emailAddress': email
+          'type': type,
+          'role': permission
     };
+
+    if (type === 'domain') permission['domain'] = 'dyslexia.ie';
+    if (type === 'user') permission['emailAddress'] = email
 
     gapi.client.drive.permissions.create({
         resource: permission,
