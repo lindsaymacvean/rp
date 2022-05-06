@@ -20,8 +20,6 @@ export const initDrive = () => {
 
 export const shareFile = (fileId, permission, email, type='user') => {
 
-    console.log(`Sharing ${fileId} with `)
-
     var permission = {
           'type': type,
           'role': permission
