@@ -123,10 +123,10 @@ export const getWeeksFiles = (parents) => {
 
 export const createGroupSubFolders = (parentFolderId) => {
     return createFolder("week 1", parentFolderId)
-        .then(() => createFolder("week 2", parentFolderId))
-        .then(() => createFolder("week 3", parentFolderId))
-        .then(() => createFolder("week 4", parentFolderId))
-        .then(() => createFolder("week 5", parentFolderId))
-        .then(() => createFolder("week 6", parentFolderId))
+        .then(() => createFolder("Week 2", parentFolderId))
+        .then(() => createFolder("Week 3", parentFolderId))
+        .then(() => createFolder("Week 4", parentFolderId))
+        .then(() => createFolder("Week 5", parentFolderId))
+        .then(() => createFolder("Week 6", parentFolderId))
         .then(() => parentFolderId);
 }
