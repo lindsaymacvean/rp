@@ -123,21 +123,26 @@ const createParticipants = async(groupId, eventId) => {
         );
 
     for (var order of ticketsResponse.data.data){
-        if (order.issued_tickets[0].status === 'void') break;
-        var participant = {
-            groupId,
-            id: order.id,
-            parent_first_name: order.issued_tickets[0].first_name,
-            parent_last_name: order.issued_tickets[0].last_name,
-            type: order.issued_tickets[0].description,
-            created_at: order.issued_tickets[0].created_at,
-            county: order.buyer_details.custom_questions[0].answer,
-            child_name: order.buyer_details.custom_questions[2].answer,
-            class: order.buyer_details.custom_questions[3].answer,
-            email: order.buyer_details.email,
-            phone: order.buyer_details.phone
-        };
-        await createParticipant(participant)
+        try {
+            if (order.issued_tickets[0].status === 'void') break;
+            var participant = {
+                groupId,
+                id: order.id,
+                parent_first_name: order.issued_tickets[0].first_name,
+                parent_last_name: order.issued_tickets[0].last_name,
+                type: order.issued_tickets[0].description,
+                created_at: order.issued_tickets[0].created_at,
+                county: order.buyer_details.custom_questions[0].answer,
+                child_name: order.buyer_details.custom_questions[2].answer,
+                class: order.buyer_details.custom_questions[3].answer,
+                email: order.buyer_details.email,
+                phone: order.buyer_details.phone
+            };
+            await createParticipant(participant)
+        } catch(e) {
+            console.log(e);
+        }
+        
     }
 
     return ticketsResponse.data.data;
