@@ -15,7 +15,6 @@ import { api_url } from "./utils/configs.js"
             }
         })
         .then(resp => {
-            //console.log(resp);
             if (document.querySelector("#groupTemplate")) {
                 var template = Handlebars.compile(document.querySelector("#groupTemplate").innerHTML);
                 document.querySelector("#groupsList").innerHTML = template({ groups: resp.data });
