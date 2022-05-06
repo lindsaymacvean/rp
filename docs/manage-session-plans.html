@@ -116,7 +116,7 @@
                         {{/if}}
                     </div>
                 </template>
-                <div id="documentsList"></div>
+                <div id="documentsList" style="text-align:center;"><div class="lds-dual-ring"></div></div>
             </div>
         </div>
         <div style="position:absolute;color:brown;transform: rotate(30deg);left:50%;">
@@ -141,7 +141,7 @@
                         <div style="width:100%; text-align: center; font-size: 1vw; margin: 0 auto;">
                             <div class="row">
                                 {{#each weeks}}
-                                <div class="col-2">
+                                <div class="col-4">
                                     {{name}}
                                     <div id="{{id}}" ondrop="drop_handler(event, this);"
                                         ondragover="dragover_handler(event);"
@@ -169,7 +169,7 @@
                         </div>
                     </div>
                 </template>
-                <div id="weeksList"></div>
+                <div id="weeksList" style="text-align:center;"><div class="lds-dual-ring"></div></div>
             </div>
         </div>
 
