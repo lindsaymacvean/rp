@@ -53,7 +53,7 @@ import { setLoading, stopLoading } from "./utils/loader.js";
 
         el.appendChild(document.getElementById(sourceId).cloneNode(true));
         
-        copyFile(sourceId, ev.currentTarget.id, `${semester.name}-${group.studentYear}/${group.themes}-${e.srcElement.getAttribute("name").slice(-1)}/6-${facilitator.email}`)
+        copyFile(sourceId, ev.currentTarget.id, `${semester.name}-${group.studentYear}/${group.themes}-${ev.srcElement.getAttribute("name").slice(-1)}/6-${facilitator.email}`)
             .then((result) => {console.log(result)})
     }
 

@@ -15,8 +15,8 @@ Handlebars.registerHelper('event', function (aString) {
     const groupId = urlParams.get('groupId');
 
     if (document.querySelector("#adapt_session_button")) {
-        var template = Handlebars.compile(document.querySelector("#adapt_session_button").outerHTML);
-        document.querySelector("#adapt_session_button").outerHTML = template({ groupId });
+        var adaptTemplate = Handlebars.compile(document.querySelector("#adapt_session_button").outerHTML);
+        document.querySelector("#adapt_session_button").outerHTML = adaptTemplate({ groupId });
     }
 
     axios.get(`${api_url}/group?id=${groupId}`, {
@@ -72,9 +72,11 @@ Handlebars.registerHelper('event', function (aString) {
             }
             return resp;            
         })
-
-    var template = Handlebars.compile(document.querySelector("#optionsTemplate").innerHTML);
-    document.querySelector("#getOptions").outerHTML = template({ LeadFacilitator: IsLeadFacilitator() });
+    
+    if (document.querySelector("#optionsTemplate")) {
+        var optionsTemplate = Handlebars.compile(document.querySelector("#optionsTemplate").innerHTML);
+        document.querySelector("#getOptions").outerHTML = optionsTemplate({ LeadFacilitator: IsLeadFacilitator() });
+    }
 
     globalThis.synchronise = function(e) {
         e.preventDefault();
