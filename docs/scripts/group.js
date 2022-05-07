@@ -93,6 +93,8 @@ window.addEventListener('load', function() {
   .then(facilitators => {
     if (document.querySelector("#group_info")) {
       groupInfo.facilitators = facilitators;
+      groupInfo.currentFacilitator = currentFacilitator
+      groupInfo.LeadFacilitator = IsLeadFacilitator();
       var template = Handlebars.compile(document.querySelector("#group_info").innerHTML);
       document.querySelector("#group_info").innerHTML = template(groupInfo);
       document.querySelector("#facilitatorSelect").value = currentFacilitator.id;

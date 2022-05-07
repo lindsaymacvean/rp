@@ -57,11 +57,15 @@
               <strong><label for="facilitatorId" class="form-label">Facilitator - </label></strong>
             </div>
             <div class="col">
+              {{#if LeadFacilitator}}
               <select id="facilitatorSelect" type="text" class="form-select"  name="facilitatorId" list="facilitatorsDatalist" autocomplete="off">
                 {{#each facilitators}}
-                <option value="{{id}}">{{email}}</option>    
+                <option value="{{id}}">{{name}} | {{email}}</option>    
                 {{/each}}
               </select>
+              {{else}}
+              {{currentFacilitator.name}} | {{currentFacilitator.email}} 
+              {{/if}}
             </div>
           </div>
         </p>
