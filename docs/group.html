@@ -51,7 +51,18 @@
         <div class="row">
             <div class="col-2"></div>
             <div class="col-4 text-left mt-2" id="group_info">
-                <p class=""><strong>Facilitator Name -</strong> {{facilitatorName}} </p>
+                <p class="">
+                    <strong><label for="facilitatorId" class="form-label">Facilitator - </label></strong>
+                    <template id="facilitatorTemplate">
+                        <select type="text" class="form-control"  name="facilitatorId" list="facilitatorsDatalist" autocomplete="off">
+                            {{#each facilitators}}
+                                <option value="{{id}}">{{email}}</option>    
+                            {{/each}}
+                        </select>
+                    </template>
+                    
+                    <div id="facilitatorSelect">waiting</div>
+                </p>
                 <p class=""><strong>Semester -</strong> {{semesterName}}</p>
                 <p class=""><strong>Weekly -</strong> {{weekDay}}s at {{time}}</p>
                 <p class=""><strong>Starting -</strong> {{firstSession}}</p>
@@ -80,9 +91,6 @@
                 <div class="col-3"></div>
                 <div class="col-4">
                     <a href="participant_profile.html?participantId={{id}}" class="w-100 ms-5"><button id="terms-btn" class="btn btn-primary w-100">{{full_name}}</button></a>
-                </div>
-                <div class="col-2">
-                    <a target="_blank" href="https://app.tickettailor.com/event/tickets-issued/{{event event_id}}#dpop=/event/tickets-issued/view/{{userId id}}" class="w-100 ms-5"><button id="terms-btn" class="btn btn-primary w-100">Ticket</button></a>
                 </div>
                 <div class="col-3"></div>
             </div>
