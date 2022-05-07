@@ -52,16 +52,14 @@
             <div class="col-2"></div>
             <div class="col-4 text-left mt-2" id="group_info">
                 <p class="">
-                    <strong><label for="facilitatorId" class="form-label">Facilitator - </label></strong>
-                    <template id="facilitatorTemplate">
-                        <select type="text" class="form-control"  name="facilitatorId" list="facilitatorsDatalist" autocomplete="off">
+                    
+                        <strong><label for="facilitatorId" class="form-label">Facilitator - </label></strong>
+                        <select id="facilitatorSelect" type="text" class="form-select"  name="facilitatorId" list="facilitatorsDatalist" autocomplete="off">
                             {{#each facilitators}}
                                 <option value="{{id}}">{{email}}</option>    
                             {{/each}}
                         </select>
-                    </template>
                     
-                    <div id="facilitatorSelect">waiting</div>
                 </p>
                 <p class=""><strong>Semester -</strong> {{semesterName}}</p>
                 <p class=""><strong>Weekly -</strong> {{weekDay}}s at {{time}}</p>

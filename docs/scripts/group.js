@@ -13,7 +13,7 @@ window.addEventListener('load', function() {
   
   const urlParams = new URLSearchParams(window.location.search);
   const groupId = urlParams.get('groupId');
-  var facilitators = [];
+  var groupInfo;
   var currentFacilitator;
   
   if (document.querySelector("#adapt_session_button")) {
@@ -43,9 +43,8 @@ window.addEventListener('load', function() {
   getGroup()
   .then(resp => {
     if (document.querySelector("#group_info")) {
-      var template = Handlebars.compile(document.querySelector("#group_info").innerHTML);
       currentFacilitator = resp.data.facilitator;
-      document.querySelector("#group_info").innerHTML = template({ 
+      groupInfo = { 
         facilitatorName: resp.data.facilitator.name, 
         semesterName: resp.data.semester.name,
         firstSession: resp.data.dateOfFirstSession,
@@ -54,7 +53,7 @@ window.addEventListener('load', function() {
         themes: resp.data.themes,
         // Not currently using ticketTailorEventId
         ticketTailorEventId: resp.data.eventId
-      });
+      }
     }
     return resp;            
   })
@@ -92,23 +91,13 @@ window.addEventListener('load', function() {
   })
   .then(() => getFacilitators())
   .then(facilitators => {
-    if (document.querySelector("#facilitatorTemplate")) {
-      var facilitatorTemplate = Handlebars.compile(document.querySelector("#facilitatorTemplate").innerHTML);
-      document.querySelector("#facilitatorSelect").innerHTML = facilitatorTemplate({facilitators});
-      //document.querySelector("#facilitatorSelect").value = currentFacilitator.id;
+    if (document.querySelector("#group_info")) {
+      groupInfo.facilitators = facilitators;
+      var template = Handlebars.compile(document.querySelector("#group_info").innerHTML);
+      document.querySelector("#group_info").innerHTML = template(groupInfo);
+      document.querySelector("#facilitatorSelect").value = currentFacilitator.id;
     }
   });
-
-  // getFacilitators()
-  // .then(facilitators => {
-  //   if (document.querySelector("#facilitatorTemplate")) {
-  //     var facilitatorTemplate = Handlebars.compile(document.querySelector("#facilitatorTemplate").innerHTML);
-  //     //console.log(currentFacilitator.id, facilitators, facilitatorTemplate);
-  //     //console.log(document.querySelector("#facilitatorSelect").innerHTML);
-  //     document.querySelector("#facilitatorSelect").innerHTML = facilitatorTemplate({ facilitators });
-  //     //element.value = currentFacilitator.id;
-  //   }
-  // });
   
   if (document.querySelector("#optionsTemplate")) {
     var optionsTemplate = Handlebars.compile(document.querySelector("#optionsTemplate").innerHTML);
