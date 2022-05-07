@@ -7,7 +7,6 @@ export const IsLeadFacilitator = () => {
 export const CurrentUserEmail = () => {
     let token = sessionStorage.getItem('id_token')
     let jsonToken = parseJwt(token);
-    console.log(jsonToken["email"]);
     return jsonToken["email"];
 }
 
