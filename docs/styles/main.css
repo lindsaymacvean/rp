@@ -7,6 +7,11 @@ body, div {
   font-size: 0.8vw;
 }
 
+/* Group Page */
+#facilitatorSelect {
+  margin-top: -0.5vw;
+}
+
 /* Manage Session Plans */
 #documentsList {
     background: white !important;
