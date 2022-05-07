@@ -31,6 +31,10 @@ import { setLoading, stopLoading } from "./utils/loader.js";
         previewModal.show()
     }
 
+    globalThis.openSession = (fileUrl) => {
+        window.open(fileUrl, '_blank').focus();
+    }
+
     globalThis.dragover_handler = (ev) => {
         console.log("dragOver");
         ev.preventDefault();
@@ -133,7 +137,7 @@ import { setLoading, stopLoading } from "./utils/loader.js";
     }
 
     globalThis.openTemplate = function (e) {
-        e.preventDefault();
+        //e.preventDefault();
 
         var nameProp = e.currentTarget.getAttribute('name');
         var id = e.currentTarget.getAttribute('id');
