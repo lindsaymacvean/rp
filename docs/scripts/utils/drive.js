@@ -49,7 +49,6 @@ export const getTemplateFolder = () => {
         pageSize: 10,
         fields: 'nextPageToken, files(id, name)',
     }).then(function(response) {
-        console.log(response);
         return response.result.files[0];
     });
 }
