@@ -135,9 +135,8 @@ import { setLoading, stopLoading } from "./utils/loader.js";
     globalThis.openTemplate = function (e) {
         e.preventDefault();
 
-        var nameProp = e.srcElement.parentElement.name;
-        var id = e.srcElement.parentElement.id;
-        console.log(nameProp, id);
+        var nameProp = e.currentTarget.getAttribute('name');
+        var id = e.currentTarget.getAttribute('id');
         if (e.srcElement.innerHTML  === "Creating from Template ...")
             return;
 
