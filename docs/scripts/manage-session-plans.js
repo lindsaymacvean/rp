@@ -106,7 +106,6 @@ import { setLoading, stopLoading } from "./utils/loader.js";
             pageSize: 10,
             fields: 'nextPageToken, files(id, name, mimeType, thumbnailLink, webViewLink, iconLink, webContentLink)',
         }).then(function (response) {
-            console.log(response);
             var template = Handlebars.compile(document.querySelector("#documentsTemplate").innerHTML);
             document.querySelector("#documentsList").innerHTML = template({ documents: response.result.files });
 
@@ -135,14 +134,17 @@ import { setLoading, stopLoading } from "./utils/loader.js";
 
     globalThis.openTemplate = function (e) {
         e.preventDefault();
+
+        var nameProp = e.srcElement.parentElement.name;
+        var id = e.srcElement.parentElement.id;
+        console.log(nameProp, id);
         if (e.srcElement.innerHTML  === "Creating from Template ...")
             return;
 
         e.srcElement.innerHTML = "Creating from Template ..."
 
-        var name =  `${semester.name}-${group.studentYear}/${group.themes}-${e.srcElement.getAttribute("name").slice(-1)}/6-${facilitator.email}`;;
-        console.log(name);
-        copyFile(template_file_id, e.srcElement.parentElement.id, name)
+        var name =  `${semester.name}-${group.studentYear}/${group.themes}-${nameProp.slice(-1)}/6-${facilitator.email}`;
+        copyFile(template_file_id, id, name)
             .then((result) => {
                 window.open(result.result.webViewLink, '_blank').focus();
                 init();
