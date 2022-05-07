@@ -107,7 +107,7 @@ import { setLoading, stopLoading } from "./utils/loader.js";
     function getFiles(templateFolder) {
         return gapi.client.drive.files.list({
             q: `'${templateFolder.id}' in parents and trashed = false`,
-            pageSize: 10,
+            pageSize: 100,
             fields: 'nextPageToken, files(id, name, mimeType, thumbnailLink, webViewLink, iconLink, webContentLink)',
         }).then(function (response) {
             var template = Handlebars.compile(document.querySelector("#documentsTemplate").innerHTML);
