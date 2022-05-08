@@ -137,6 +137,7 @@ import { createGroupFolder, initDrive, shareFile, shareTemplateFolder } from "./
                 .then((semesterResponse) => createGroupFolder(semesterResponse.data.name, groupData.name, groupData.themes, groupData.studentYear, groupData.facilitatorId, groupData.year, facilitatorEmail))
                 .then((parentFolderId) => saveFolderIdToGroup(parentFolderId, groupResponse.data))
                 .then((parentFolderId) => shareFile(parentFolderId, "writer", facilitatorEmail, "domain"))
+                .then((parentFolderId) => shareFile(parentFolderId, "writer", facilitatorEmail, "user"))
                 .then(() => shareTemplateFolder(facilitatorEmail))
                 .then(() => window.location.href = `${frontend_url}/semester.html?semesterId=${semesterId}`);
         });
