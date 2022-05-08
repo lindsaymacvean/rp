@@ -59,9 +59,21 @@ Resources:
       AttributeDefinitions: 
         - AttributeName: id
           AttributeType: S
+        - AttributeName: groupId
+          AttributeType: S
       KeySchema: 
         - AttributeName: id
           KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: gsiParticipantEventTable
+          ProvisionedThroughput:
+            ReadCapacityUnits: 0
+            WriteCapacityUnits: 0
+          KeySchema:
+            - AttributeName: groupId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
   GroupsTable:
     Type: AWS::DynamoDB::Table
     DeletionPolicy: Retain
@@ -229,6 +241,28 @@ Resources:
           Type: Api
           Properties:
             Path: /participant
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  GetParticipants:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getParticipants.js
+      Handler: getParticipants.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /participants
             Method: get
             Auth:
               Authorizer: ReadableApiCognitoAuthorizer
