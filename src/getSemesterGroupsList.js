@@ -30,6 +30,9 @@ exports.handler = async(event, context) => {
 
         var groups = await dynamo.batchGet(params).promise();
 
+        // TODO: get the facilitator name and email from facilitator table
+
+
         response = {
             'statusCode': 200,
             'body': JSON.stringify(groups.Responses.group),
