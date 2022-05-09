@@ -56,6 +56,7 @@ window.addEventListener('load', function() {
       groupInfo = { 
         facilitatorName: group.data.facilitator.name, 
         semesterName: group.data.semester.name,
+        studentYear: group.data.studentYear,
         firstSession: group.data.dateOfFirstSession,
         weekDay: group.data.dayOfWeek,
         time: group.data.time,
