@@ -125,13 +125,13 @@
           <table class="table" id="studentTable">
             <thead>
               <tr>
+                <th scope="col" colspan="6">Attendance</th>
                 <th scope="col" rowspan="2">Participant Name</th>
                 <th scope="col" rowspan="2">Parent Name</th>
                 <th scope="col" rowspan="2">Parent Email</th>
                 <th scope="col" rowspan="2">Parent Phone</th>
                 <th scope="col" rowspan="2">Class</th>
                 <th scope="col" rowspan="2">County</th>
-                <th scope="col" colspan="6">Attendance</th>
               </tr>
               <tr>
                 <th scope="col">1</th>
@@ -146,18 +146,18 @@
             <tbody>
               {{#each participants}}
               <tr>
+                <td><input type="checkbox" id="week1_{{id}}" name="week1_{{child_name}}"></td>
+                <td><input type="checkbox" id="week2_{{id}}" name="week2_{{child_name}}"></td>
+                <td><input type="checkbox" id="week3_{{id}}" name="week3_{{child_name}}"></td>
+                <td><input type="checkbox" id="week4_{{id}}" name="week4_{{child_name}}"></td>
+                <td><input type="checkbox" id="week5_{{id}}" name="week5_{{child_name}}"></td>
+                <td><input type="checkbox" id="week6_{{id}}" name="week6_{{child_name}}"></td>
                 <td>{{child_name}}</td>
                 <td></td>
                 <td>{{email}}</td>
                 <td>{{phone}}</td>
                 <td>{{class}}</td>
                 <td>{{county}}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               {{/each}}
             </tbody>
@@ -207,6 +207,7 @@
       <div class="col-4"></div>
     </div>
     {{/if}}
+    <div class="row" style="height: 5vh"></div>
   </template>
   <div id="getOptions"></div>
   
