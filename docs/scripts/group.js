@@ -52,7 +52,7 @@ window.addEventListener('load', function() {
   getGroup()
   .then(group => {
     if (document.querySelector("#group_info")) {
-      if (IsLeadFacilitator()) currentFacilitator = group.data.facilitator;
+      currentFacilitator = group.data.facilitator;
       groupInfo = { 
         facilitatorName: group.data.facilitator.name, 
         semesterName: group.data.semester.name,
@@ -104,7 +104,9 @@ window.addEventListener('load', function() {
   .then(facilitators => {
     if (document.querySelector("#group_info")) {
       groupInfo.facilitators = facilitators;
-      groupInfo.currentFacilitator = currentFacilitator
+      
+      groupInfo.currentFacilitator = currentFacilitator;
+      console.log(groupInfo)
       groupInfo.LeadFacilitator = IsLeadFacilitator();
       var template = Handlebars.compile(document.querySelector("#group_info").innerHTML);
       document.querySelector("#group_info_replace").outerHTML = template(groupInfo);
