@@ -40,7 +40,7 @@ export const shareFile = (fileId, permission, email, type='user') => {
 
 export const shareTemplateFolder = (email) => {
     return getTemplateFolder()
-        .then((tempateFolder) => shareFile(tempateFolder.id, "reader", email, type='user'));
+        .then((tempateFolder) => shareFile(tempateFolder.id, "reader", email, 'user'));
 }
 
 export const getTemplateFolder = () => {
