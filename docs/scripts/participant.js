@@ -1,4 +1,7 @@
 import { api_url } from "./utils/configs.js"
+import { logout }  from "./utils/logout.js";
+
+globalThis.logout = logout;
 
 (function() {
 

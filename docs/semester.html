@@ -63,32 +63,25 @@
                     </div>
                 </div>
                 
-                <template id="getSessionsTemplate">
-                    {{#if LeadFacilitator}}
-                    <div class="row" style="height: 5vh"></div>
+                <div class="row" style="height: 5vh"></div>
 
-                    <div class="row text-center  mt-5 ">
-                        <div class="col-12">
-                            <p class="fs-5 w-100">Tools</p>
-                        </div>
+                <div class="row text-center  mt-5 ">
+                    <div class="col-12">
+                        <p class="fs-5 w-100">Tools</p>
                     </div>
-                    <div class="row text-center mt-2">
-                        <div class="col-12">
-                            <a href="#" onClick="getSessionPlans(event)" class="w-100"><button
-                                    id="grabFiles" class="btn btn-primary w-100">Get Session Plans</button></a>
-                        </div>
+                </div>
+                <div class="row text-center mt-2">
+                    <div class="col-12">
+                        <a href="#" onClick="getSessionPlans(event)" class="w-100"><button
+                                id="grabFiles" class="btn btn-primary w-100">Get Session Plans</button></a>
                     </div>
-                    {{/if}}
-                </template>
-
-                <div id="getSessions"></div>
-
+                </div>
+                    
             </div>
         </div>
     </div>
 
-    <script type="module" src="scripts/main.js"></script>
-    <script type="module" src="scripts/groups_list.js"></script>
+    <script type="module" src="scripts/semester.js"></script>
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>

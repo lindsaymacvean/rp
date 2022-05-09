@@ -1,8 +1,11 @@
-import { template_file_id, api_url, google_client_id } from "./utils/configs.js"
-import { CurrentUserEmail, CurrentUserName, CurrentUserId } from "./utils/utils.js"
+import { template_file_id, google_client_id } from "./utils/configs.js"
+import { CurrentUserEmail } from "./utils/utils.js"
 import { getTemplateFolder, getWeeksFiles, getFolderFiles, copyFile } from "./utils/drive.js"
 import { getFacilitator, getGroup, getSemester } from "./utils/api.js";
-import { setLoading, stopLoading } from "./utils/loader.js";
+import { stopLoading } from "./utils/loader.js";
+import { logout }  from "./utils/logout.js";
+
+globalThis.logout = logout;
 
 (function () {
 
@@ -13,7 +16,6 @@ import { setLoading, stopLoading } from "./utils/loader.js";
     let semester = null;
     let facilitator = null;
     let weeks = [];
-    // setLoading();
 
     globalThis.search = (event) => {
 

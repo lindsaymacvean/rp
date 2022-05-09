@@ -1,5 +1,8 @@
 import { api_url } from "./utils/configs.js";
 import { IsLeadFacilitator } from "./utils/utils.js";
+import { logout }  from "./utils/logout.js";
+
+globalThis.logout = logout;
 
 Handlebars.registerHelper('userId', function (aString) {
   return aString.replace(/it_/, '')
@@ -71,7 +74,7 @@ window.addEventListener('load', function() {
   .then(group => {
     if (document.querySelector('#semesterBreadcrumb')) {
       var template = Handlebars.compile(document.querySelector("#semesterBreadcrumb").innerHTML);
-      document.querySelector("#semesterBreadcrumb").innerHTML = template({ semesterId: group.data.semester.id, semesterName: group.data.semester.name });
+      document.querySelector("#semesterBreadcrumb").outerHTML = template({ semesterId: group.data.semester.id, semesterName: group.data.semester.name, IsLeadFacilitator});
     }
     return group;
   })
@@ -79,7 +82,17 @@ window.addEventListener('load', function() {
   .then(group => {
     if (document.querySelector("#groupBreadcrumb")) {
       var template = Handlebars.compile(document.querySelector("#groupBreadcrumb").innerHTML);
-      document.querySelector("#groupBreadcrumb").innerHTML = template({ groupId, groupName: group.data.name });
+      document.querySelector("#groupBreadcrumb").innerHTML = template({ groupId, groupName: group.data.name, IsLeadFacilitator });
+    }
+    return group;
+  })
+  // Special Case for the Group page if a facilitator
+  .then(group => {
+    if (this.document.querySelector("#homeButtonBreadcrumb")) {
+      var homeTemplate = Handlebars.compile(document.querySelector("#homeButtonBreadcrumb").innerHTML);
+      document.querySelector("#HomeButtonBreadcrumbReplace").outerHTML = homeTemplate({
+        IsLeadFacilitator
+      });
     }
     return group;
   })
@@ -104,9 +117,7 @@ window.addEventListener('load', function() {
   .then(facilitators => {
     if (document.querySelector("#group_info")) {
       groupInfo.facilitators = facilitators;
-      
       groupInfo.currentFacilitator = currentFacilitator;
-      console.log(groupInfo)
       groupInfo.LeadFacilitator = IsLeadFacilitator();
       var template = Handlebars.compile(document.querySelector("#group_info").innerHTML);
       document.querySelector("#group_info_replace").outerHTML = template(groupInfo);
@@ -122,8 +133,8 @@ window.addEventListener('load', function() {
   }
 
   if (document.querySelector("#issue_calendar_invites")) {
-    var optionsTemplate = Handlebars.compile(document.querySelector("#issue_calendar_invites").outerHTML);
-    document.querySelector("#issue_calendar_invites").outerHTML = optionsTemplate({ LeadFacilitator: IsLeadFacilitator() });
+    var calendarTemplate = Handlebars.compile(document.querySelector("#issue_calendar_invites").outerHTML);
+    document.querySelector("#issue_calendar_invites").outerHTML = calendarTemplate({ LeadFacilitator: IsLeadFacilitator() });
   }
   
   globalThis.synchronise = function(e) {

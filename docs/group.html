@@ -23,8 +23,25 @@
         </button>
         <div class="navbar-collapse collapse" id="collapseNavbar">
           <ul class="navbar-nav">
-            <li class="nav-item"><a class="nav-link" href="home.html">Home ></a></li>
-            <li class="nav-item" id="semesterBreadcrumb"><a class="nav-link" href="semester.html?semesterId={{semesterId}}">Semester {{semesterName}} ></a></li>
+            <li class="nav-item">
+              <script id="homeButtonBreadcrumb" type="text/template">
+                {{#if IsLeadFacilitator}}
+                <a class="nav-link" href="home.html">Home ></a>
+                {{else}}
+                <a class="nav-link" href="facilitator_groups.html">Home ></a>
+                {{/if}}
+              </script>
+              <a id="HomeButtonBreadcrumbReplace" class="nav-link">Home ></a>
+            </li>
+            <li class="nav-item">
+              <script id="semesterBreadcrumb" type="text/template">
+                {{# if IsLeadFacilitator}}
+                <a class="nav-link" href="semester.html?semesterId={{semesterId}}">Semester {{semesterName}} ></a>
+                {{else}}
+                <a class="nav-link" href="facilitator_groups.html">Semester {{semesterName}} ></a>
+                {{/if}}
+              </script>
+            </li>
             <li class="nav-item active" id="groupBreadcrumb" aria-current="page"><span class="nav-link">{{groupName}}</span></li>
           </ul>
           <ul class="navbar-nav ms-auto">
@@ -54,20 +71,20 @@
         <div class="col-4 text-left mt-2">
           <p class="">
             <div class="row justify-content-start">
-              <div class="col-3">
-                <strong><label for="facilitatorId" class="form-label">Facilitator - </label></strong>
+              <div class="col-3 pe-0">
+                <strong><label for="facilitatorId" class="form-label">Facilitator &nbsp;&nbsp;-</label></strong>
               </div>
-              <div class="col">
                 {{#if LeadFacilitator}}
-                <select id="facilitatorSelect" type="text" class="form-select"  name="facilitatorId" list="facilitatorsDatalist" autocomplete="off">
-                  {{#each facilitators}}
-                  <option value="{{id}}">{{name}} | {{email}}</option>    
-                  {{/each}}
-                </select>
+                <div class="col">
+                  <select id="facilitatorSelect" type="text" class="form-select"  name="facilitatorId" list="facilitatorsDatalist" autocomplete="off">
+                    {{#each facilitators}}
+                    <option value="{{id}}">{{name}} | {{email}}</option>    
+                    {{/each}}
+                  </select>
+                </div>
                 {{else}}
                 {{currentFacilitator.name}} | {{currentFacilitator.email}} 
                 {{/if}}
-              </div>
             </div>
           </p>
           <p class=""><strong>Year Group -</strong> {{studentYear}}</p>
@@ -211,9 +228,6 @@
   </template>
   <div id="getOptions"></div>
   
-  
-  
-  <script type="module" src="scripts/main.js"></script>
   <script type="module" src="scripts/group.js"></script>
   <!-- Option 1: Bootstrap Bundle with Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>

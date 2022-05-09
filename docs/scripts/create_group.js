@@ -2,6 +2,9 @@ import { getSemester } from "./utils/api.js";
 import { getTicketTailorEvents } from "./utils/ticketTailor.js";
 import { api_url, frontend_url } from "./utils/configs.js"
 import { createGroupFolder, initDrive, shareFile, shareTemplateFolder } from "./utils/drive.js"
+import { logout }  from "./utils/logout.js";
+
+globalThis.logout = logout;
 
 (function () {
 
