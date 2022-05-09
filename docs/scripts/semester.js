@@ -33,6 +33,17 @@ globalThis.logout = logout;
   getSemesterGroupList()
     .then(resp => {
       if (document.querySelector("#groupTemplate")) {
+        console.log(resp);
+        const map = {
+          'Monday': 1,'Tuesday': 2,'Wednesday': 3,'Thursday': 4,'Friday': 5,'Saturday': 6,
+          'Sunday': 7
+        };
+        resp.data.sort((a, b) => {
+          let result = map[a.dayOfWeek] - map[b.dayOfWeek];
+          if (result === 0)
+            result = getTimeAsNumberOfMinutes(a.time) - getTimeAsNumberOfMinutes(b.time);
+          return  result;
+        });
         var template = Handlebars.compile(document.querySelector("#groupTemplate").innerHTML);
         document.querySelector("#groupsList").innerHTML = template({ groups: resp.data });
       }
@@ -48,3 +59,9 @@ globalThis.logout = logout;
       return resp;
     });
 })();
+
+function getTimeAsNumberOfMinutes(time) {
+    var timeParts = time.split(":");
+    var timeInMinutes = (timeParts[0] * 60) + timeParts[1];
+    return timeInMinutes;
+}
