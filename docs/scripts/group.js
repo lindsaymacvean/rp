@@ -107,9 +107,11 @@ window.addEventListener('load', function() {
       groupInfo.currentFacilitator = currentFacilitator
       groupInfo.LeadFacilitator = IsLeadFacilitator();
       var template = Handlebars.compile(document.querySelector("#group_info").innerHTML);
-      document.querySelector("#group_info").innerHTML = template(groupInfo);
-      if (IsLeadFacilitator()) document.querySelector("#facilitatorSelect").value = currentFacilitator.id;
+      document.querySelector("#group_info_replace").outerHTML = template(groupInfo);
     }
+  })
+  .then(() => {
+    if (IsLeadFacilitator()) document.querySelector("#facilitatorSelect").value = currentFacilitator.id;
   });
   
   if (document.querySelector("#optionsTemplate")) {

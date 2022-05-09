@@ -50,29 +50,49 @@
     
     <div class="row">
       <div class="col-2"></div>
-      <div class="col-4 text-left mt-2" id="group_info">
+      <script id="group_info" type="text/template">
+        <div class="col-4 text-left mt-2">
+          <p class="">
+            <div class="row justify-content-start">
+              <div class="col-3">
+                <strong><label for="facilitatorId" class="form-label">Facilitator - </label></strong>
+              </div>
+              <div class="col">
+                {{#if LeadFacilitator}}
+                <select id="facilitatorSelect" type="text" class="form-select"  name="facilitatorId" list="facilitatorsDatalist" autocomplete="off">
+                  {{#each facilitators}}
+                  <option value="{{id}}">{{name}} | {{email}}</option>    
+                  {{/each}}
+                </select>
+                {{else}}
+                {{currentFacilitator.name}} | {{currentFacilitator.email}} 
+                {{/if}}
+              </div>
+            </div>
+          </p>
+          <p class=""><strong>Year Group -</strong> {{studentYear}}</p>
+          <p class=""><strong>Weekly -</strong> {{weekDay}}s at {{time}}</p>
+          <p class=""><strong>Starting -</strong> {{firstSession}}</p>
+          <p class=""><strong>Theme -</strong> {{themes}}</p>
+        </div>
+      </script>
+      <div id="group_info_replace" class="col-4 text-left mt-2">
         <p class="">
           <div class="row justify-content-start">
             <div class="col-3">
-              <strong><label for="facilitatorId" class="form-label">Facilitator - </label></strong>
+              <strong><label class="form-label">Facilitator - </label></strong>
             </div>
             <div class="col">
-              {{#if LeadFacilitator}}
-              <select id="facilitatorSelect" type="text" class="form-select"  name="facilitatorId" list="facilitatorsDatalist" autocomplete="off">
-                {{#each facilitators}}
-                <option value="{{id}}">{{name}} | {{email}}</option>    
-                {{/each}}
+              <select>
+                <option></option>    
               </select>
-              {{else}}
-              {{currentFacilitator.name}} | {{currentFacilitator.email}} 
-              {{/if}}
             </div>
           </div>
         </p>
-        <p class=""><strong>Year Group -</strong> {{studentYear}}</p>
-        <p class=""><strong>Weekly -</strong> {{weekDay}}s at {{time}}</p>
-        <p class=""><strong>Starting -</strong> {{firstSession}}</p>
-        <p class=""><strong>Theme -</strong> {{themes}}</p>
+        <p class=""><strong>Year Group -</strong></p>
+        <p class=""><strong>Weekly -</strong></p>
+        <p class=""><strong>Starting -</strong></p>
+        <p class=""><strong>Theme -</strong></p>
       </div>
       <div class="col-6 text-center">
         <div id="issue_calendar_invites">
