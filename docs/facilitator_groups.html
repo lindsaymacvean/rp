@@ -43,21 +43,23 @@
                 </div>
 
                 <template type="text/x-handlebars-template" id="groupTemplate">
+                    {{#if groups}}
                     {{#each groups}}
                     <div class="row text-center mt-2">
                         <div class="col-12">
                             <a href="group.html?groupId={{id}}" class="w-100">
-                                <button class="btn btn-primary w-100">{{name}}</button>
+                                <button class="btn btn-primary w-100">{{dayOfWeek}} @ {{time}} - {{name}}</button>
                             </a>
                         </div>
                     </div>
+                    {{/each}}
                     {{else}}
                     <div class="col-12">
                         <a href="group.html?groupId={{id}}" class="w-100">
                             Welcome. You do not have any Groups set up yet.
                         </a>
                     </div>
-                    {{/each}}
+                    {{/if}}
                 </template>
                 <div id="groupsList" style="text-align:center;"><div class="lds-dual-ring"></div></div>
 
