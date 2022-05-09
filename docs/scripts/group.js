@@ -38,56 +38,66 @@ window.addEventListener('load', function() {
     })
     return data;
   }
+
+  const getParticipants = async () => {
+    const data = await axios.get(`${api_url}/participants?id=${groupId}`, {
+      headers: {
+        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+      }
+    })
+    return data;
+  }
   
   // Fill out students in the Group
   getGroup()
-  .then(resp => {
+  .then(group => {
     if (document.querySelector("#group_info")) {
-      currentFacilitator = resp.data.facilitator;
+      if (IsLeadFacilitator()) currentFacilitator = group.data.facilitator;
       groupInfo = { 
-        facilitatorName: resp.data.facilitator.name, 
-        semesterName: resp.data.semester.name,
-        firstSession: resp.data.dateOfFirstSession,
-        weekDay: resp.data.dayOfWeek,
-        time: resp.data.time,
-        themes: resp.data.themes,
+        facilitatorName: group.data.facilitator.name, 
+        semesterName: group.data.semester.name,
+        firstSession: group.data.dateOfFirstSession,
+        weekDay: group.data.dayOfWeek,
+        time: group.data.time,
+        themes: group.data.themes,
         // Not currently using ticketTailorEventId
-        ticketTailorEventId: resp.data.eventId
+        ticketTailorEventId: group.data.eventId
       }
     }
-    return resp;            
+    return group;            
   })
   // Fill in the semester breadcrumb
-  .then(resp => {
+  .then(group => {
     if (document.querySelector('#semesterBreadcrumb')) {
       var template = Handlebars.compile(document.querySelector("#semesterBreadcrumb").innerHTML);
-      document.querySelector("#semesterBreadcrumb").innerHTML = template({ semesterId: resp.data.semester.id, semesterName: resp.data.semester.name });
+      document.querySelector("#semesterBreadcrumb").innerHTML = template({ semesterId: group.data.semester.id, semesterName: group.data.semester.name });
     }
-    return resp;
+    return group;
   })
   // Fill in the Group breadcrumb
-  .then(resp => {
+  .then(group => {
     if (document.querySelector("#groupBreadcrumb")) {
       var template = Handlebars.compile(document.querySelector("#groupBreadcrumb").innerHTML);
-      document.querySelector("#groupBreadcrumb").innerHTML = template({ groupId, groupName: resp.data.name });
+      document.querySelector("#groupBreadcrumb").innerHTML = template({ groupId, groupName: group.data.name });
     }
-    return resp;
+    return group;
   })
   // Fill title on Group page
-  .then(resp => {
+  .then(group => {
     if (document.querySelector("#groupName")) {
       var template = Handlebars.compile(document.querySelector("#groupName").innerHTML);
-      document.querySelector("#groupName").innerHTML = template({ groupId, groupName: resp.data.name });
+      document.querySelector("#groupName").innerHTML = template({ groupId, groupName: group.data.name });
     }
-    return resp;
+    return group;
   })
   // Fill out students list in the Group
+  .then(() => getParticipants())
   .then(resp => {
     if (document.querySelector("#studentsListTemplate")) {
       var template = Handlebars.compile(document.querySelector("#studentsListTemplate").innerHTML);
-      document.querySelector("#studentsList").outerHTML = template({ participants: resp.data.participants });
+      document.querySelector("#studentsList").innerHTML = template({ participants: resp.data.Items });
+      
     }
-    return resp;            
   })
   .then(() => getFacilitators())
   .then(facilitators => {
@@ -97,13 +107,18 @@ window.addEventListener('load', function() {
       groupInfo.LeadFacilitator = IsLeadFacilitator();
       var template = Handlebars.compile(document.querySelector("#group_info").innerHTML);
       document.querySelector("#group_info").innerHTML = template(groupInfo);
-      document.querySelector("#facilitatorSelect").value = currentFacilitator.id;
+      if (IsLeadFacilitator()) document.querySelector("#facilitatorSelect").value = currentFacilitator.id;
     }
   });
   
   if (document.querySelector("#optionsTemplate")) {
     var optionsTemplate = Handlebars.compile(document.querySelector("#optionsTemplate").innerHTML);
     document.querySelector("#getOptions").outerHTML = optionsTemplate({ LeadFacilitator: IsLeadFacilitator() });
+  }
+
+  if (document.querySelector("#issue_calendar_invites")) {
+    var optionsTemplate = Handlebars.compile(document.querySelector("#issue_calendar_invites").outerHTML);
+    document.querySelector("#issue_calendar_invites").outerHTML = optionsTemplate({ LeadFacilitator: IsLeadFacilitator() });
   }
   
   globalThis.synchronise = function(e) {
@@ -118,6 +133,55 @@ window.addEventListener('load', function() {
     .then((response) => {
       console.log(response);
       //remove spinner
+    });
+  }
+
+  globalThis.copyColumn = function(event, index, tableId) {
+    event.preventDefault();
+    var columnText = '';
+    var rows = document.querySelector('#' + tableId + ' tbody').rows;
+    for (var i = 0; i < rows.length; i++) {
+      console.log(rows[i].cells[index-1].innerHTML);
+      columnText = columnText.concat(' ' + rows[i].cells[index-1].innerHTML);
+    }
+
+    copyTextToClipboard(columnText);
+    alert('Successfully copied. Try opening an email and paste into the BCC.');
+  }
+
+  function fallbackCopyTextToClipboard(text) {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+    
+    // Avoid scrolling to bottom
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+  
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+  
+    try {
+      var successful = document.execCommand('copy');
+      var msg = successful ? 'successful' : 'unsuccessful';
+      console.log('Fallback: Copying text command was ' + msg);
+    } catch (err) {
+      console.error('Fallback: Oops, unable to copy', err);
+    }
+  
+    document.body.removeChild(textArea);
+  }
+
+  function copyTextToClipboard(text) {
+    if (!navigator.clipboard) {
+      fallbackCopyTextToClipboard(text);
+      return;
+    }
+    navigator.clipboard.writeText(text).then(function() {
+      console.log('Async: Copying to clipboard was successful!');
+    }, function(err) {
+      console.error('Async: Could not copy text: ', err);
     });
   }
   
