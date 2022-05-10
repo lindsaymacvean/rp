@@ -143,7 +143,7 @@ globalThis.logout = logout;
                 .then((parentFolderId) => saveFolderIdToGroup(parentFolderId, groupResponse.data))
                 .then((parentFolderId) => shareFileWithDomain(parentFolderId))
                 // TODO: figure out how to transfer ownership to main lead facilitator
-                //.then((parentFolderId) => transferOwnership(parentFolderId, 'readableproject@dyslexia.ie'))
+                .then((parentFolderId) => transferOwnership(parentFolderId, 'readableproject@dyslexia.ie'))
                 .then(() => window.location.href = `${frontend_url}/semester.html?semesterId=${semesterId}`);
         });
     }

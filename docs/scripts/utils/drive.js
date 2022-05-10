@@ -27,14 +27,13 @@ export const shareFileWithDomain = (fileId) => {
           'domain': 'dyslexia.ie'
     };
 
-    var request = gapi.client.drive.permissions.create({
+    return gapi.client.drive.permissions.create({
         resource: permission,
         fileId: fileId
-    });
-
-    request.execute(resp => console.log(resp));
-
-    return fileId;
+    }).then((resp) => {
+        console.log(resp);
+        return fileId;
+    })
 }
 
 export const transferOwnership = (fileId, email) => {
@@ -44,17 +43,16 @@ export const transferOwnership = (fileId, email) => {
           "emailAddress": email
     };
 
-    var request = gapi.client.drive.permissions.create({
+    return gapi.client.drive.permissions.create({
         resource: permission,
         fileId: fileId,
-        sendNotificationEmail: false,
         transferOwnership: true
 
-    });
+    }).then((resp) => {
+        console.log(resp);
+        return fileId;
+    })
 
-    request.execute(resp => console.log(resp));
-
-    return fileId;
 }
 
 export const getTemplateFolder = () => {
