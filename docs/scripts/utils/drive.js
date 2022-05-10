@@ -1,6 +1,8 @@
 import { CurrentUserEmail } from "./utils.js"
 import { google_client_id } from "./configs.js"
 
+// Documentation here https://developers.google.com/drive/api/v3/reference
+
 
 export const initDrive = () => {
     return new Promise((resolve, reject) => {
@@ -18,29 +20,41 @@ export const initDrive = () => {
     });
 }
 
-export const shareFile = (fileId, permission, email, type='user') => {
-
+export const shareFileWithDomain = (fileId) => {
     var permission = {
-          'type': type,
-          'role': permission
+          "type": "domain",
+          "role": "writer",
+          'domain': 'dyslexia.ie'
     };
 
-    if (type === 'domain') permission['domain'] = 'dyslexia.ie';
-    if (type === 'user') permission['emailAddress'] = email
-
-    gapi.client.drive.permissions.create({
+    var request = gapi.client.drive.permissions.create({
         resource: permission,
-        fileId: fileId,
-        fields: 'id',
+        fileId: fileId
     });
 
-    return fileId;
+    request.execute(resp => console.log(resp));
 
+    return fileId;
 }
 
-export const shareTemplateFolder = (email) => {
-    return getTemplateFolder()
-        .then((tempateFolder) => shareFile(tempateFolder.id, "reader", email, 'user'));
+export const transferOwnership = (fileId, email) => {
+    var permission = {
+          "type": "user",
+          "role": "owner",
+          "emailAddress": email
+    };
+
+    var request = gapi.client.drive.permissions.create({
+        resource: permission,
+        fileId: fileId,
+        sendNotificationEmail: false,
+        transferOwnership: true
+
+    });
+
+    request.execute(resp => console.log(resp));
+
+    return fileId;
 }
 
 export const getTemplateFolder = () => {

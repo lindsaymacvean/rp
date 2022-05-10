@@ -15,7 +15,6 @@ globalThis.logout = logout;
     let group = null;
     let semester = null;
     let facilitator = null;
-    let weeks = [];
 
     globalThis.search = (event) => {
 
@@ -130,7 +129,6 @@ globalThis.logout = logout;
             pageSize: 10,
             fields: 'nextPageToken, files(id, name, mimeType, thumbnailLink, webViewLink, iconLink, webContentLink)',
         }).then(function (response) {
-            console.log(response);
             var template = Handlebars.compile(document.querySelector("#documentsTemplate").innerHTML);
             document.querySelector("#documentsList").innerHTML = template({ documents: response.result.files });
 
@@ -153,7 +151,6 @@ globalThis.logout = logout;
             .then((result) => {
                 window.open(result.result.webViewLink, '_blank').focus();
                 init();
-                console.log(result)
             })
     }
 

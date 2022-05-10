@@ -1,7 +1,7 @@
 import { getSemester } from "./utils/api.js";
 import { getTicketTailorEvents } from "./utils/ticketTailor.js";
 import { api_url, frontend_url } from "./utils/configs.js"
-import { createGroupFolder, initDrive, shareFile, shareTemplateFolder } from "./utils/drive.js"
+import { createGroupFolder, initDrive, shareFileWithDomain, transferOwnership } from "./utils/drive.js"
 import { logout }  from "./utils/logout.js";
 
 globalThis.logout = logout;
@@ -77,6 +77,8 @@ globalThis.logout = logout;
     }
 
     globalThis.onTicketTailorEventChange = (ev, el) => {
+        // Name should look like: 'Readable (1st & 2nd Year) - JUNIOR CERT NOVELS'
+
         // Name
         document.getElementById("name").value = ticketTailorEvents[ev.selectedIndex].name; 
 
@@ -139,9 +141,9 @@ globalThis.logout = logout;
                 .then(() => getSemester(groupData.semesterId))
                 .then((semesterResponse) => createGroupFolder(semesterResponse.data.name, groupData.name, groupData.themes, groupData.studentYear, groupData.facilitatorId, groupData.year, facilitatorEmail))
                 .then((parentFolderId) => saveFolderIdToGroup(parentFolderId, groupResponse.data))
-                .then((parentFolderId) => shareFile(parentFolderId, "writer", facilitatorEmail, "domain"))
-                .then((parentFolderId) => shareFile(parentFolderId, "writer", facilitatorEmail, "user"))
-                .then(() => shareTemplateFolder(facilitatorEmail))
+                .then((parentFolderId) => shareFileWithDomain(parentFolderId))
+                // TODO: figure out how to transfer ownership to main lead facilitator
+                //.then((parentFolderId) => transferOwnership(parentFolderId, 'readableproject@dyslexia.ie'))
                 .then(() => window.location.href = `${frontend_url}/semester.html?semesterId=${semesterId}`);
         });
     }

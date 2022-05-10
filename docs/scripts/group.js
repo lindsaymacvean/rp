@@ -54,8 +54,8 @@ window.addEventListener('load', function() {
   // Fill out students in the Group
   getGroup()
   .then(group => {
+    currentFacilitator = group.data.facilitator;
     if (document.querySelector("#group_info")) {
-      currentFacilitator = group.data.facilitator;
       groupInfo = { 
         facilitatorName: group.data.facilitator.name, 
         semesterName: group.data.semester.name,
@@ -124,7 +124,7 @@ window.addEventListener('load', function() {
     }
   })
   .then(() => {
-    if (IsLeadFacilitator()) document.querySelector("#facilitatorSelect").value = currentFacilitator.id;
+    if (IsLeadFacilitator() && document.querySelector("#facilitatorSelect")) document.querySelector("#facilitatorSelect").value = currentFacilitator.id;
   });
   
   if (document.querySelector("#optionsTemplate")) {
@@ -157,7 +157,6 @@ window.addEventListener('load', function() {
     var columnText = '';
     var rows = document.querySelector('#' + tableId + ' tbody').rows;
     for (var i = 0; i < rows.length; i++) {
-      console.log(rows[i].cells[index-1].innerHTML);
       columnText = columnText.concat(' ' + rows[i].cells[index-1].innerHTML);
     }
 
