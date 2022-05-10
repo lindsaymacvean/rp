@@ -50,7 +50,7 @@ window.addEventListener('load', function() {
     })
     return data;
   }
-  
+
   // Fill out students in the Group
   getGroup()
   .then(group => {
@@ -109,7 +109,12 @@ window.addEventListener('load', function() {
   .then(resp => {
     if (document.querySelector("#studentsListTemplate")) {
       var template = Handlebars.compile(document.querySelector("#studentsListTemplate").innerHTML);
-      document.querySelector("#studentsList").innerHTML = template({ participants: resp.data.Items });
+      var participants = resp.data.Items.map(r => {
+        if (r.attend)
+          r.attend = r.attend[r.groupId];
+        return r;
+      })
+      document.querySelector("#studentsList").innerHTML = template({ participants });
       
     }
   })
@@ -142,6 +147,25 @@ window.addEventListener('load', function() {
     // Load Spinner
     
     axios.get(`${api_url}/group/synchronise?id=${groupId}`, {
+      headers: {
+        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+      }
+    })
+    .then((response) => {
+      console.log(response);
+      //remove spinner
+    });
+  }
+
+  globalThis.checkAttendee = function(e, participantId, groupId, weekId) {
+    e.preventDefault();
+    // Load Spinner
+
+    e.currentTarget.disabled  = true;
+
+    var data = {participantId, groupId, weekId} ;
+
+    axios.post(`${api_url}/participant/attend`, data, {
       headers: {
         'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
       }

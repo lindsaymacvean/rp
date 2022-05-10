@@ -164,12 +164,12 @@
             <tbody>
               {{#each participants}}
               <tr>
-                <td><input type="checkbox" id="week1_{{id}}" name="week1_{{child_name}}"></td>
-                <td><input type="checkbox" id="week2_{{id}}" name="week2_{{child_name}}"></td>
-                <td><input type="checkbox" id="week3_{{id}}" name="week3_{{child_name}}"></td>
-                <td><input type="checkbox" id="week4_{{id}}" name="week4_{{child_name}}"></td>
-                <td><input type="checkbox" id="week5_{{id}}" name="week5_{{child_name}}"></td>
-                <td><input type="checkbox" id="week6_{{id}}" name="week6_{{child_name}}"></td>
+                <td><input type="checkbox" {{#if attend.week1}}checked{{/if}} {{#if attend.week1}}disabled{{/if}} onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week1')" id="week1_{{id}}" name="week1_{{child_name}}"></td>
+                <td><input type="checkbox" {{#if attend.week2}}checked{{/if}} {{#if attend.week2}}disabled{{/if}} onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week2')" id="week2_{{id}}" name="week2_{{child_name}}"></td>
+                <td><input type="checkbox" {{#if attend.week3}}checked{{/if}} {{#if attend.week3}}disabled{{/if}} onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week3')" id="week3_{{id}}" name="week3_{{child_name}}"></td>
+                <td><input type="checkbox" {{#if attend.week4}}checked{{/if}} {{#if attend.week4}}disabled{{/if}} onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week4')" id="week4_{{id}}" name="week4_{{child_name}}"></td>
+                <td><input type="checkbox" {{#if attend.week5}}checked{{/if}} {{#if attend.week5}}disabled{{/if}} onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week5')" id="week5_{{id}}" name="week5_{{child_name}}"></td>
+                <td><input type="checkbox" {{#if attend.week6}}checked{{/if}} {{#if attend.week6}}disabled{{/if}} onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week6')" id="week6_{{id}}" name="week6_{{child_name}}"></td>
                 <td>{{child_name}}</td>
                 <td></td>
                 <td>{{email}}</td>

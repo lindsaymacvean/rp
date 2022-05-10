@@ -1,6 +1,4 @@
 const AWS = require('aws-sdk');
-const dynamo = new AWS.DynamoDB.DocumentClient();
-const crypto = require("crypto")
 
 exports.handler = async(event, context, callback) => {
 

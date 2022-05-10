@@ -59,9 +59,21 @@ Resources:
       AttributeDefinitions: 
         - AttributeName: id
           AttributeType: S
+        - AttributeName: groupId
+          AttributeType: S
       KeySchema: 
         - AttributeName: id
           KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: gsiParticipantEventTable
+          ProvisionedThroughput:
+            ReadCapacityUnits: 0
+            WriteCapacityUnits: 0
+          KeySchema:
+            - AttributeName: groupId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
   GroupsTable:
     Type: AWS::DynamoDB::Table
     DeletionPolicy: Retain
@@ -234,6 +246,50 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
+  GetParticipants:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getParticipants.js
+      Handler: getParticipants.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /participants
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  PostParticipantAttend:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/postParticipantAttend.js
+      Handler: postParticipantAttend.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBWritePolicy:
+            TableName: !Ref ParticipantsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /participant/attend
+            Method: post
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
   GetFacilitatorGroupsList:
     Type: AWS::Serverless::Function
     Properties:
@@ -362,6 +418,32 @@ Resources:
           Properties:
             Path: /group/update
             Method: put
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  GetSynchroniseGroup:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getSynchroniseGroup.js
+      Handler: getSynchroniseGroup.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Layers:
+         - !Ref AxiosLambdaLayer
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBWritePolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref ParticipantsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /group/synchronise
+            Method: get
             Auth:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:

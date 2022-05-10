@@ -268,6 +268,28 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
+  PostParticipantAttend:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/postParticipantAttend.js
+      Handler: postParticipantAttend.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBWritePolicy:
+            TableName: !Ref ParticipantsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /participant/attend
+            Method: post
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
   GetFacilitatorGroupsList:
     Type: AWS::Serverless::Function
     Properties:
