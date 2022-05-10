@@ -30,7 +30,7 @@ exports.handler = async(event, context, callback) => {
         };
     }
 
-    if (data.event === "Issued ticket"){
+    if (data.event === 'Issued ticket' || data.event === 'ISSUED_TICKET.CREATED'){
         var group = (await getGroupByEventId(data.payload.event_id)).Items[0];
         
         console.log(group);
