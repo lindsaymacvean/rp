@@ -381,15 +381,19 @@ Resources:
          - !Ref AxiosLambdaLayer
       Policies:
          - SSMParameterReadPolicy:
+            ParameterName: !Ref TicketTailorSecretParameter
+         - SSMParameterReadPolicy:
             ParameterName: !Ref TicketTailorWebhookSecretParameter
+         - DynamoDBReadPolicy:
+            TableName: !Ref ParticipantsTable
          - DynamoDBWritePolicy:
             TableName: !Ref ParticipantsTable
          - DynamoDBWritePolicy:
             TableName: !Ref GroupsTable
          - DynamoDBReadPolicy:
-            TableName: !Ref FacilitatorsTable
-         - DynamoDBReadPolicy:
             TableName: !Ref GroupsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
       Events:
         ApiEvent:
           Type: Api
