@@ -30,7 +30,7 @@ exports.handler = async(event, context, callback) => {
         };
     }
 
-    if (data.event === 'Issued ticket' || data.event === 'ISSUED_TICKET.CREATED'){
+    if (data.event === 'ORDER.CREATED'){
         var group = (await getGroupByEventId(data.payload.event_id)).Items[0];
         
         console.log(group);
@@ -48,12 +48,14 @@ exports.handler = async(event, context, callback) => {
         if (!group.participants)
             group.participants = [];
     
-        var existingParticipantIndex = group.participants.findIndex(r => r.id == data.payload.id);
+        var participant = await createOrUpdateParticipant(data.payload, group.id);
+
+        var existingParticipantIndex = group.participants.findIndex(r => r.id == participant.id);
 
         if (existingParticipantIndex === -1)
-            group.participants.push(data.payload);
+            group.participants.push(participant);
         else{
-            group.participants[existingParticipantIndex] = data.payload;
+            group.participants[existingParticipantIndex] = participant;
         }
 
         var params = {
@@ -63,7 +65,6 @@ exports.handler = async(event, context, callback) => {
 
         await dynamo.put(params).promise();
 
-        await createParticipant(data.payload, group.id);
     }
 
     response = {
@@ -90,8 +91,20 @@ const getGroupByEventId = async(eventId) => {
     return await dynamo.query(params).promise();
 };
 
-const createParticipant = async (participant, groupId) => {
+const createOrUpdateParticipant = async (payload, groupId) => {
+
+    var participant = await getParticipant(payload.id);
+
     participant.groupId = groupId;
+
+    participant.parent_name = order.buyer_details.name;
+    participant.type = order.issued_tickets[0].description;
+    participant.created_at = order.issued_tickets[0].created_at;
+    participant.county = order.buyer_details.custom_questions[0].answer;
+    participant.child_name = order.buyer_details.custom_questions[2].answer;
+    participant.class = order.buyer_details.custom_questions[3].answer;
+    participant.email = order.buyer_details.email;
+    participant.phone = order.buyer_details.phone;
 
     var params = {
         TableName: 'participant',
@@ -99,4 +112,24 @@ const createParticipant = async (participant, groupId) => {
     };
 
     await dynamo.put(params).promise();
+
+    return participant;
 }
+
+const getParticipant = async(participantId) => {
+    var participant = null;
+
+    try{
+        var params = {
+            TableName: 'participant',
+            Key: {
+                'id': participantId
+            }
+        };
+        participant = await dynamo.get(params).promise();
+    } catch(e){
+        return null;
+    }
+  
+    return participant
+};
