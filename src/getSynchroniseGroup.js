@@ -15,7 +15,7 @@ exports.handler = async(event, context) => {
 
         for (var order of orders){
             try {
-                if (order.issued_tickets[0].status === 'void') continue;
+                if (order.issued_tickets[0].status !== 'valid') continue;
 
                 var participant = await createOrUpdateParticipant(order, group.id);
                 participants.push(participant)
@@ -28,6 +28,7 @@ exports.handler = async(event, context) => {
             group.participants = [];
 
         for (var participant of participants){
+
             var existingParticipantIndex = group.participants.findIndex(r => r.id == participant.id);
 
             if (existingParticipantIndex === -1)

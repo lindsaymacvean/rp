@@ -125,7 +125,7 @@ const createParticipants = async(groupId, eventId) => {
     var participants = [];
     for (var order of ticketsResponse.data.data){
         try {
-            if (order.issued_tickets[0].status === 'void') continue;
+            if (order.issued_tickets[0].status !== 'valid') continue;
             var participant = {
                 groupId,
                 id: order.id,
