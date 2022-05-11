@@ -91,9 +91,9 @@ const getGroupByEventId = async(eventId) => {
     return await dynamo.query(params).promise();
 };
 
-const createOrUpdateParticipant = async (payload, groupId) => {
+const createOrUpdateParticipant = async (order, groupId) => {
 
-    var participant = await getParticipant(payload.id);
+    var participant = await getParticipant(order.id);
 
     participant.groupId = groupId;
 
