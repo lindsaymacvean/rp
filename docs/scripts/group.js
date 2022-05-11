@@ -145,6 +145,8 @@ window.addEventListener('load', function() {
   globalThis.synchronise = function(e) {
     e.preventDefault();
     // Load Spinner
+    var spinner = '<div style="text-align:center;"><div class="lds-dual-ring"></div><br /><strong>Importing Participants from Ticket Tailor</strong></div>';
+    document.getElementsByTagName('body')[0].innerHTML = spinner;
     
     axios.get(`${api_url}/group/synchronise?id=${groupId}`, {
       headers: {
@@ -154,12 +156,12 @@ window.addEventListener('load', function() {
     .then((response) => {
       console.log(response);
       //remove spinner
+      window.location.reload();
     });
   }
 
   globalThis.checkAttendee = function(e, participantId, groupId, weekId) {
     e.preventDefault();
-    // Load Spinner
 
     e.currentTarget.disabled  = true;
 
@@ -172,7 +174,6 @@ window.addEventListener('load', function() {
     })
     .then((response) => {
       console.log(response);
-      //remove spinner
     });
   }
 
@@ -223,5 +224,7 @@ window.addEventListener('load', function() {
       console.error('Async: Could not copy text: ', err);
     });
   }
+
+  
   
 });
