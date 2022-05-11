@@ -9,7 +9,7 @@ exports.handler = async(event, context) => {
 
         var group = (await getGroup(event.queryStringParameters.id)).Item;
 
-        var orders = getOrders(group.eventId);
+        var orders = (await getOrders(group.eventId)).data.data;
 
         var participants = [];
 
@@ -17,27 +17,15 @@ exports.handler = async(event, context) => {
             try {
                 if (order.issued_tickets[0].status === 'void') continue;
 
-                createOrUpdateParticipant(order);
-
-                var participant = {
-                    groupId,
-                    id: order.id,
-                    parent_name: order.buyer_details.name,
-                    type: order.issued_tickets[0].description,
-                    created_at: order.issued_tickets[0].created_at,
-                    county: order.buyer_details.custom_questions[0].answer,
-                    child_name: order.buyer_details.custom_questions[2].answer,
-                    class: order.buyer_details.custom_questions[3].answer,
-                    email: order.buyer_details.email,
-                    phone: order.buyer_details.phone
-                };
-                participant = await createOrUpdateParticipant(participant)
+                var participant = await createOrUpdateParticipant(order, group.id);
                 participants.push(participant)
             } catch(e) {
                 console.log(e);
             }
         }
 
+        if (!group.participants)
+            group.participants = [];
 
         for (var participant of participants){
             var existingParticipantIndex = group.participants.findIndex(r => r.id == participant.id);
@@ -89,10 +77,14 @@ const getOrders = async(eventId) => {
 }
 
 const createOrUpdateParticipant = async (order, groupId) => {
+    var participant = (await getParticipant(order.id))?.Item;
 
-    var participant = await getParticipant(order.id);
-
-    participant.groupId = groupId;
+    if (!participant || !participant.id ){
+        participant = {
+            id: order.id,
+            groupId
+        }
+    } 
 
     participant.parent_name = order.buyer_details.name;
     participant.type = order.issued_tickets[0].description;

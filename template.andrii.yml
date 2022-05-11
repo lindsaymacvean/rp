@@ -432,6 +432,10 @@ Resources:
       Layers:
          - !Ref AxiosLambdaLayer
       Policies:
+         - SSMParameterReadPolicy:
+            ParameterName: !Ref TicketTailorSecretParameter
+         - DynamoDBWritePolicy:
+            TableName: !Ref GroupsTable
          - DynamoDBReadPolicy:
             TableName: !Ref GroupsTable
          - DynamoDBWritePolicy:
