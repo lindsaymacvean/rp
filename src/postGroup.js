@@ -122,14 +122,14 @@ const createParticipants = async(groupId, eventId) => {
             }
         );
 
+    var participants = [];
     for (var order of ticketsResponse.data.data){
         try {
             if (order.issued_tickets[0].status === 'void') break;
             var participant = {
                 groupId,
                 id: order.id,
-                parent_first_name: order.issued_tickets[0].first_name,
-                parent_last_name: order.issued_tickets[0].last_name,
+                parent_name: order.buyer_details.name,
                 type: order.issued_tickets[0].description,
                 created_at: order.issued_tickets[0].created_at,
                 county: order.buyer_details.custom_questions[0].answer,
@@ -138,14 +138,14 @@ const createParticipants = async(groupId, eventId) => {
                 email: order.buyer_details.email,
                 phone: order.buyer_details.phone
             };
+            participants.push(participant)
             await createParticipant(participant)
         } catch(e) {
             console.log(e);
         }
-        
     }
 
-    return ticketsResponse.data.data;
+    return participants;
 }
 
 const createParticipant = async (data) => {
