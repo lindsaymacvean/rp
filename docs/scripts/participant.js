@@ -1,3 +1,4 @@
+import { fillBreadcrumbs } from "./utils/breadcrumbs.js";
 import { api_url } from "./utils/configs.js"
 import { logout }  from "./utils/logout.js";
 
@@ -20,9 +21,10 @@ globalThis.logout = logout;
         })
         // Fill out student details.
         .then(resp => {
+            console.log(resp);
             if (document.querySelector("#participant_details")) {
                 var template = Handlebars.compile(document.querySelector("#participant_details").outerHTML);
-                document.querySelector("#participant_details").outerHTML = template({ full_name: resp.data.full_name });
+                document.querySelector("#participant_details").outerHTML = template({ full_name: resp.data.child_name });
             }
 
             return resp;
@@ -35,5 +37,8 @@ globalThis.logout = logout;
             }
 
             return resp;
+        })
+        .then((resp) => {
+            fillBreadcrumbs(resp);
         })
 })();

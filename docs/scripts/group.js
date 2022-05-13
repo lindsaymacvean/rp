@@ -1,18 +1,13 @@
 import { api_url } from "./utils/configs.js";
-import { IsLeadFacilitator } from "./utils/utils.js";
+import { IsLeadFacilitator, registerHandlebarHelpers } from "./utils/utils.js";
 import { logout }  from "./utils/logout.js";
+import { fillBreadcrumbs } from "./utils/breadcrumbs.js";
 
 globalThis.logout = logout;
 
-Handlebars.registerHelper('userId', function (aString) {
-  return aString.replace(/it_/, '')
-});
-
-Handlebars.registerHelper('event', function (aString) {
-  return aString.replace(/ev_/, '')
-});
-
 window.addEventListener('load', function() {
+
+  registerHandlebarHelpers();
   
   const urlParams = new URLSearchParams(window.location.search);
   const groupId = urlParams.get('groupId');
@@ -70,31 +65,8 @@ window.addEventListener('load', function() {
     }
     return group;            
   })
-  // Fill in the semester breadcrumb
-  .then(group => {
-    if (document.querySelector('#semesterBreadcrumb')) {
-      var template = Handlebars.compile(document.querySelector("#semesterBreadcrumb").innerHTML);
-      document.querySelector("#semesterBreadcrumb").outerHTML = template({ semesterId: group.data.semester.id, semesterName: group.data.semester.name, IsLeadFacilitator});
-    }
-    return group;
-  })
-  // Fill in the Group breadcrumb
-  .then(group => {
-    if (document.querySelector("#groupBreadcrumb")) {
-      var template = Handlebars.compile(document.querySelector("#groupBreadcrumb").innerHTML);
-      document.querySelector("#groupBreadcrumb").innerHTML = template({ groupId, groupName: group.data.name, IsLeadFacilitator });
-    }
-    return group;
-  })
-  // Special Case for the Group page if a facilitator
-  .then(group => {
-    if (this.document.querySelector("#homeButtonBreadcrumb")) {
-      var homeTemplate = Handlebars.compile(document.querySelector("#homeButtonBreadcrumb").innerHTML);
-      document.querySelector("#HomeButtonBreadcrumbReplace").outerHTML = homeTemplate({
-        IsLeadFacilitator
-      });
-    }
-    return group;
+  .then((group) => {
+    return fillBreadcrumbs(group);
   })
   // Fill title on Group page
   .then(group => {
