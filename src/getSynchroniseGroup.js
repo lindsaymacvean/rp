@@ -20,7 +20,6 @@ exports.handler = async(event, context) => {
                 var participant = await createOrUpdateParticipant(order, group.id);
                 participants.push(participant)
             } catch(e) {
-                console.log(e);
             }
         }
 
@@ -54,7 +53,6 @@ exports.handler = async(event, context) => {
         }
 
     } catch (err) {
-        console.log(err);
         return err;
     }
 

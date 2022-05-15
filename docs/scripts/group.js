@@ -79,7 +79,6 @@ window.addEventListener('load', function() {
   // Fill out students list in the Group
   .then(() => getParticipants())
   .then(resp => {
-    console.log(resp);
     if (document.querySelector("#studentsListTemplate")) {
       var template = Handlebars.compile(document.querySelector("#studentsListTemplate").innerHTML);
       var participants = resp.data.Items.map(r => {
@@ -126,7 +125,6 @@ window.addEventListener('load', function() {
       }
     })
     .then((response) => {
-      console.log(response);
       //remove spinner
       window.location.reload();
     });
@@ -145,7 +143,6 @@ window.addEventListener('load', function() {
       }
     })
     .then((response) => {
-      console.log(response);
     });
   }
 
@@ -177,9 +174,7 @@ window.addEventListener('load', function() {
     try {
       var successful = document.execCommand('copy');
       var msg = successful ? 'successful' : 'unsuccessful';
-      console.log('Fallback: Copying text command was ' + msg);
     } catch (err) {
-      console.error('Fallback: Oops, unable to copy', err);
     }
   
     document.body.removeChild(textArea);
@@ -191,9 +186,7 @@ window.addEventListener('load', function() {
       return;
     }
     navigator.clipboard.writeText(text).then(function() {
-      console.log('Async: Copying to clipboard was successful!');
     }, function(err) {
-      console.error('Async: Could not copy text: ', err);
     });
   }
 

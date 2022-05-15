@@ -37,17 +37,14 @@ globalThis.logout = logout;
     }
 
     globalThis.dragover_handler = (ev) => {
-        console.log("dragOver");
         ev.preventDefault();
     }
 
     globalThis.dragstart_handler = (ev) => {
-        console.log("dragStart");
         ev.dataTransfer.setData("text", ev.target.id);
     }
 
     globalThis.drop_handler = (ev, el) => {
-        console.log("Drop");
         ev.currentTarget.style.background = "lightyellow";
        
         ev.preventDefault();
@@ -59,7 +56,7 @@ globalThis.logout = logout;
         el.appendChild(document.getElementById(sourceId).cloneNode(true));
         
         copyFile(sourceId, ev.currentTarget.id, `${semester.name}-${group.studentYear}/${group.themes}-${ev.srcElement.getAttribute("name").slice(-1)}/6-${facilitator.email}`)
-            .then((result) => {console.log(result)})
+            .then((result) => {})
     }
 
     document.getElementById('search_input').addEventListener("keyup", function (event) {

@@ -4,7 +4,6 @@ function DyslexiaService () {
             return userAttributes["cognito:groups"].includes("LeadFacilitators");
         }
         catch (e){
-            console.log(e);
             return false;
         }
        

@@ -141,7 +141,6 @@ const createParticipants = async(groupId, eventId) => {
             participants.push(participant)
             await createParticipant(participant)
         } catch(e) {
-            console.log(e);
         }
     }
 

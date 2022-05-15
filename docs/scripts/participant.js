@@ -21,7 +21,6 @@ globalThis.logout = logout;
         })
         // Fill out student details.
         .then(resp => {
-            console.log(resp);
             if (document.querySelector("#participant_title")) {
                 var template = Handlebars.compile(document.querySelector("#participant_title").outerHTML);
                 document.querySelector("#participant_title").outerHTML = template({ full_name: resp.data.child_name });
@@ -60,7 +59,6 @@ globalThis.logout = logout;
           .then((response) => {
                 var myModal = new bootstrap.Modal(document.getElementById("updatedConfirmation"), {});
                 myModal.show();
-              console.log(response);
           });
     }
 })();

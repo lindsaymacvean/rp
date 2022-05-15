@@ -31,7 +31,6 @@ export const shareFileWithDomain = (fileId) => {
         resource: permission,
         fileId: fileId
     }).then((resp) => {
-        console.log(resp);
         return fileId;
     })
 }
@@ -49,7 +48,6 @@ export const transferOwnership = (fileId, email) => {
         transferOwnership: true
 
     }).then((resp) => {
-        console.log(resp);
         return fileId;
     })
 

@@ -13,14 +13,12 @@ export const CurrentUserEmail = () => {
 export const CurrentUserName = () => {
   let token = sessionStorage.getItem('id_token')
   let jsonToken = parseJwt(token);
-  console.log(jsonToken["name"]);
   return jsonToken["name"];
 }
 
 export const CurrentUserId = () => {
   let token = sessionStorage.getItem('id_token')
   let jsonToken = parseJwt(token);
-  console.log(jsonToken["sub"]);
   return jsonToken["sub"];
 }
 

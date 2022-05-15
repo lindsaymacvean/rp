@@ -8,8 +8,6 @@ exports.handler = async(event, context, callback) => {
 
     var data = JSON.parse(event.body);
 
-    console.log(data);
-
     const ticketTailorWebhookSk = await ssm.getParameter({
         Name: process.env.TICKET_TAILOR_WEBHOOK_SK,
         WithDecryption: true
@@ -44,7 +42,6 @@ exports.handler = async(event, context, callback) => {
                 var participant = await createOrUpdateParticipant(order, group.id);
                 participants.push(participant)
             } catch(e) {
-                console.log(e);
             }
         }
 
@@ -73,8 +70,6 @@ exports.handler = async(event, context, callback) => {
 
     // if (data.event === 'ORDER.CREATED'){
     //     var group = (await getGroupByEventId(data.payload.event_id)).Items[0];
-        
-    //     console.log(group);
 
     //     if (!group){
     //         return {

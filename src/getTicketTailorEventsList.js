@@ -22,8 +22,6 @@ exports.handler = async(event, context) => {
                 }
             }
         );
-        
-        console.log(eventsResponse.data.data);
 
         response = {
             'statusCode': 200,
@@ -34,7 +32,6 @@ exports.handler = async(event, context) => {
         }
 
     } catch (err) {
-        console.log(err);
         return err;
     }
 
