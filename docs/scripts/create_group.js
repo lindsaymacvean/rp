@@ -68,7 +68,7 @@ globalThis.logout = logout;
             folderId
         }
 
-        return axios.put(`${api_url}/group/update`, data, {
+        return axios.put(`${api_url}/group`, data, {
             headers: {
                 'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
             }

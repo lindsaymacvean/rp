@@ -79,6 +79,7 @@ window.addEventListener('load', function() {
   // Fill out students list in the Group
   .then(() => getParticipants())
   .then(resp => {
+    console.log(resp);
     if (document.querySelector("#studentsListTemplate")) {
       var template = Handlebars.compile(document.querySelector("#studentsListTemplate").innerHTML);
       var participants = resp.data.Items.map(r => {
@@ -87,7 +88,6 @@ window.addEventListener('load', function() {
         return r;
       })
       document.querySelector("#studentsList").innerHTML = template({ participants });
-      
     }
   })
   .then(() => getFacilitators())
@@ -197,6 +197,4 @@ window.addEventListener('load', function() {
     });
   }
 
-  
-  
 });

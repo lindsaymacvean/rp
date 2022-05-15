@@ -124,7 +124,7 @@
         <div class="row" style="height: 2vh"></div>
         <a id="adapt_session_button" href="manage-session-plans.html?groupId={{groupId}}"><button  class="btn btn-primary  w-50">Adapt or Create a Session Plan</button></a>
         <div class="row" style="height: 2vh"></div>
-        <a id="copyTable" onclick="copyColumn(event, 9, 'studentTable');" href="#"><button  class="btn btn-primary  w-50">Copy Emails in order to paste into Gmail</button></a>
+        <a id="copyTable" onclick="copyColumn(event, 10, 'studentTable');" href="#"><button  class="btn btn-primary  w-50">Copy Emails in order to paste into Gmail</button></a>
       </div>
       <div class="col-2 text-center"></div>
     </div>
@@ -147,6 +147,7 @@
             <thead>
               <tr>
                 <th scope="col" colspan="6">Attendance</th>
+                <th scope="col" rowspan="2"></th>
                 <th scope="col" rowspan="2">Participant Name</th>
                 <th scope="col" rowspan="2">Parent Name</th>
                 <th scope="col" rowspan="2">Parent Email</th>
@@ -173,6 +174,7 @@
                 <td><input type="checkbox" {{#if attend.week4}}checked{{/if}} {{#if attend.week4}}disabled{{/if}} onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week4')" id="week4_{{id}}" name="week4_{{child_name}}"></td>
                 <td><input type="checkbox" {{#if attend.week5}}checked{{/if}} {{#if attend.week5}}disabled{{/if}} onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week5')" id="week5_{{id}}" name="week5_{{child_name}}"></td>
                 <td><input type="checkbox" {{#if attend.week6}}checked{{/if}} {{#if attend.week6}}disabled{{/if}} onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week6')" id="week6_{{id}}" name="week6_{{child_name}}"></td>
+                <td class="btn-group-sm align-items-right"><a href="/participant_profile.html?participantId={{id}}" class="btn btn-secondary" style="margin-top:-0.3vw;margin-right:-1.5vw;">Edit</a></td>
                 <td>{{child_name}}</td>
                 <td>{{parent_name}}</td>
                 <td>{{email}}</td>
@@ -185,7 +187,6 @@
           </table>
         
         </div>
-        <div class="col-1"></div>
       </div>
       {{else}}
       <div class="row text-center mt-2">
@@ -244,7 +245,7 @@
           If a user has been manually added to the RP platform they will not be altered or removed. Do you wish to continue?
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-danger" onclick="synchronise(event)">Start Sync</button>
         </div>
       </div>

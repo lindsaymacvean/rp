@@ -246,6 +246,28 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
+  PutParticipant:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/putParticipant.js
+      Handler: putParticipant.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBWritePolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBWritePolicy:
+            TableName: !Ref GroupsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /participant
+            Method: put
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
   GetParticipants:
     Type: AWS::Serverless::Function
     Properties:
@@ -420,7 +442,7 @@ Resources:
         ApiEvent:
           Type: Api
           Properties:
-            Path: /group/update
+            Path: /group
             Method: put
             Auth:
               Authorizer: ReadableApiCognitoAuthorizer

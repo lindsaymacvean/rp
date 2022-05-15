@@ -22,9 +22,14 @@ globalThis.logout = logout;
         // Fill out student details.
         .then(resp => {
             console.log(resp);
+            if (document.querySelector("#participant_title")) {
+                var template = Handlebars.compile(document.querySelector("#participant_title").outerHTML);
+                document.querySelector("#participant_title").outerHTML = template({ full_name: resp.data.child_name });
+            }
+
             if (document.querySelector("#participant_details")) {
                 var template = Handlebars.compile(document.querySelector("#participant_details").outerHTML);
-                document.querySelector("#participant_details").outerHTML = template({ full_name: resp.data.child_name });
+                document.querySelector("#participant_details").outerHTML = template( resp.data );
             }
 
             return resp;
@@ -41,4 +46,21 @@ globalThis.logout = logout;
         .then((resp) => {
             fillBreadcrumbs(resp);
         })
+
+    globalThis.updateParticipant = function (e) {
+        e.preventDefault();
+        var data = {};
+        data.child_name = e.target.child_name.value;
+        data.parent_name = e.target.parent_name.value;
+        axios.put(`${api_url}/participant?id=${participantId}`, data, {
+            headers: {
+              'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+            }
+          })
+          .then((response) => {
+                var myModal = new bootstrap.Modal(document.getElementById("updatedConfirmation"), {});
+                myModal.show();
+              console.log(response);
+          });
+    }
 })();

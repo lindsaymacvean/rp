@@ -9,7 +9,7 @@ exports.handler = async(event, context, callback) => {
     //TODO check if current user is Lead Facilitator.
     //TODO validate data
 
-    var group = await updateGroup(data);
+    await updateGroup(data);
 
     response = {
         'statusCode': 200,

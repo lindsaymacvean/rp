@@ -420,7 +420,7 @@ Resources:
         ApiEvent:
           Type: Api
           Properties:
-            Path: /group/update
+            Path: /group
             Method: put
             Auth:
               Authorizer: ReadableApiCognitoAuthorizer

@@ -7,12 +7,10 @@ globalThis.logout = logout;
 
     globalThis.createNewSemester = function(e) {
         e.preventDefault();
-        console.log(api_url);
         var form = document.forms.namedItem("newSemester");
         var formData = new FormData(form);
 
         var data = JSON.stringify(Object.fromEntries(formData));
-        console.log(data);
         axios.post(`${api_url}/semester/create`, data, {
                 headers: {
                     'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`

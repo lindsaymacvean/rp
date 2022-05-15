@@ -1,5 +1,8 @@
 import { IsLeadFacilitator } from "./utils.js";
 
+const urlParams = new URLSearchParams(window.location.search);
+const groupId = urlParams.get('groupId');
+
 
 /**
  * 
