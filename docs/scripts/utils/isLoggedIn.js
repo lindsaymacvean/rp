@@ -4,7 +4,7 @@ import { IsLeadFacilitator } from "./utils.js"
 export const IsLoggedIn = function() {
     // Set a timer to refresh page after 60 minutes to make sure people dont edit when not logged in
     // The token expires on the backend after 24 hours.
-    setTimeout(refresh, 3600000);
+    setTimeout(window.location.reload.bind(window.location), 3600000);
 
     //TODO this is messy and can be refactored to be more elegant.
 
