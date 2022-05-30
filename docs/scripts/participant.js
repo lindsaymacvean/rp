@@ -1,10 +1,12 @@
 import { fillBreadcrumbs } from "./utils/breadcrumbs.js";
 import { api_url } from "./utils/configs.js"
 import { logout }  from "./utils/logout.js";
+import { IsLoggedIn } from "./utils/isLoggedIn.js";
 
 globalThis.logout = logout;
 
 (function() {
+    IsLoggedIn();
 
     const urlParams = new URLSearchParams(window.location.search);
     const participantId = urlParams.get('participantId');

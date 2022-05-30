@@ -2,10 +2,12 @@ import { api_url } from "./utils/configs.js";
 import { IsLeadFacilitator, registerHandlebarHelpers } from "./utils/utils.js";
 import { logout }  from "./utils/logout.js";
 import { fillBreadcrumbs } from "./utils/breadcrumbs.js";
+import { IsLoggedIn } from "./utils/isLoggedIn.js";
 
 globalThis.logout = logout;
 
 window.addEventListener('load', function() {
+  IsLoggedIn();
 
   registerHandlebarHelpers();
   

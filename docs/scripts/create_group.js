@@ -3,10 +3,12 @@ import { getTicketTailorEvents } from "./utils/ticketTailor.js";
 import { api_url, frontend_url } from "./utils/configs.js"
 import { createGroupFolder, initDrive, shareFileWithDomain, transferOwnership } from "./utils/drive.js"
 import { logout }  from "./utils/logout.js";
+import { IsLoggedIn } from "./utils/isLoggedIn.js";
 
 globalThis.logout = logout;
 
 (function () {
+    IsLoggedIn();
 
     var facilitators = [];
     var ticketTailorEvents = [];

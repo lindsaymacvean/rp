@@ -4,10 +4,12 @@ import { getTemplateFolder, getWeeksFiles, getFolderFiles, copyFile } from "./ut
 import { getFacilitator, getGroup, getSemester } from "./utils/api.js";
 import { stopLoading } from "./utils/loader.js";
 import { logout }  from "./utils/logout.js";
+import { IsLoggedIn } from "./utils/isLoggedIn.js";
 
 globalThis.logout = logout;
 
 (function () {
+    IsLoggedIn();
 
     const urlParams = new URLSearchParams(window.location.search);
     const groupId = urlParams.get('groupId');        
