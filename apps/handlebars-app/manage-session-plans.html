@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <link href="/styles/main.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"
+  integrity="sha512-RNLkV3d+aLtfcpEyFG8jRbnWHxUqVZozacROI4J2F1sTaDqo1dPQYs01OMi1t1w9Y2FdbSCDSQ2ZVdAC8bzgAg=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <link rel="shortcut icon" href="./assets/favicon.ico">
+</head>
+
+<body style="background-color: rgb(221, 238, 232);">
+  
+  <!-- Loader -->
+  <div class="modal " id="loaderModal" data-bs-backdrop="static" tabindex="-1" ria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="spinner-border" style="width: 15rem; height: 15rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal -->
+  <div class="modal fade " id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <iframe id="preview-iframe" src="" style="width:100%; height:600px; border:0;"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div style="max-width: 1100px; margin: auto;" class="container mt-5">
+    
+    <nav class="navbar navbar-expand-md navbar-dark bg-primary">
+      <div class="container-fluid">
+        <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNavbar">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse" id="collapseNavbar">
+          <ul class="navbar-nav">
+            <li class="nav-item"><a class="nav-link" href="home.html">Home ></a></li>
+            <li class="nav-item" id="semesterBreadcrumb"><a class="nav-link"
+              href="semester.html?semesterId={{semesterId}}">Semester {{semesterName}} ></a>
+            </li>
+            <li class="nav-item" id="groupBreadcrumb">
+              <a class="nav-link" href="group.html?groupId={{groupId}}">{{groupName}} ></a>
+            </li>
+            <li class="nav-item active" aria-current="page">
+              <span class="nav-link">Manage Session
+                Plans
+              </span>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#" onclick="logout(event)">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="row mt-5">
+      <div class="col-lg-12">
+        <div class="row text-left">
+          <div class="col-12">
+            <h2>My Session Plans</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="row mt-1">
+      <div class="col-lg-10 ms-5">
+        <template type="text/x-handlebars-template" id="weeksTemplate">
+          <div class="row row-cols-1 row-cols-md-3 g-2 mt-2 mb-2">
+            {{#each weeks}}
+            <div class="col">
+              <div class="card">
+                <h4>{{name}}</h4>
+                <div id="{{id}}" class="ps-4 pe-4" name="{{name}}" style="margin-top:-0.5vw;" ondrop="drop_handler(event, this);" ondragover="dragover_handler(event);">
+                  {{#if files}}
+                  {{#each files}}
+                  <div class="row row-cols-1 row-cols-md-1 g-2 mt-2 mb-2">
+                    <div class="col">
+                      <div id="{{id}}" class="card" onclick="openSession('{{webViewLink}}')">
+                        <img class="card-img-top" draggable="false" src="{{thumbnailLink}}" />
+                        <div class="card-body">
+                          <a draggable="false" href="#">{{name}}</a>
+                        </div>
+                        <!-- <div class="m-2">
+                          <svg
+                            width="24"
+                            height="24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          >
+                            <use href="/assets/feather-sprite.svg#trash-2"/>
+                          </svg>
+                        </div> -->
+                      </div>
+                    </div>
+                  </div>
+                  {{/each}}
+                  {{else}}
+                  <div class="row row-cols-1 row-cols-md-1 g-2 mt-2 mb-2">
+                    <div class="col">
+                      <div class="card" ondrop="drop_handler(event, this);"
+                      ondragover="dragover_handler(event);">
+                        <button id="{{id}}" name="{{name}}" style="user-select: none;" onclick="openTemplate(event)">
+                          <div>
+                            <div class="m-2">
+                              <svg
+                                width="24"
+                                height="24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              >
+                                <use href="/assets/feather-sprite.svg#file-plus"/>
+                              </svg>
+                            </div>
+                            <span>
+                              Click to create new Session Plan from template, or drag an existing Session Plan from the Golden Library below.
+                            </span>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  {{/if }}
+                </div>
+              </div>
+            </div>
+            {{/each}}
+          </div>
+        </template>
+        <div id="weeksList" style="text-align:center;"><div class="lds-dual-ring"></div></div>
+      </div>
+    </div>
+
+    <!-- <div style="position:absolute;color:brown;transform: rotate(-30deg);left:50%;">
+      <img style="height:2vw;" src="/assets/investigation-arrow.png" />DRAG
+    </div> -->
+    
+    <div class="row mt-5">
+      <div class="col-lg-12">
+        <div class="row text-left">
+          <h2>Golden Library</h2>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-10 ms-5">
+        <div class="d-flex">
+          <input type="search" class="form-control me-2 ms-0" id="search_input" oninput="search(event)" placeholder="Search" aria-label="Search">
+          <button type="button" class="btn btn-primary" oninput="search(event)">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row mt-1">
+      <div class="col-lg-10 ms-5 goldenArea">
+        <template type="text/x-handlebars-template" id="documentsTemplate">
+          <div class="row row-cols-1 row-cols-md-6 g-2">
+          {{#if documents.length}}
+          {{#each documents}}
+          <div class="col">
+            <div class="card border-primary text-primary" id="{{id}}" docName="{{name}}" draggable="true" ondragstart="dragstart_handler(event)" onclick="preview('{{webViewLink}}')">
+              <img class="card-img-top" draggable="false" src="{{thumbnailLink}}"/>
+              <div class="card-body">
+                <a class="text-center" draggable="false" href="#">{{name}}</a>
+              </div>
+            </div>
+          </div>
+          {{/each}}
+          {{else}}
+          <div style="height: 200px; width:100%; background-color: white; text-align: center; font-size: 2vw; margin: 0 auto;">
+            No Results
+          </div>
+          {{/if}}
+          </div>
+        </template>
+        <div id="documentsList"><div class="lds-dual-ring"></div></div>
+      </div>
+    </div>
+
+  </div>
+  
+  <script src="https://apis.google.com/js/api.js"></script>
+  <script type="module" src="scripts/manage-session-plans.js"></script>
+  <script type="module" src="scripts/group.js"></script>
+  <!-- Option 1: Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+  crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/masonry/4.2.2/masonry.pkgd.min.js" 
+  integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" 
+  crossorigin="anonymous" async></script>
+
+</body>
+
+</html>

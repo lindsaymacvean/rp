@@ -1,0 +1,596 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Readable API
+Globals:
+  Function:
+    Environment:
+      Variables:
+        TICKET_TAILOR_SK: '/parameterStore/ticketTailorSk'
+        TICKET_TAILOR_WEBHOOK_SK: '/parameterStore/ticketTailorWebhookSk'
+Parameters:
+  TicketTailorSecretParameter:
+    Description: TicketTailor client secret.
+    Type: String
+    Default: 'parameterStore/ticketTailorSk'
+  TicketTailorWebhookSecretParameter:
+    Description: TicketTailor webhook secret.
+    Type: String
+    Default: 'parameterStore/ticketTailorWebhookSk'
+Resources:
+  FacilitatorsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: facilitator
+      BillingMode: PAY_PER_REQUEST
+      ProvisionedThroughput:
+        ReadCapacityUnits: 0
+        WriteCapacityUnits: 0
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
+  SemestersTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: semester
+      BillingMode: PAY_PER_REQUEST
+      ProvisionedThroughput:
+        ReadCapacityUnits: 0
+        WriteCapacityUnits: 0
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
+  ParticipantsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: participant
+      BillingMode: PAY_PER_REQUEST
+      ProvisionedThroughput:
+        ReadCapacityUnits: 0
+        WriteCapacityUnits: 0
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: groupId
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: gsiParticipantEventTable
+          ProvisionedThroughput:
+            ReadCapacityUnits: 0
+            WriteCapacityUnits: 0
+          KeySchema:
+            - AttributeName: groupId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+  GroupsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: group
+      BillingMode: PAY_PER_REQUEST
+      ProvisionedThroughput:
+        ReadCapacityUnits: 0
+        WriteCapacityUnits: 0
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: eventId
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: gsiGroupEventTable
+          ProvisionedThroughput:
+            ReadCapacityUnits: 0
+            WriteCapacityUnits: 0
+          KeySchema:
+            - AttributeName: eventId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+  LeadFacilitatorsCognitoGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties: 
+      Description: "List of lead facilitators"
+      GroupName: LeadFacilitators
+      UserPoolId: eu-west-1_QSQoQgvuD
+  ReadableApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: ReadableApiStage
+      Cors: #"'*'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowMethods: "'GET,PUT,POST,OPTIONS'"
+        AllowOrigin: "'*'"
+      Auth:
+        Authorizers:
+          ReadableApiCognitoAuthorizer:
+            UserPoolArn: 
+              - arn:aws:cognito-idp:eu-west-1:573428131898:userpool/eu-west-1_QSQoQgvuD
+  GoogleApisLambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: googleApisLambdaLayer
+      ContentUri: layers/googleApisLambdaLayer
+      Description: googleapis lambda layer
+      RetentionPolicy: Delete
+  AxiosLambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: axiosLambdaLayer
+      ContentUri: layers/axiosLayer
+      Description: googleapis lambda layer
+      RetentionPolicy: Delete
+  DyslexiaServiceLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: DyslexiaService
+      ContentUri: layers/dyslexiaService
+      Description: Dyslexia general code layer
+      RetentionPolicy: Delete
+  PreSignUpFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      FunctionName: PreSignUpFunction
+      CodeUri: src/preSignUp.js
+      Handler: preSignUp.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+  PostConfirmationFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      FunctionName: PostConfirmationFunction
+      CodeUri: src/postConfirmation.js
+      Handler: postConfirmation.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies: 
+         - DynamoDBWritePolicy:
+            TableName: !Ref FacilitatorsTable
+  GetFacilitatorsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getFacilitatorsList.js
+      Handler: getFacilitatorsList.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /facilitator/list
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  GetFacilitator:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getFacilitator.js
+      Handler: getFacilitator.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /facilitator
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  GetGroup:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getGroup.js
+      Handler: getGroup.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref SemestersTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /group
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  GetParticipant:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getParticipant.js
+      Handler: getParticipant.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /participant
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  PutParticipant:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/putParticipant.js
+      Handler: putParticipant.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBWritePolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBWritePolicy:
+            TableName: !Ref GroupsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /participant
+            Method: put
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  GetParticipants:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getParticipants.js
+      Handler: getParticipants.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /participants
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  PostParticipantAttend:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/postParticipantAttend.js
+      Handler: postParticipantAttend.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBWritePolicy:
+            TableName: !Ref ParticipantsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /participant/attend
+            Method: post
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  GetFacilitatorGroupsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getFacilitatorGroupsList.js
+      Handler: getFacilitatorGroupsList.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /group/facilitator
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  GetSemesterGroupsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getSemesterGroupsList.js
+      Handler: getSemesterGroupsList.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref SemestersTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /group/semester
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  PostGroup:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/postGroup.js
+      Handler: postGroup.handler
+      Runtime: nodejs14.x
+      Timeout: 120
+      Layers:
+         - !Ref AxiosLambdaLayer
+      Policies:
+         - SSMParameterReadPolicy:
+            ParameterName: !Ref TicketTailorSecretParameter
+         - DynamoDBWritePolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBWritePolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBWritePolicy:
+            TableName: !Ref SemestersTable
+         - DynamoDBWritePolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref SemestersTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /group/create
+            Method: post
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  PostTicketTailorWebhook:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/postTicketTailorWebhook.js
+      Handler: postTicketTailorWebhook.handler
+      Runtime: nodejs14.x
+      Timeout: 120
+      Layers:
+         - !Ref AxiosLambdaLayer
+      Policies:
+         - SSMParameterReadPolicy:
+            ParameterName: !Ref TicketTailorSecretParameter
+         - SSMParameterReadPolicy:
+            ParameterName: !Ref TicketTailorWebhookSecretParameter
+         - DynamoDBReadPolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBWritePolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBWritePolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /tickettailor/webhook
+            Method: post
+            RestApiId:
+              Ref: ReadableApiGateway
+  PutGroup:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/putGroup.js
+      Handler: putGroup.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBWritePolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /group
+            Method: put
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  GetSynchroniseGroup:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getSynchroniseGroup.js
+      Handler: getSynchroniseGroup.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Layers:
+         - !Ref AxiosLambdaLayer
+      Policies:
+         - SSMParameterReadPolicy:
+            ParameterName: !Ref TicketTailorSecretParameter
+         - DynamoDBWritePolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBWritePolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref ParticipantsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /group/synchronise
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  GetSemester:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getSemester.js
+      Handler: getSemester.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref SemestersTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /semester
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  GetSemestersList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getSemestersList.js
+      Handler: getSemestersList.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref SemestersTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /semester/list
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  GetTicketTailorEventsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/getTicketTailorEventsList.js
+      Handler: getTicketTailorEventsList.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Layers:
+         - !Ref AxiosLambdaLayer
+      Policies:
+         - SSMParameterReadPolicy:
+            ParameterName: !Ref TicketTailorSecretParameter
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /tickettailor/events
+            Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  PostSemester:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/postSemester.js
+      Handler: postSemester.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBWritePolicy:
+            TableName: !Ref SemestersTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref SemestersTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref SemestersTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /semester/create
+            Method: post
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  PostFacilitator:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/postFacilitator.js
+      Handler: postFacilitator.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBWritePolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /facilitator
+            Method: post
+            RestApiId:
+              Ref: ReadableApiGateway

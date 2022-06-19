@@ -1,0 +1,87 @@
+body {
+    margin: 20px;
+}
+
+/*Setting font sizes*/
+body, div {
+  font-size: 0.8vw;
+}
+
+/* Group Page */
+#facilitatorSelect {
+  margin-top: -0.5vw;
+}
+
+/* Manage Session Plans */
+#documentsList {
+    background: white !important;
+    padding: 0.25vw !important;
+    border-radius: 0.25rem !important;
+    width: 100%;
+}
+
+.goldenArea  {
+  background: white;
+  text-align: center;
+}
+
+.card-body {
+  padding: 0.1vw;
+  margin-top: -0.8vw;
+}
+
+.card-img-top {
+  height: 150px;
+}
+
+#weeksTemplate {
+  width: 100%;
+}
+
+.mySessionPlans {
+  width:100%; 
+  text-align: center; 
+  font-size: 1vw; 
+  margin: 0 auto;
+}
+
+.sessionPlanWeekBox {
+  border: solid 1px; 
+  height: 200px;
+  border-radius: 5px;
+  border-color: lightblue; 
+  background-color: white;
+  text-align: center;
+}
+
+.sessionCardtobedeleted {
+  height: 200px; width:150px; background-color: white; border-radius: 5px; border: solid 1px; border-color: lightblue;
+}
+
+
+/* spinner */
+.lds-dual-ring {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+  }
+  .lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border-radius: 50%;
+    border: 6px solid #fff;
+    border-color: #0d6efd transparent #0d6efd transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+  }
+  @keyframes lds-dual-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
