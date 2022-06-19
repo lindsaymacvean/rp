@@ -1,4 +1,4 @@
-.history
-node_modules
-token.json
-credentials.json
+**/.history
+**/node_modules
+**/token.json
+**/credentials.json
