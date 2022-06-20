@@ -4,19 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy-backend": "cd lambda-app && ./deploy.sh"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lindsaymacvean/rp.git"
   },
-  "author": "",
+  "author": "Andrii Romakh",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/lindsaymacvean/rp/issues"
   },
-  "homepage": "https://github.com/lindsaymacvean/rp#readme",
-  "dependencies": {
-    "googleapis": "^39.2.0"
-  }
+  "homepage": "https://rp.dyslexia.ie"
 }

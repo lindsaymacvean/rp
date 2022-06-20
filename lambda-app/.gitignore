@@ -1,1 +1,3 @@
 package.yml
+layers/**/node_modules
+credentials.json
