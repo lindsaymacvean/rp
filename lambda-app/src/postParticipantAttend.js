@@ -9,17 +9,31 @@ exports.handler = async(event, context) => {
         //TODO check if current user is Lead Facilitator
         var data = JSON.parse(event.body);
 
+        console.log(data);
+
+        // Get the particpant from the participant table
         var participant = (await getParticipant(data.participantId)).Item;
+
         participant.attend = participant.attend ?? {};
         participant.attend[data.groupId] = participant.attend[data.groupId] ?? {};
-        participant.attend[data.groupId][data.weekId] = true;
 
-        var params = {
+        // If particpant already marked as attending
+        if (participant.attend[data.groupId][data.weekId]) {
+            participant.attend[data.groupId][data.weekId]= !participant.attend[data.groupId][data.weekId];
+        }
+        else {
+            participant.attend[data.groupId][data.weekId] = true;
+        }
+            
+
+        var participant = {
             TableName: 'participant',
             Item: participant
         };
     
-        await dynamo.put(params).promise();
+        await dynamo.put(participant).promise();
+
+
 
         response = {
             'statusCode': 200,

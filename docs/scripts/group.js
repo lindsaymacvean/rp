@@ -135,7 +135,7 @@ window.addEventListener('load', function() {
   globalThis.checkAttendee = function(e, participantId, groupId, weekId) {
     e.preventDefault();
 
-    e.currentTarget.disabled  = true;
+    //e.currentTarget.disabled  = true;
 
     var data = {participantId, groupId, weekId} ;
 
