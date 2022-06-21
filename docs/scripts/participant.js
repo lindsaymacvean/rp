@@ -61,6 +61,9 @@ globalThis.logout = logout;
           .then((response) => {
                 var myModal = new bootstrap.Modal(document.getElementById("updatedConfirmation"), {});
                 myModal.show();
+          })
+          .catch(function(error) {
+                alert('Participant was not updated, possibly because of a network connection error.')
           });
     }
 })();
