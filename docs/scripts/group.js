@@ -132,6 +132,26 @@ window.addEventListener('load', function() {
     });
   }
 
+  globalThis.changeFacilitator = function(ev, el) {
+    console.log(ev.value);
+    var data = {};
+    data.id = groupId;
+    data.facilitatorId = ev.value;
+    // Update facilitator on the Backend
+    axios.put(`${api_url}/group/facilitator`, data, {
+      headers: {
+        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+      }
+    })
+    .then((response) => {
+          var myModal = new bootstrap.Modal(document.getElementById("updatedConfirmation"), {});
+          myModal.show();
+    })
+    .catch(function(error) {
+          alert('Facilitator was not updated, possibly because of a network connection error.')
+    });
+  }
+
   globalThis.checkAttendee = function(e, participantId, groupId, weekId) {
     e.preventDefault();
 
@@ -145,6 +165,9 @@ window.addEventListener('load', function() {
       }
     })
     .then((response) => {
+    })
+    .catch(error => {
+      alert('The Attendance was not updated, possibly because of a network connection issue. Try exiting and reopening this window and see if it helps.')
     });
   }
 

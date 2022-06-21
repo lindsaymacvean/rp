@@ -79,7 +79,7 @@
               </div>
                 {{#if LeadFacilitator}}
                 <div class="col">
-                  <select id="facilitatorSelect" type="text" class="form-select"  name="facilitatorId" list="facilitatorsDatalist" autocomplete="off">
+                  <select id="facilitatorSelect" type="text" class="form-select" onchange="changeFacilitator(this)" name="facilitatorId" list="facilitatorsDatalist" autocomplete="off">
                     {{#each facilitators}}
                     <option value="{{id}}">{{name}} | {{email}}</option>    
                     {{/each}}
@@ -252,6 +252,22 @@
     </div>
   </div>
   
+  <!-- Sync Confirmation Modal -->
+  <div class="modal fade" id="updatedConfirmation" role="dialog" aria-labelledby="updatedModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updatedModalLabel">Successfully Updated</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <!-- <div class="modal-body">
+        </div> -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <script type="module" src="scripts/group.js"></script>
 </body>
 

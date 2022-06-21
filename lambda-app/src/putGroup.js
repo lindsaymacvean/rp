@@ -8,6 +8,7 @@ exports.handler = async(event, context, callback) => {
 
     //TODO check if current user is Lead Facilitator.
     //TODO validate data
+    //TODO merge this with putGroupFacilitator using parameter overloading to determine what to update
 
     await updateGroup(data);
 

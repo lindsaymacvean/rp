@@ -471,6 +471,32 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
+  PutGroupFacilitator:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/putGroupFacilitator.js
+      Handler: putGroupFacilitator.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBWritePolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBWritePolicy:
+            TableName: !Ref LogTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /group/facilitator
+            Method: put
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
   GetSynchroniseGroup:
     Type: AWS::Serverless::Function
     Properties:
