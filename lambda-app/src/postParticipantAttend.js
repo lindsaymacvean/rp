@@ -1,6 +1,7 @@
 let response;
 const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient();
+const crypto = require("crypto");
 
 exports.handler = async(event, context) => {
 
@@ -9,31 +10,44 @@ exports.handler = async(event, context) => {
         //TODO check if current user is Lead Facilitator
         var data = JSON.parse(event.body);
 
-        console.log(data);
-
         // Get the particpant from the participant table
         var participant = (await getParticipant(data.participantId)).Item;
 
         participant.attend = participant.attend ?? {};
         participant.attend[data.groupId] = participant.attend[data.groupId] ?? {};
 
-        // If particpant already marked as attending
-        if (participant.attend[data.groupId][data.weekId]) {
-            participant.attend[data.groupId][data.weekId]= !participant.attend[data.groupId][data.weekId];
+        // If particpant already marked as attending then mark as not attending
+        var group = participant.attend[data.groupId]
+        var weekId = data.weekId;
+        if (group[weekId]) {
+            group[weekId] = false;
         }
         else {
-            participant.attend[data.groupId][data.weekId] = true;
+            group[weekId] = true;
         }
-            
 
-        var participant = {
+        var participantDetails = {
             TableName: 'participant',
             Item: participant
         };
     
-        await dynamo.put(participant).promise();
+        await dynamo.put(participantDetails).promise();
 
+        var userDetails = event.requestContext.authorizer.claims;
 
+        var userChange = {
+            TableName: 'changelogs',
+            Item: {
+                id: crypto.randomUUID(),
+                date: new Date().toISOString(),
+                event: {
+                    user: userDetails,
+                    description: `${userDetails.name} set participant ${participant.id} to ${group[weekId]}, in group ${data.groupId} ${weekId}.`
+                }
+            }
+        }
+
+        await dynamo.put(userChange).promise();
 
         response = {
             'statusCode': 200,

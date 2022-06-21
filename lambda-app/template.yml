@@ -47,6 +47,25 @@ Resources:
       KeySchema: 
         - AttributeName: id
           KeyType: HASH
+  LogTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: changelogs
+      BillingMode: PAY_PER_REQUEST
+      ProvisionedThroughput:
+        ReadCapacityUnits: 0
+        WriteCapacityUnits: 0
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: date
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
+        - AttributeName: date
+          KeyType: RANGE
   ParticipantsTable:
     Type: AWS::DynamoDB::Table
     DeletionPolicy: Retain
@@ -120,6 +139,8 @@ Resources:
           ReadableApiCognitoAuthorizer:
             UserPoolArn: 
               - arn:aws:cognito-idp:eu-west-1:573428131898:userpool/eu-west-1_QSQoQgvuD
+            Identity: 
+              Header: "Authorization"
   GoogleApisLambdaLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -302,34 +323,14 @@ Resources:
             TableName: !Ref ParticipantsTable
          - DynamoDBWritePolicy:
             TableName: !Ref ParticipantsTable
+         - DynamoDBWritePolicy:
+            TableName: !Ref LogTable
       Events:
         ApiEvent:
           Type: Api
           Properties:
             Path: /participant/attend
             Method: post
-            Auth:
-              Authorizer: ReadableApiCognitoAuthorizer
-            RestApiId:
-              Ref: ReadableApiGateway
-  PutParticipantAttend:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: src/putParticipantAttend.js
-      Handler: putParticipantAttend.handler
-      Runtime: nodejs14.x
-      Timeout: 60
-      Policies:
-         - DynamoDBReadPolicy:
-            TableName: !Ref ParticipantsTable
-         - DynamoDBWritePolicy:
-            TableName: !Ref ParticipantsTable
-      Events:
-        ApiEvent:
-          Type: Api
-          Properties:
-            Path: /participant/attend
-            Method: put
             Auth:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
