@@ -60,6 +60,85 @@ globalThis.logout = logout;
       }
       return resp;
     });
+  
+  if (document.querySelector("#stats")) {
+    template = Handlebars.compile(document.querySelector("#stats").innerHTML);
+    document.querySelector("#statsReplace").outerHTML = template({
+        IsLeadFacilitator
+    });
+  }
+
+  async function getStats() {
+    return axios.get(`${api_url}/stats?semesterid=${semesterId}`, {
+      headers: {
+          'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+      }
+    });
+  }
+  
+  async function processCounties(stats) {
+    var data = [['County', 'Number of Participants']];
+    for (const [key, value] of Object.entries(stats.data.counties)) {
+      data = data.concat([[key, value]]);
+    }
+    return data;
+  }
+
+  async function processAttendance(stats) {
+    var data = [['Week', 'Attendance']];
+    for (const [key, value] of Object.entries(stats.data.attendance)) {
+      var percentage = (value / stats.data.count)*100;
+      data = data.concat([[key, percentage]]);
+      data.sort();
+    }
+    return data;
+  }
+
+  google.charts.load('current', {'packages':['bar', 'table']});
+  google.charts.setOnLoadCallback(drawChart);
+
+  async function drawChart() {
+    var raw = await getStats();
+    // Display counties table
+    var counties =  await processCounties(raw);
+    var data = google.visualization.arrayToDataTable(counties);
+
+    var options = {
+      title: 'Participants by County',
+      showRowNumber: true, 
+      width: '100%', 
+      height: '100%',
+      sortColumn: 1,
+      sortAscending: false
+    };
+
+    var countiesChart = new google.visualization.Table(document.getElementById('countiesChart'));
+    countiesChart.draw(data, options);
+
+    // Display attendance chart
+    var attendance = await processAttendance(raw);
+    data = google.visualization.arrayToDataTable(attendance);
+
+    options = {
+      legend: { position: 'none' },
+      width: 600,
+      chart: {
+        title: 'Weekly Attendance'
+      }
+    };
+
+    var attendanceChart = new google.charts.Bar(document.getElementById('attendanceChart'));
+    attendanceChart.draw(data, options);
+
+    
+    var attendanceArray = Object.keys(raw.data.attendance)
+    .map(function(key) {
+        return raw.data.attendance[key];
+    });
+    const average = attendanceArray.reduce((a, b) => a + b, 0) / attendanceArray.length;
+    document.getElementById('averageattendance').innerHTML = Math.round(average) + "%"
+    document.getElementById('statsRing').outerHTML = "";
+  }
 })();
 
 function getTimeAsNumberOfMinutes(time) {

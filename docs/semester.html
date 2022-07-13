@@ -10,6 +10,8 @@
     <link href="/styles/main.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js" integrity="sha512-RNLkV3d+aLtfcpEyFG8jRbnWHxUqVZozacROI4J2F1sTaDqo1dPQYs01OMi1t1w9Y2FdbSCDSQ2ZVdAC8bzgAg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.bundle.min.js'></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <link rel="shortcut icon" href="./assets/favicon.ico">
 </head>
 
@@ -33,6 +35,35 @@
                 </div>
             </div>
         </nav>
+
+        <script id="stats" type="text/template">
+            {{#if IsLeadFacilitator}}
+            <div class="accordion mt-2" id="statsAccordian">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                        <h5>Semester Stats</h5>
+                    </button>
+                  </h2>
+                  <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#statsAccordian">
+                    <div class="accordion-body">
+                        <div class="row align-items-start">
+                            <div class="col">
+                                <div id="countiesChart"></div>
+                            </div>
+                            <div class="col">
+                                <div id="attendanceChart"></div>
+                                <div id="averageattendance" style="font-size:8vw;text-align:center;"></div>
+                            </div>
+                        </div>
+                        <div id="statsRing" class="lds-dual-ring"></div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            {{/if}}
+        </script>
+        <div id="statsReplace"></div>
 
         <div class="row">
             <div class="col-lg-3"></div>
