@@ -54,16 +54,19 @@ globalThis.logout = logout;
         var parentFolderId = event.currentTarget.getAttribute('parentFolderId');
         var name = `${semester.name}-${group.studentYear}/${group.themes}-${event.srcElement.getAttribute("name").slice(-1)}/6-${facilitator.email}`;
 
-        element.innerHTML = "";
-
-        element.appendChild(document.getElementById(fileId).cloneNode(true));
+        element.innerHTML = `<div class="lds-dual-ring"></div>`;
         
         copyFile(
             fileId, 
             parentFolderId, 
             name
             )
-            .then((result) => {console.log('result', result)});
+            .then((result) => {
+                element.innerHTML= "";
+                element.appendChild(document.getElementById(fileId).cloneNode(true));
+                console.log('result', result);
+                location.reload();
+            });
     }
 
     document.getElementById('search_input').addEventListener("keyup", function (event) {
@@ -143,8 +146,8 @@ globalThis.logout = logout;
     globalThis.openTemplate = function (e) {
         //e.preventDefault();
 
-        var nameProp = e.currentTarget.getAttribute('name');
-        var id = e.currentTarget.getAttribute('id');
+        var nameProp = e.currentTarget.getAttribute('filename');
+        var id = e.currentTarget.getAttribute('fileid');
         if (e.srcElement.innerHTML  === "Creating from Template ...")
             return;
 
