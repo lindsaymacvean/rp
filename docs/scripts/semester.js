@@ -81,6 +81,8 @@ globalThis.logout = logout;
     for (const [key, value] of Object.entries(stats.data.counties)) {
       data = data.concat([[key, value]]);
     }
+    data = data.concat([['Total', stats.data.count]]);
+    data.sort((a,b) => a[1]-b[1])
     return data;
   }
 
@@ -108,8 +110,9 @@ globalThis.logout = logout;
       showRowNumber: true, 
       width: '100%', 
       height: '100%',
-      sortColumn: 1,
-      sortAscending: false
+      sort: 'disable',
+      //sortColumn: 2,
+      //sortAscending: false
     };
 
     var countiesChart = new google.visualization.Table(document.getElementById('countiesChart'));
@@ -124,6 +127,16 @@ globalThis.logout = logout;
       width: 600,
       chart: {
         title: 'Weekly Attendance'
+      },
+      vAxis: {
+        minValue: 0,
+        maxValue: 100,
+        ticks: [0, 20, 40, 60, 80]
+      },
+      axes: {
+        x: {
+            0: { side: 'bottom', label: ""}
+        }
       }
     };
 
@@ -133,10 +146,10 @@ globalThis.logout = logout;
     
     var attendanceArray = Object.keys(raw.data.attendance)
     .map(function(key) {
-        return raw.data.attendance[key];
+        return Math.round((raw.data.attendance[key]/raw.data.count)*100);
     });
     const average = attendanceArray.reduce((a, b) => a + b, 0) / attendanceArray.length;
-    document.getElementById('averageattendance').innerHTML = Math.round(average) + "%"
+    document.getElementById('averageattendance').innerHTML = average + "%"
     document.getElementById('statsRing').outerHTML = "";
   }
 })();
