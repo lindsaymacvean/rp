@@ -95,12 +95,12 @@
             <div class="col">
               <div class="card">
                 <h4>{{name}}</h4>
-                <div id="{{id}}" class="ps-4 pe-4" name="{{name}}" style="margin-top:-0.5vw;" ondrop="drop_handler(event, this);" ondragover="dragover_handler(event);">
+                <div id="{{id}}" class="ps-4 pe-4" name="{{name}}" style="margin-top:-0.5vw;">
                   {{#if files}}
                   {{#each files}}
                   <div class="row row-cols-1 row-cols-md-1 g-2 mt-2 mb-2">
                     <div class="col">
-                      <div id="{{id}}" class="card" onclick="openSession('{{webViewLink}}')">
+                      <div id="{{id}}" class="card" docName="{{name}}" draggable="true" ondragstart="dragstart_handler(event)" onclick="openSession('{{webViewLink}}')">
                         <img class="card-img-top" draggable="false" src="{{thumbnailLink}}" />
                         <div class="card-body">
                           <a draggable="false" href="#">{{name}}</a>
@@ -125,8 +125,7 @@
                   {{else}}
                   <div class="row row-cols-1 row-cols-md-1 g-2 mt-2 mb-2">
                     <div class="col">
-                      <div class="card" ondrop="drop_handler(event, this);"
-                      ondragover="dragover_handler(event);">
+                      <div class="card">
                         <button id="{{id}}" name="{{name}}" style="user-select: none;" onclick="openTemplate(event)">
                           <div>
                             <div class="m-2">
@@ -142,7 +141,7 @@
                                 <use href="/assets/feather-sprite.svg#file-plus"/>
                               </svg>
                             </div>
-                            <span>
+                            <span name="{{name}}" parentFolderId="{{id}}"  ondrop="drop_handler(event, this);" ondragover="dragover_handler(event);">
                               Click to create new Session Plan from template, or drag an existing Session Plan from the Golden Library below.
                             </span>
                           </div>

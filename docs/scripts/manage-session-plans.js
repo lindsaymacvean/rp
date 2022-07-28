@@ -38,27 +38,32 @@ globalThis.logout = logout;
         window.open(fileUrl, '_blank').focus();
     }
 
-    globalThis.dragover_handler = (ev) => {
-        ev.preventDefault();
+    globalThis.dragover_handler = (event) => {
+        event.preventDefault();
     }
 
-    globalThis.dragstart_handler = (ev) => {
-        ev.dataTransfer.setData("text", ev.target.id);
+    globalThis.dragstart_handler = (event) => {
+        event.dataTransfer.setData("text", event.target.id);
     }
 
-    globalThis.drop_handler = (ev, el) => {
-        ev.currentTarget.style.background = "lightyellow";
+    globalThis.drop_handler = (event, element) => {
+        event.currentTarget.style.background = "lightyellow";
        
-        ev.preventDefault();
-        var sourceId = ev.dataTransfer.getData("text");
+        event.preventDefault();
+        var fileId = event.dataTransfer.getData("text");
+        var parentFolderId = event.currentTarget.getAttribute('parentFolderId');
+        var name = `${semester.name}-${group.studentYear}/${group.themes}-${event.srcElement.getAttribute("name").slice(-1)}/6-${facilitator.email}`;
 
-        //if (el.innerHTML.startsWith("<span"))
-        el.innerHTML = "";
+        element.innerHTML = "";
 
-        el.appendChild(document.getElementById(sourceId).cloneNode(true));
+        element.appendChild(document.getElementById(fileId).cloneNode(true));
         
-        copyFile(sourceId, ev.currentTarget.id, `${semester.name}-${group.studentYear}/${group.themes}-${ev.srcElement.getAttribute("name").slice(-1)}/6-${facilitator.email}`)
-            .then((result) => {})
+        copyFile(
+            fileId, 
+            parentFolderId, 
+            name
+            )
+            .then((result) => {console.log('result', result)});
     }
 
     document.getElementById('search_input').addEventListener("keyup", function (event) {
