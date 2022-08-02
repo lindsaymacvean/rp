@@ -17,14 +17,14 @@ exports.handler = async(event, context) => {
         var body = {
             counties: {},
             attendance: {},
-            count: 0
+            count: 0,
+            noshows: 0
         };
         for (let groupId of semester.groupsIds) {
             // Get participants for each group
             group = await getGroup(groupId)
             group.forEach(participant => {
                 // For each participant check their county and add it to a dictionary
-                body.count += 1;
                 if (participant.county) {
                     if (body.counties[participant.county]) {
                         body.counties[participant.county] += 1;
@@ -38,9 +38,16 @@ exports.handler = async(event, context) => {
             groupsParticipants = await getParticipants(groupId);
             // Loop through participants and get attendance
             groupsParticipants.forEach(participant => {
-                if (participant.attend) {
+                body.count += 1;
+                if (!participant.attend || Object.keys(participant.attend).length === 0) {
+                    body.noshows += 1;
+                    body.count -= 1;
+                } else {
                     for (const [group, attend] of Object.entries(participant.attend)) {
-                        if (group) {
+                        if (!attend || Object.keys(attend).length === 0) {
+                            body.noshows += 1;
+                            body.count -= 1;
+                        } else {
                             // For each student check their attendance record
                             for (const [week, value] of Object.entries(attend)) {
                                 // For each week in that group attendance
@@ -54,7 +61,7 @@ exports.handler = async(event, context) => {
                             }
                         }
                     }
-                }  
+                }
             });
         }
 

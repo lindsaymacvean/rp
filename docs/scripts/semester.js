@@ -149,7 +149,7 @@ globalThis.logout = logout;
             </tr>
           </tbody>
         </table>
-        <button class="btn btn-primary w-50 mt-3" onClick="alert(\'Counties have been copied and are ready to paste into a spreadsheet.\')">Copy Counties</button>
+        <button class="btn btn-primary w-50 mt-3 ms-5" onClick="alert(\'Counties have been copied and are ready to paste into a spreadsheet.\')">Copy Counties</button>
       `;
       insertAfter(a, countiesChart.container);
     });
@@ -179,6 +179,11 @@ globalThis.logout = logout;
     };
 
     var attendanceChart = new google.charts.Bar(document.getElementById('attendanceChart'));
+    google.visualization.events.addListener(attendanceChart, 'ready', () => {
+      var a = document.createElement('div');
+      a.innerHTML = `<div class="small ms-5">* Data excludes ${raw.data.noshows} participants who did not show up to a single session.</div>`;
+      insertAfter(a, attendanceChart.container);
+    });
     attendanceChart.draw(data, options);
 
     
