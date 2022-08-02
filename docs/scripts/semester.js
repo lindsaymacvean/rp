@@ -9,8 +9,6 @@ globalThis.logout = logout;
   IsLoggedIn();
 
   globalThis.copyTable = function(el) {
-    //alert('table being copied');
-    console.log(el);
     // create a Range object
     var range = document.createRange();  
     // set the Node to select the "range"
@@ -48,22 +46,35 @@ globalThis.logout = logout;
         }
     });
   }
+
+  function getFirstLetters(str) {
+    const firstLetters = str
+      .split(' ')
+      .map(word => word[0])
+      .join('');
+  
+    return firstLetters;
+  }
   
   getSemesterGroupList()
     .then(resp => {
+      for (let group of resp.data.groups) {
+        let initials = getFirstLetters(group.name);
+        group.initials = initials;
+      }
       if (document.querySelector("#groupTemplate")) {
         const map = {
           'Monday': 1,'Tuesday': 2,'Wednesday': 3,'Thursday': 4,'Friday': 5,'Saturday': 6,
           'Sunday': 7
         };
-        resp.data.sort((a, b) => {
+        resp.data.groups.sort((a, b) => {
           let result = map[a.dayOfWeek] - map[b.dayOfWeek];
           if (result === 0)
             result = getTimeAsNumberOfMinutes(a.time) - getTimeAsNumberOfMinutes(b.time);
           return  result;
         });
         var template = Handlebars.compile(document.querySelector("#groupTemplate").innerHTML);
-        document.querySelector("#groupsList").innerHTML = template({ groups: resp.data });
+        document.querySelector("#groupsList").innerHTML = template({ groups: resp.data.groups });
       }
       return resp;
     })

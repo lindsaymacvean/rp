@@ -393,6 +393,8 @@ Resources:
             TableName: !Ref SemestersTable
          - DynamoDBReadPolicy:
             TableName: !Ref GroupsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
       Events:
         ApiEvent:
           Type: Api
@@ -652,10 +654,6 @@ Resources:
       Timeout: 60
       Policies:
          - DynamoDBWritePolicy:
-            TableName: !Ref FacilitatorsTable
-         - DynamoDBReadPolicy:
-            TableName: !Ref FacilitatorsTable
-         - DynamoDBReadPolicy:
             TableName: !Ref FacilitatorsTable
          - DynamoDBReadPolicy:
             TableName: !Ref FacilitatorsTable

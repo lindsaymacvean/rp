@@ -9,18 +9,22 @@ exports.handler = async(event, context) => {
         //TODO check if current user is Lead Facilitator.
 
         var params = {
-            TableName: 'semester',
+            TableName: "semester",
             Key: {
-                'id': event.queryStringParameters.semesterId
+                "id": event.queryStringParameters.semesterId
             }
         };
 
-        var body = await dynamo.get(params).promise();
-
-        var semesterGroupsIds = body.Item.groupsIds;
+        var body = {
+            groups: {},
+            facilitators: []
+        }
+        
+        var semesters = await dynamo.get(params).promise();
+        var semesterGroupsIds = semesters.Item.groupsIds;
         var keys = semesterGroupsIds.map(r => ({ id: r }));
 
-        var params = {
+        var groupsParams = {
             "RequestItems": {
                 "group": {
                     "Keys": keys
@@ -28,14 +32,29 @@ exports.handler = async(event, context) => {
             }
         };
 
-        var groups = await dynamo.batchGet(params).promise();
+        var groupsFromDB = await dynamo.batchGet(groupsParams).promise();
+        var groupsWithFacilitatorNames = [];
 
-        // TODO: get the facilitator name and email from facilitator table
+        // Get the facilitator name and email from facilitator table
+        for (let group of groupsFromDB.Responses.group) {
+            var facilitatorParams = {
+                TableName: "facilitator",
+                Key: {
+                    "id": group.facilitatorId
+                }
+            };
+            // TODO: this is inefficient and causes a long delay when calling this endpoint
+            // Try altering the db so that the facilitator name is stored in the group itself??
+            var facilitator = await dynamo.get(facilitatorParams).promise();
+            group.name = facilitator.Item.name;
+            groupsWithFacilitatorNames = groupsWithFacilitatorNames.concat(group);
+        }
 
+        body.groups = groupsWithFacilitatorNames;
 
         response = {
             'statusCode': 200,
-            'body': JSON.stringify(groups.Responses.group),
+            'body': JSON.stringify(body),
             'headers': {
                 'Access-Control-Allow-Origin': '*',
             }
