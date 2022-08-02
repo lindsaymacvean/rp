@@ -7,6 +7,22 @@ globalThis.logout = logout;
 
 (function() {
   IsLoggedIn();
+
+  globalThis.copyTable = function(el) {
+    //alert('table being copied');
+    console.log(el);
+    // create a Range object
+    var range = document.createRange();  
+    // set the Node to select the "range"
+    range.selectNode(el);
+    // add the Range to the set of window selections
+    var sel = window.getSelection();
+    sel.addRange(range);
+    
+    // execute 'copy', can't 'cut' in this case
+    document.execCommand('copy');
+    sel.removeAllRanges();
+  }
   
   if (!IsLeadFacilitator())
         window.location.href = `${frontend_url}/facilitator_groups.html`;
@@ -81,7 +97,8 @@ globalThis.logout = logout;
     for (const [key, value] of Object.entries(stats.data.counties)) {
       data = data.concat([[key, value]]);
     }
-    data = data.concat([['Total', stats.data.count]]);
+    // This is not needed if we append a total table below
+    //data = data.concat([['Total', stats.data.count]]);
     data.sort((a,b) => a[1]-b[1])
     return data;
   }
@@ -96,7 +113,7 @@ globalThis.logout = logout;
     return data;
   }
 
-  google.charts.load('current', {'packages':['bar', 'table']});
+  google.charts.load('current', {'packages':['corechart', 'bar', 'table']});
   google.charts.setOnLoadCallback(drawChart);
 
   async function drawChart() {
@@ -116,7 +133,28 @@ globalThis.logout = logout;
     };
 
     var countiesChart = new google.visualization.Table(document.getElementById('countiesChart'));
+    function insertAfter(newNode, existingNode) {
+      existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+    }
+    google.visualization.events.addListener(countiesChart, 'ready', () => {
+      copyTable(countiesChart.VS);
+      var a = document.createElement('div');
+      a.innerHTML = `
+        <table cellspacing="0" class="google-visualization-table-table" style="width: 100%; height: 100%;">
+          <tbody>
+            <tr class="google-visualization-table-tr-even ">
+              <td class="google-visualization-table-td google-visualization-table-seq"></td>
+              <td colspan="1" class="google-visualization-table-td"><strong>Total</strong></td>
+              <td colspan="1" class="google-visualization-table-type-number google-visualization-table-td"><strong>${raw.data.count}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+        <button class="btn btn-primary w-50 mt-3" onClick="alert(\'Counties have been copied and are ready to paste into a spreadsheet.\')">Copy Counties</button>
+      `;
+      insertAfter(a, countiesChart.container);
+    });
     countiesChart.draw(data, options);
+
 
     // Display attendance chart
     var attendance = await processAttendance(raw);
@@ -152,6 +190,7 @@ globalThis.logout = logout;
     document.getElementById('averageattendance').innerHTML = average + "%"
     document.getElementById('statsRing').outerHTML = "";
   }
+
 })();
 
 function getTimeAsNumberOfMinutes(time) {
