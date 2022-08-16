@@ -74,12 +74,23 @@
                     </div>
                 </div>
 
+                <div class="row mt-1">
+                    <div class="col-10 ms-5">
+                      <div class="d-flex">
+                        <input type="search" class="form-control me-2 ms-0" id="search_input" onkeyup="filterGroups()" placeholder="Search" aria-label="Search">
+                        <button type="button" class="btn btn-primary" oninput="filterGroups()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                      </div>
+                    </div>
+                </div>
+
                 <template type="text/x-handlebars-template" id="groupTemplate">
                     {{#each groups}}
-                    <div class="row text-center mt-2">
+                    <div class="row text-center mt-2 searchItems" id="{{eventId}}">
                         <div class="col-12">
                             <a href="group.html?groupId={{id}}" class="w-100">
-                                <button class="btn btn-primary w-100">{{dayOfWeek}} @ {{time}} - {{themes}} - {{initials}}</button>
+                                <button class="btn btn-primary w-100">{{dayOfWeek}} @ {{time}} - {{themes}} - {{initials}} - {{participants.length}}</button>
                             </a>
                         </div>
                     </div>

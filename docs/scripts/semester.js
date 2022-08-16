@@ -7,6 +7,7 @@ globalThis.logout = logout;
 
 (function() {
   IsLoggedIn();
+  var flatGroupData;
 
   globalThis.copyTable = function(el) {
     // create a Range object
@@ -58,10 +59,14 @@ globalThis.logout = logout;
   
   getSemesterGroupList()
     .then(resp => {
+      flatGroupData = flattenGroups(resp.data.groups);
+      console.log(flatGroupData);
+
       for (let group of resp.data.groups) {
         let initials = getFirstLetters(group.name);
         group.initials = initials;
       }
+      //console.log(resp);
       if (document.querySelector("#groupTemplate")) {
         const map = {
           'Monday': 1,'Tuesday': 2,'Wednesday': 3,'Thursday': 4,'Friday': 5,'Saturday': 6,
@@ -205,6 +210,46 @@ globalThis.logout = logout;
     const average = attendanceArray.reduce((a, b) => a + b, 0) / attendanceArray.length;
     document.getElementById('averageattendance').innerHTML = average + "%"
     document.getElementById('statsRing').outerHTML = "";
+  }
+
+  function flattenGroups(groups) {
+    for (var group in groups) {
+      groups[group].flatParticipants = "";
+      for (var participant in groups[group].participants) {
+        for (var field in groups[group].participants[participant]) {
+          groups[group].flatParticipants = groups[group].flatParticipants + groups[group].participants[participant][field];
+        }
+      }
+    }
+    console.log(groups);
+    return groups;
+  }
+
+  globalThis.filterGroups = function() {
+    var input = document.getElementById('search_input');
+    var toSearch = input.value.toUpperCase();
+    var results = [];
+
+    // Search through each the groups and then each of the individual groups properties
+    for(var group in flatGroupData) {
+      for (var field in flatGroupData[group]) {
+        var txtValue = flatGroupData[group][field].toString().toUpperCase();
+        if(txtValue.indexOf(toSearch)!=-1) {
+          results.push(flatGroupData[group].eventId);
+        }
+      }
+    }
+
+    // Loop through all list items, and hide those who don't match the search query
+    var searchGroups = document.getElementById("groupsList");
+    var items = searchGroups.getElementsByClassName('searchItems');
+    for (var i = 0; i < items.length; i++) {
+      if (results.includes(items[i].id)) {
+        items[i].style.display = "";
+      } else {
+        items[i].style.display = "none";
+      }
+    }
   }
 
 })();
