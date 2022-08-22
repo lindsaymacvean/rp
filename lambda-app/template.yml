@@ -235,6 +235,10 @@ Resources:
       Policies:
          - DynamoDBReadPolicy:
             TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref SemestersTable
       Events:
         ApiEvent:
           Type: Api
