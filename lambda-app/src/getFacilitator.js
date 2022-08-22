@@ -35,8 +35,6 @@ exports.handler = async(event, context) => {
 
         // Get semester name for each group
         for (const [key, value] of Object.entries(body.Item.groups)) {
-            // console.log("key, value", key, value);
-            // console.log(body.Item.groups[key]);
             try {
                 var semesterId = body.Item.groups[key].semesterId;
                 var semesterParams = {
@@ -46,8 +44,6 @@ exports.handler = async(event, context) => {
                     }
                 }
                 var semesterDetails = await dynamo.get(semesterParams).promise();
-                console.log(body.Item.groups[key]);
-                console.log(semesterDetails);
                 body.Item.groups[key].semesterName = semesterDetails.Item.name;
             } catch (e) {
                 console.log(e);
