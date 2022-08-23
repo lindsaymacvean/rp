@@ -13,11 +13,12 @@ globalThis.logout = logout;
             }
         })
         .then(resp => {
+            console.log(resp);
             const map = {
                 'Monday': 1,'Tuesday': 2,'Wednesday': 3,'Thursday': 4,'Friday': 5,'Saturday': 6,
                 'Sunday': 7
             };
-            resp.data.Responses.group.sort((a, b) => {
+            resp.data.sort((a, b) => {
                 let result = map[a.dayOfWeek] - map[b.dayOfWeek];
                 if (result === 0)
                   result = getTimeAsNumberOfMinutes(a.time) - getTimeAsNumberOfMinutes(b.time);
@@ -25,7 +26,7 @@ globalThis.logout = logout;
             });
             if (document.querySelector("#groupTemplate")) {
                 var template = Handlebars.compile(document.querySelector("#groupTemplate").innerHTML);
-                document.querySelector("#groupsList").innerHTML = template({ groups: resp.data.Responses.group });
+                document.querySelector("#groupsList").innerHTML = template({ groups: resp.data });
             }
             return resp;
         });

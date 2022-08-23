@@ -43,7 +43,6 @@
                 </div>
 
                 <template type="text/x-handlebars-template" id="groupTemplate">
-                    {{#if groups}}
                     {{#each groups}}
                     <div class="row text-center mt-2">
                         <div class="col-12">
@@ -52,14 +51,13 @@
                             </a>
                         </div>
                     </div>
-                    {{/each}}
                     {{else}}
                     <div class="col-12">
-                        <a href="group.html?groupId={{id}}" class="w-100">
-                            Welcome. You do not have any Groups set up yet.
-                        </a>
+                        <p>Welcome. You have not had any Groups assigned to you.</p>
+                        Please contact the lead facilitator <a href="readableproject@dyslexia.ie">readableproject@dyslexia.ie</a> 
+                        if you think there should be some Groups here by now.
                     </div>
-                    {{/if}}
+                    {{/each}}
                 </template>
                 <div id="groupsList" style="text-align:center;"><div class="lds-dual-ring"></div></div>
 
