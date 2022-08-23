@@ -509,12 +509,14 @@ Resources:
       Runtime: nodejs14.x
       Timeout: 60
       Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
          - DynamoDBWritePolicy:
             TableName: !Ref GroupsTable
          - DynamoDBReadPolicy:
             TableName: !Ref FacilitatorsTable
-         - DynamoDBReadPolicy:
-            TableName: !Ref GroupsTable
+         - DynamoDBWritePolicy:
+            TableName: !Ref FacilitatorsTable
          - DynamoDBWritePolicy:
             TableName: !Ref LogTable
       Events:
