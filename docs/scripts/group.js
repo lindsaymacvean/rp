@@ -133,7 +133,6 @@ window.addEventListener('load', function() {
   }
 
   globalThis.changeFacilitator = function(ev, el) {
-    console.log(ev.value);
     var data = {};
     data.id = groupId;
     data.facilitatorId = ev.value;

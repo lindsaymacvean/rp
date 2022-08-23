@@ -60,13 +60,11 @@ globalThis.logout = logout;
   getSemesterGroupList()
     .then(resp => {
       flatGroupData = flattenGroups(resp.data.groups);
-      console.log(flatGroupData);
 
       for (let group of resp.data.groups) {
         let initials = getFirstLetters(group.name);
         group.initials = initials;
       }
-      //console.log(resp);
       if (document.querySelector("#groupTemplate")) {
         const map = {
           'Monday': 1,'Tuesday': 2,'Wednesday': 3,'Thursday': 4,'Friday': 5,'Saturday': 6,
@@ -221,7 +219,6 @@ globalThis.logout = logout;
         }
       }
     }
-    console.log(groups);
     return groups;
   }
 

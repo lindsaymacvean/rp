@@ -16,7 +16,6 @@ globalThis.logout = logout;
             }
         })
         .then(resp => {
-            console.log(resp);
             var template = Handlebars.compile(document.querySelector("#facilitatorDataTempalte").innerHTML);
             document.querySelector("#facilitatorData").innerHTML = template(resp.data.Item);
         })
