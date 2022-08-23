@@ -87,6 +87,10 @@
                                                 <a href="group.html?groupId={{id}}" class="w-100 ms-5 p-2"><button class="btn btn-primary w-100 p-2">{{semesterName}} {{dayOfWeek}} @ {{time}} - {{themes}} - {{participants.length}}</button></a>
                                             </div>
                                         </div>
+                                    {{else}}
+                                        <div class="row text-center mt-2">
+                                            <div class="col">No Groups</div>
+                                        </div>
                                     {{/each}}
                                 </div>
                             </div>
