@@ -6,6 +6,8 @@ exports.handler = async(event, context, callback) => {
 
     var data = JSON.parse(event.body);
 
+    // This endpoint does not seem to be called by the front end...
+
     // Check if it is a readable project entry (if not send email warning)
     // First Check if a user already exists for this Email and PPS number
     // Either insert or update the user
