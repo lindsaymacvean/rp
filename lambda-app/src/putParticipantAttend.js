@@ -1,3 +1,5 @@
+// This file is not currently being used by an endpoint
+
 let response;
 const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient();

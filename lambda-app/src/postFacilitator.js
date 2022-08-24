@@ -6,7 +6,8 @@ exports.handler = async(event, context, callback) => {
 
     var data = JSON.parse(event.body);
 
-    // This endpoint does not seem to be called by the front end...
+    // This endpoint does not seem to be called by the front end, because user is created at first signin
+    // See postconfirmation.js
 
     // Check if it is a readable project entry (if not send email warning)
     // First Check if a user already exists for this Email and PPS number
