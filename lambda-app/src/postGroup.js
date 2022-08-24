@@ -8,9 +8,7 @@ exports.handler = async(event, context, callback) => {
 
     var data = JSON.parse(event.body);
 
-    //TODO: check if current user is Lead Facilitator.  
-    // Probably need to check the signature on this claim 
-    // to make sure it has not been altered by the frontend
+    //TODO: check if current user is Lead Facilitator.
     if (event.requestContext.authorizer.claims['cognito:groups'].includes('LeadFacilitators')) {
         console.log('user is a lead facilitator');
     } else {
