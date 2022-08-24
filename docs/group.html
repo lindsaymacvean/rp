@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="./styles/main.css">
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
   <!-- Option 1: Bootstrap Bundle with Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js" integrity="sha512-RNLkV3d+aLtfcpEyFG8jRbnWHxUqVZozacROI4J2F1sTaDqo1dPQYs01OMi1t1w9Y2FdbSCDSQ2ZVdAC8bzgAg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -124,56 +126,214 @@
         <div class="row" style="height: 2vh"></div>
         <a id="adapt_session_button" href="manage-session-plans.html?groupId={{groupId}}"><button  class="btn btn-primary  w-50">Adapt, Create, Store a Session Plan</button></a>
         <div class="row" style="height: 2vh"></div>
-        <a id="copyTable" onclick="copyColumn(event, 10, 'studentTable');" href="#"><button  class="btn btn-primary  w-50">Copy Emails in order to paste into Gmail</button></a>
+        <a id="copyTable" onclick="copyColumn(event, 4, 'studentTable');" href="#"><button  class="btn btn-primary  w-50">Copy Emails in order to paste into Gmail</button></a>
       </div>
       <div class="col-2 text-center"></div>
-    </div>
-    
-    <div class="row text-center  mt-2 ">
-      <div class="col-2"></div>
-      <div class="col-8">
-        <p class="fs-5 w-100 ms-5">Group Student List</p>
-      </div>
-      <div class="col-2"></div>
     </div>
     
     <!-- use script instead of template https://stackoverflow.com/questions/15386276/why-should-we-wrap-our-templates-inside-script-blocks -->
     <script id="studentsListTemplate" type="text/template">
       {{#if participants}}
+      <div class="row text-center  mt-2 ">
+        <div class="col-2"></div>
+        <div class="col-8">
+          <p class="fs-5 w-100 ms-5">Attendance Register</p>
+        </div>
+        <div class="col-2"></div>
+      </div>
       <div class="row text-center mt-1">
         <div class="col-12">
           
-          <table class="table" id="studentTable">
+          <table class="table" id="registerTable">
             <thead>
               <tr>
-                <th scope="col" colspan="6">Attendance</th>
-                <th scope="col" rowspan="2"></th>
-                <th scope="col" rowspan="2">Participant Name</th>
-                <th scope="col" rowspan="2">Parent Name</th>
-                <th scope="col" rowspan="2">Parent Email</th>
-                <th scope="col" rowspan="2">Parent Phone</th>
-                <th scope="col" rowspan="2">Class</th>
-                <th scope="col" rowspan="2">County</th>
+                <th scope="col"></th>
+                <th scope="col">Week 1</th>
+                <th scope="col">Week 2</th>
+                <th scope="col">Week 3</th>
+                <th scope="col">Week 4</th>
+                <th scope="col">Week 5</th>
+                <th scope="col">Week 6</th>
               </tr>
-              <tr>
-                <th scope="col">1</th>
-                <th scope="col">2</th>
-                <th scope="col">3</th>
-                <th scope="col">4</th>
-                <th scope="col">5</th>
-                <th scope="col">6</th>
-              </tr>
-
             </thead>
             <tbody>
               {{#each participants}}
               <tr>
-                <td><input type="checkbox" {{#if attend.week1}}checked{{/if}} onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week1')" id="week1_{{id}}" name="week1_{{child_name}}"></td>
-                <td><input type="checkbox" {{#if attend.week2}}checked{{/if}} onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week2')" id="week2_{{id}}" name="week2_{{child_name}}"></td>
-                <td><input type="checkbox" {{#if attend.week3}}checked{{/if}} onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week3')" id="week3_{{id}}" name="week3_{{child_name}}"></td>
-                <td><input type="checkbox" {{#if attend.week4}}checked{{/if}} onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week4')" id="week4_{{id}}" name="week4_{{child_name}}"></td>
-                <td><input type="checkbox" {{#if attend.week5}}checked{{/if}} onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week5')" id="week5_{{id}}" name="week5_{{child_name}}"></td>
-                <td><input type="checkbox" {{#if attend.week6}}checked{{/if}} onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week6')" id="week6_{{id}}" name="week6_{{child_name}}"></td>
+                <td>{{child_name}}</td>
+                <td>
+                  <i class="fa-solid fa-circle-check box-shadow" 
+                      {{#if attend.week1.present}}style="color:green;"{{else}}style="color:grey;"{{/if}} 
+                      onclick="checkAttendee(event, '{{id}}', '{{groupId}}', 'week1')" 
+                      id="week1_{{id}}_tick" 
+                      name="week1_{{child_name}}_tick"></i>
+                  <i class="fa-solid fa-circle-xmark box-shadow" 
+                      {{#if attend.week1.absent}}style="color:red;"{{else}}style="color:grey;"{{/if}} 
+                      onclick="checkAttendee(event, '{{id}}', '{{groupId}}', 'week1')" 
+                      id="week1_{{id}}_cross" 
+                      name="week1_{{child_name}}_cross"></i>
+                  <select id="week1_{{id}}_reason" 
+                          onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week1')"
+                          name="week1_{{child_name}}_reason"
+                          style="{{#unless attend.week1.absent}}display:none;{{/unless}}">
+                    <option>Reason Not Given</option>
+                    <option>Illness</option>
+                    <option>Holidays</option>
+                    <option>Exams</option>
+                    <option>School trip</option>
+                    <option>Home Work</option>
+                    <option>Other</option>
+                  </select>
+                </td>
+                <td>
+                  <i class="fa-solid fa-circle-check box-shadow" 
+                      {{#if attend.week2.present}}style="color:green"{{else}}style="color:grey;"{{/if}} 
+                      onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week2')" 
+                      id="week2_{{id}}_tick" 
+                      name="week2_{{child_name}}_tick"></i>
+                  <i class="fa-solid fa-circle-xmark box-shadow" 
+                      {{#if attend.week1.absent}}style="color:red;"{{else}}style="color:grey;"{{/if}} 
+                      onclick="checkAttendee(event, '{{id}}', '{{groupId}}', 'week2')" 
+                      id="week2_{{id}}_cross" 
+                      name="week2_{{child_name}}_cross"></i>
+                  <select id="week2_{{id}}_reason" 
+                          onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week2')"
+                          name="week2_{{child_name}}_reason"
+                          style="{{#unless attend.week2.absent}}display:none;{{/unless}}">
+                    <option>Reason Not Given</option>
+                    <option>Illness</option>
+                    <option>Holidays</option>
+                    <option>Exams</option>
+                    <option>School trip</option>
+                    <option>Home Work</option>
+                    <option>Other</option>
+                  </select>
+                </td>
+                <td>
+                  <i class="fa-solid fa-circle-check box-shadow" 
+                      {{#if attend.week3.present}}style="color:green"{{else}}style="color:grey;"{{/if}} 
+                      onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week3')" 
+                      id="week3_{{id}}_tick" 
+                      name="week3_{{child_name}}_tick"></i>
+                  <i class="fa-solid fa-circle-xmark box-shadow" 
+                      {{#if attend.week1.absent}}style="color:red;"{{else}}style="color:grey;"{{/if}} 
+                      onclick="checkAttendee(event, '{{id}}', '{{groupId}}', 'week3')" 
+                      id="week3_{{id}}_cross" 
+                      name="week3_{{child_name}}_cross"></i>
+                  <select id="week3_{{id}}_reason" 
+                      onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week3')"
+                      name="week3_{{child_name}}_reason"
+                      style="{{#unless attend.week3.absent}}display:none;{{/unless}}">
+                    <option>Reason Not Given</option>
+                    <option>Illness</option>
+                    <option>Holidays</option>
+                    <option>Exams</option>
+                    <option>School trip</option>
+                    <option>Home Work</option>
+                    <option>Other</option>
+                  </select>
+                </td>
+                <td>
+                  <i class="fa-solid fa-circle-check box-shadow" 
+                      {{#if attend.week4.present}}style="color:green"{{else}}style="color:grey;"{{/if}} 
+                      onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week4')" 
+                      id="week4_{{id}}_tick" 
+                      name="week4_{{child_name}}_tick"></i>
+                  <i class="fa-solid fa-circle-xmark box-shadow" 
+                      {{#if attend.week1.absent}}style="color:red;"{{else}}style="color:grey;"{{/if}} 
+                      onclick="checkAttendee(event, '{{id}}', '{{groupId}}', 'week4')" 
+                      id="week4_{{id}}_cross" 
+                      name="week4_{{child_name}}_cross"></i>
+                  <select id="week4_{{id}}_reason" 
+                      onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week4')"
+                      name="week4_{{child_name}}_reason"
+                      style="{{#unless attend.week4.absent}}display:none;{{/unless}}">
+                    <option>Reason Not Given</option>
+                    <option>Illness</option>
+                    <option>Holidays</option>
+                    <option>Exams</option>
+                    <option>School trip</option>
+                    <option>Home Work</option>
+                    <option>Other</option>
+                  </select>
+                </td>
+                <td>
+                  <i class="fa-solid fa-circle-check box-shadow" 
+                      {{#if attend.week5.present}}style="color:green"{{else}}style="color:grey;"{{/if}} 
+                      onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week5')" 
+                      id="week5_{{id}}_tick" 
+                      name="week5_{{child_name}}_tick"></i>
+                  <i class="fa-solid fa-circle-xmark box-shadow" 
+                      {{#if attend.week1.absent}}style="color:red;"{{else}}style="color:grey;"{{/if}} 
+                      onclick="checkAttendee(event, '{{id}}', '{{groupId}}', 'week5')" 
+                      id="week5_{{id}}_cross" 
+                      name="week5_{{child_name}}_cross"></i>
+                  <select id="week5_{{id}}_reason" 
+                      onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week5')"
+                      name="week5_{{child_name}}_reason"
+                      style="{{#unless attend.week5.absent}}display:none;{{/unless}}">
+                    <option>Reason Not Given</option>
+                    <option>Illness</option>
+                    <option>Holidays</option>
+                    <option>Exams</option>
+                    <option>School trip</option>
+                    <option>Home Work</option>
+                    <option>Other</option>
+                  </select>
+                </td>
+                <td>
+                  <i class="fa-solid fa-circle-check box-shadow" 
+                      {{#if attend.week6.present}}style="color:green"{{else}}style="color:grey;"{{/if}} 
+                      onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week6')" 
+                      id="week6_{{id}}_tick" 
+                      name="week6_{{child_name}}_tick"></i>
+                  <i class="fa-solid fa-circle-xmark box-shadow" 
+                      {{#if attend.week1.absent}}style="color:red;"{{else}}style="color:grey;"{{/if}} 
+                      onclick="checkAttendee(event, '{{id}}', '{{groupId}}', 'week6')" 
+                      id="week6_{{id}}_cross" 
+                      name="week6_{{child_name}}_cross"></i>
+                  <select id="week6_{{id}}_reason" 
+                      onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week6')"
+                      name="week6_{{child_name}}_reason"
+                      style="{{#unless attend.week6.absent}}display:none;{{/unless}}">
+                    <option>Reason Not Given</option>
+                    <option>Illness</option>
+                    <option>Holidays</option>
+                    <option>Exams</option>
+                    <option>School trip</option>
+                    <option>Home Work</option>
+                    <option>Other</option>
+                  </select>
+                </td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row text-center  mt-5 ">
+        <div class="col-2"></div>
+        <div class="col-8">
+          <p class="fs-5 w-100 ms-5">Group Details</p>
+        </div>
+        <div class="col-2"></div>
+      </div>
+      <div class="row text-center mt-1">
+        <div class="col-12">
+          <table class="table" id="studentTable">
+            <thead>
+              <tr>
+                <th scope="col"></th>
+                <th scope="col">Participant Name</th>
+                <th scope="col">Parent Name</th>
+                <th scope="col">Parent Email</th>
+                <th scope="col">Parent Phone</th>
+                <th scope="col">Class</th>
+                <th scope="col">County</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each participants}}
+              <tr>
                 <td class="btn-group-sm align-items-right"><a href="/participant_profile.html?participantId={{id}}" class="btn btn-secondary" style="margin-top:-0.3vw;margin-right:-1.5vw;">Edit</a></td>
                 <td>{{child_name}}</td>
                 <td>{{parent_name}}</td>

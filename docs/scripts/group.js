@@ -151,12 +151,64 @@ window.addEventListener('load', function() {
     });
   }
 
+  function changeColor(e, participantId, weekId) {
+    var target = e.target || e.srcElement;
+    var reason = document.getElementById(`${weekId}_${participantId}_reason`);
+    if (target.id === `${weekId}_${participantId}_tick`) {
+      var cross = document.getElementById(`${weekId}_${participantId}_cross`);
+      if (target.style.color === "grey") {
+        target.style.color = 'green';
+        cross.style.color = 'grey';
+        reason.style.display = 'none';
+      } else {
+        target.style.color = 'grey';
+      }
+    } 
+    else if (target.id === `${weekId}_${participantId}_cross`) {
+      var tick = document.getElementById(`${weekId}_${participantId}_tick`);
+      if (target.style.color === "grey") {
+        target.style.color = 'red';
+        tick.style.color = 'grey';
+        reason.style.display = '';
+      } else {
+        target.style.color = 'grey';
+      }
+    }
+  }
+
   globalThis.checkAttendee = function(e, participantId, groupId, weekId) {
+    // Event is either triggered by tick, cross, or reason dropdown
     e.preventDefault();
+    e = e || window.event;
+    changeColor(e, participantId, weekId);
+    var target = e.target || e.srcElement;
+    var tick = `${weekId}_${participantId}_tick`;
+    var cross = `${weekId}_${participantId}_cross`;
+    var reason = `${weekId}_${participantId}_reason`;
+    console.log(document.getElementById(reason).value);
+    var present;
 
-    //e.currentTarget.disabled  = true;
+    // If event id is tick then present = true, if cross then present = false
+    if (target.id === tick) {
+      present = true;
+    } 
+    else if (target.id === cross) {
+      present = false;
+    }
+    else if (target.id === reason) {
+      present = false;
+    } else {
+      return;
+    }
 
-    var data = {participantId, groupId, weekId} ;
+    // If present = false then get reason else reason = "";
+    if (!present) {
+      reason = document.getElementById(reason).value;
+    } else {
+      reason = "";
+    }
+
+    var data = {participantId, groupId, weekId, present, reason};
 
     axios.post(`${api_url}/participant/attend`, data, {
       headers: {
@@ -164,6 +216,7 @@ window.addEventListener('load', function() {
       }
     })
     .then((response) => {
+      
     })
     .catch(error => {
       alert('The Attendance was not updated, possibly because of a network connection issue. Try exiting and reopening this window and see if it helps.')
