@@ -187,6 +187,26 @@ const getOrders = async(eventId) => {
         );
 }
 
+const findQuestion = (searchString, questions) => {
+    var reg = new RegExp(searchString, 'g');
+    var answer = {
+        answer: undefined
+    };
+    try {
+        answer = questions.find(o => {  
+            if (typeof o === 'object') {
+                for (p of Object.values(o)) {    
+                    if (reg.test(p)) return true; 
+                }
+            }  
+        });
+    } catch (e) {
+        console.log(e);
+    }
+    
+    return answer.answer;
+}
+
 const createOrUpdateParticipant = async (order, groupId) => {
     var participant = (await getParticipant(order.id))?.Item;
 
@@ -200,9 +220,12 @@ const createOrUpdateParticipant = async (order, groupId) => {
     participant.parent_name = order.buyer_details.name;
     participant.type = order.issued_tickets[0].description;
     participant.created_at = order.issued_tickets[0].created_at;
-    participant.county = order.buyer_details.custom_questions[0].answer;
-    participant.child_name = order.buyer_details.custom_questions[2].answer;
-    participant.class = order.buyer_details.custom_questions[3].answer;
+
+    var questions = order.buyer_details.custom_questions;
+    participant.county = findQuestion('county', questions);
+    participant.child_name = findQuestion('name', questions);
+    participant.class = findQuestion('class', questions);
+    
     participant.email = order.buyer_details.email;
     participant.phone = order.buyer_details.phone;
 

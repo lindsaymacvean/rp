@@ -127,6 +127,26 @@ const createParticipants = async(groupId, eventId) => {
             }
         );
 
+    var findQuestion = (searchString, questions) => {
+        var reg = new RegExp(searchString, 'g');
+        var answer = {
+            answer: undefined
+        };
+        try {
+            answer = questions.find(o => {  
+                if (typeof o === 'object') {
+                    for (p of Object.values(o)) {    
+                        if (reg.test(p)) return true; 
+                    }
+                }  
+            });
+        } catch (e) {
+            console.log(e);
+        }
+        
+        return answer.answer;
+    }
+
     var participants = [];
     for (var order of ticketsResponse.data.data){
         try {
@@ -137,6 +157,9 @@ const createParticipants = async(groupId, eventId) => {
                 parent_name: order.buyer_details.name,
                 type: order.issued_tickets[0].description,
                 created_at: order.issued_tickets[0].created_at,
+                county: findQuestion('county', order.buyer_details.custom_questions),
+                child_name: findQuestion('name', order.buyer_details.custom_questions),
+                class: findQuestion('class', order.buyer_details.custom_questions),
                 county: order.buyer_details.custom_questions[0].answer,
                 child_name: order.buyer_details.custom_questions[2].answer,
                 class: order.buyer_details.custom_questions[3].answer,
