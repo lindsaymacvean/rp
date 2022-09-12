@@ -37,7 +37,10 @@ exports.handler = async(event, context, callback) => {
 
         for (var order of orders){
             try {
-                if (order.issued_tickets[0].status === 'void') continue;
+                if (order.issued_tickets[0].status === 'void') {
+                    // TODO: remove participant if they have been voided
+                    continue;
+                }
 
                 var participant = await createOrUpdateParticipant(order, group.id);
                 participants.push(participant)
