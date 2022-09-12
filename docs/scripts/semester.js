@@ -59,10 +59,11 @@ globalThis.logout = logout;
   
   getSemesterGroupList()
     .then(resp => {
+      console.log(resp);
       flatGroupData = flattenGroups(resp.data.groups);
 
       for (let group of resp.data.groups) {
-        let initials = getFirstLetters(group.name);
+        let initials = getFirstLetters(group.facilitatorname);
         group.initials = initials;
       }
       if (document.querySelector("#groupTemplate")) {
@@ -78,6 +79,7 @@ globalThis.logout = logout;
         });
         var template = Handlebars.compile(document.querySelector("#groupTemplate").innerHTML);
         document.querySelector("#groupsList").innerHTML = template({ groups: resp.data.groups });
+        
       }
       return resp;
     })

@@ -51,7 +51,7 @@ exports.handler = async(event, context) => {
             // TODO: this is inefficient and causes a long delay when calling this endpoint
             // Try altering the db so that the facilitator name is stored in the group itself??
             var facilitator = await dynamo.get(facilitatorParams).promise();
-            group.name = facilitator.Item.name;
+            group.facilitatorname = facilitator.Item.name;
             groupsWithFacilitatorNames = groupsWithFacilitatorNames.concat(group);
         }
 
