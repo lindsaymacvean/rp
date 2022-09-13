@@ -35,11 +35,12 @@ globalThis.logout = logout;
 
             return resp;
         })
-        // Fill out student groups.
+        // Add Student Group to Breadcrumb
+        // Student only has one group
         .then(resp => {
-            if (document.querySelector("#groupsListTemplate")) {
-                var template = Handlebars.compile(document.querySelector("#groupsListTemplate").innerHTML);
-                document.querySelector("#groupsList").outerHTML = template({ groups: resp.data.groups });
+            if (document.querySelector("#breadCrumbGroupTemplate")) {
+                var template = Handlebars.compile(document.querySelector("#breadCrumbGroupTemplate").innerHTML);
+                document.querySelector("#breadCrumbGroup").outerHTML = template({ groups: resp.data.groups });
             }
 
             return resp;

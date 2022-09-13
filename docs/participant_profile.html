@@ -27,13 +27,19 @@
             <li class="nav-item">
               <script id="homeButtonBreadcrumb" type="text/template">
                 {{#if IsLeadFacilitator}}
-                <a class="nav-link" href="home.html">Home</a>
+                <a class="nav-link" href="home.html">Home ></a>
                 {{else}}
-                <a class="nav-link" href="facilitator_groups.html">Home</a>
+                <a class="nav-link" href="facilitator_groups.html">Home ></a>
                 {{/if}}
               </script>
-              <a id="HomeButtonBreadcrumbReplace" class="nav-link">Home</a>
+              <a id="HomeButtonBreadcrumbReplace" class="nav-link">Home ></a>
             </li>
+            <template type="text/x-handlebars-template" id="breadCrumbGroupTemplate">
+              {{#each groups}}
+                <a class="nav-link" href="/group.html?groupId={{id}}">{{name}}</a>
+              {{/each}}
+            </template>
+            <li id="breadCrumbGroup"></li>
           </ul>
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
@@ -128,30 +134,7 @@
     </div>
     
     <div class="row" style="height: 6vh"></div>
-    
-    <div class="row">
-      <div class="col-lg-3"></div>
-      <div class="col-lg-12">
-        <div class="row text-center mt-5">
-          <div class="col-12">
-            <p id="p_groups" class="fs-5 w-100">Group List</p>
-          </div>
-        </div>
-        <template id="groupsListTemplate">
-          {{#each groups}}
-          <div class="row text-center mt-2">
-            <div class="col-12">
-              <a href="group.html?groupId={{id}}"><button id="p_groups-btn" class="btn btn-primary w-100">{{name}}</button></a>
-            </div>
-          </div>
-          {{/each}}
-        </template>
-      </div>
-    </div>
-    
-    <div id="groupsList"></div>
 
-    <div class="row" style="height: 6vh"></div>
   </div>
 
   <!-- Sync Confirmation Modal -->
