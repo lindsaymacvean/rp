@@ -359,39 +359,35 @@
       {{/if}}
     </script>
     <div id="studentsList"></div>
+
+    <div class="row" style="height: 5vh"></div>
+  
+    <template id="optionsTemplate">
+      {{#if LeadFacilitator}}
+      <div class="row text-center  mt-2">
+        <div class="col-2"></div>
+        <div class="col-8">
+          <p class="fs-5 w-100 ms-5">Options</p>
+        </div>
+        <div class="col-2"></div>
+      </div>
+      
+      <div class="row text-center mt-2">
+        <div class="col-5">
+          
+        </div>
+        <div class="col-3">
+          <span href="#" class=""><button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#syncConfirmation">Synchronise with Ticket Tailor</button></span>
+        </div>
+        <div class="col-5"></div>
+      </div>
+      {{/if}}
+      <div class="row" style="height: 5vh"></div>
+    </template>
+    <div id="getOptions"></div>
   </div>
   
-  <div class="row" style="height: 5vh"></div>
   
-  <template id="optionsTemplate">
-    {{#if LeadFacilitator}}
-    <div class="row text-center  mt-2">
-      <div class="col-2"></div>
-      <div class="col-8">
-        <p class="fs-5 w-100 ms-5">Options</p>
-      </div>
-      <div class="col-2"></div>
-    </div>
-    
-    <div class="row text-center mt-2">
-      <div class="col-2">
-        
-      </div>
-      <div class="col-2">
-        <span href="#" class="w-100 ms-5"><button type="button" class="btn btn-secondary w-100" data-bs-toggle="modal" data-bs-target="#syncConfirmation">Synchronise with Ticket Tailor</button></span>
-      </div>
-      <div class="col-2">
-        <a href="#" class="w-100 ms-5"><button class="btn btn-secondary w-100">Archive Group</button></a>
-      </div>
-      <div class="col-2">
-        
-      </div>
-      <div class="col-4"></div>
-    </div>
-    {{/if}}
-    <div class="row" style="height: 5vh"></div>
-  </template>
-  <div id="getOptions"></div>
   <!-- Sync Confirmation Modal -->
   <div class="modal fade" id="syncConfirmation" role="dialog" aria-labelledby="syncModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
