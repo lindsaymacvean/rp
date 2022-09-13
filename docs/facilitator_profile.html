@@ -35,11 +35,11 @@
             </div>
         </nav>
 
-        <template type="text/x-handlebars-template" id="facilitatorDataTempalte">
+        <template type="text/x-handlebars-template" id="facilitatorDataTemplate">
             <div class="row">
                 <div class="col-12">
                     <p id="p_groups" class="fs-5 w-100">
-                        <h1>{{name}}'s Profile Page</h1>
+                        <h1>{{data.name}}'s Profile Page</h1>
                     </p>
                 </div>
             </div>
@@ -54,34 +54,58 @@
                                     <div class="col">
                                         <strong>Facilitators Name:</strong>
                                     </div>
-                                    <div class="col-8 text-start ps-4">{{name}}</div>
+                                    <div class="col-8 text-start ps-4">{{data.name}}</div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
                                         <strong>Facilitators Email:</strong>
                                     </div>
-                                    <div class="col-8 text-start ps-4">{{email}}</div>
+                                    <div class="col-8 text-start ps-4">{{data.email}}</div>
                                 </div>
-                                <form name="newGroup">
-                                    <div class="row text-start mt-2">
+                                {{#if IsLeadFacilitator}}
+                                <form id="facilitator_details" name="facilitator_details" 
+                                    class="needs-validation" onSubmit="updateFacilitator(event)">
+                                    <div class="row text-start ps-2">
                                         <label for="zoom_link" class="col col-form-label"><strong>Zoom Classroom Link:</strong></label>
                                         <div class="col-8">
-                                            <input type="text" class="form-control" id="zoom_link" value="{{zoom_link}}" name="zoom_link" required>
+                                            <input type="text" class="form-control" id="zoom_link" value="{{data.zoom_link}}" name="zoom_link" required>
                                         </div>
+                                        
                                     </div>
                                     <div class="mt-3">
                                         <a>
-                                            <button onclick="saveFacilitator(event)" id="save-facilitator-btn" class="btn btn-success  w-100">Save</button>
+                                            <button id="save-facilitator-btn" class="btn btn-success  w-100">Save</button>
                                         </a>
                                     </div>
                                 </form>
+                                {{else}}
+                                <div class="row">
+                                    <div class="col">
+                                        <strong>Facilitators Zoom Link:</strong>
+                                    </div>
+                                    <div class="col-8 text-start ps-4">
+                                        <a href="{{data.zoom_link}}" target="_blank">{{data.zoom_link}}</a>
+                                    </div>
+                                </div>
+                                {{/if}}
                             </div>
                         </div>
                         <div class="col-6">
-                            <h2>Groups</h2>
-                            <div class="row mt-4">
+                            <div class="row mt-4 mb-5">
                                 <div class="col">
-                                    {{#each groups}}
+                                    <div class="row text-center mt-2">
+                                        <div id="zoom_link_button" class="col-10">
+                                            <a href="{{data.zoom_link}}" class="w-100 ms-5 p-2" target="_blank">
+                                                <button class="btn btn-secondary  w-100 p-2">Open Zoom Room</button>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h2>Groups</h2>
+                            <div class="row mt-1">
+                                <div class="col">
+                                    {{#each data.groups}}
                                         <div class="row text-center mt-2">
                                             <div class="col-10">
                                                 <a href="group.html?groupId={{id}}" class="w-100 ms-5 p-2"><button class="btn btn-primary w-100 p-2">{{semesterName}} {{dayOfWeek}} @ {{time}} - {{themes}} - {{participants.length}}</button></a>
@@ -118,6 +142,22 @@
 
     </div>
 
+    <!-- Sync Confirmation Modal -->
+    <div class="modal fade" id="updatedConfirmation" role="dialog" aria-labelledby="updatedModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="updatedModalLabel">Successfully Updated</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- <div class="modal-body">
+            </div> -->
+            <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue</button>
+            </div>
+        </div>
+        </div>
+    </div>
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>

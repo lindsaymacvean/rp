@@ -667,5 +667,29 @@ Resources:
           Properties:
             Path: /facilitator
             Method: post
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  PutFacilitator:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/putFacilitator.js
+      Handler: putFacilitator.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBWritePolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /facilitator
+            Method: put
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
