@@ -13,13 +13,47 @@ exports.handler = async(event, context) => {
 
         var participants = [];
 
-        for (var order of orders){
+        for (var order of orders) {
             try {
-                if (order.issued_tickets[0].status !== 'valid') continue;
+                if (order.issued_tickets[0].status !== 'valid') {
+                    // remove student manually from participants in group table
+                    var participantIndexToDelete = group.participants.findIndex(r => r.id == order.id);
+                    if (participantIndexToDelete > -1) {
+                        group.participants.splice(participantIndexToDelete, 1);
+                        var UpdateExpression = 'REMOVE participants['+participantIndexToDelete+']';
+                        var removeParticipantParams = {
+                            TableName: 'group',
+                            Key: {
+                                'id': event.queryStringParameters.id
+                            },
+                            UpdateExpression
+                        }
+                        try {
+                            dynamo.update(removeParticipantParams).promise();
+                            console.log('removed from participants in group');
+                        } catch (e) {
+                            console.log(e);
+                        }
+                    }
 
+                    var removeParticipantParams2 = {
+                        TableName: 'participant',
+                        Key: {
+                            'id': order.id
+                        }
+                    }
+                    try {
+                        dynamo.delete(removeParticipantParams2).promise();
+                        console.log('removed from participants table');
+                    } catch (e) {
+                        console.log(e);
+                    }
+                    continue;
+                }
                 var participant = await createOrUpdateParticipant(order, group.id);
                 participants.push(participant)
             } catch(e) {
+                console.log(e);
             }
         }
 

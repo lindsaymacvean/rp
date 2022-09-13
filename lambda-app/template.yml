@@ -545,9 +545,7 @@ Resources:
             TableName: !Ref GroupsTable
          - DynamoDBReadPolicy:
             TableName: !Ref GroupsTable
-         - DynamoDBWritePolicy:
-            TableName: !Ref ParticipantsTable
-         - DynamoDBReadPolicy:
+         - DynamoDBCrudPolicy:
             TableName: !Ref ParticipantsTable
       Events:
         ApiEvent:
