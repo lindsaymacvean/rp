@@ -24,6 +24,17 @@ globalThis.logout = logout;
                   result = getTimeAsNumberOfMinutes(a.time) - getTimeAsNumberOfMinutes(b.time);
                 return  result;
             });
+            // Do not display groups older than a 3 months
+            resp.data = resp.data.filter((a) => {
+                var dateOfSession = new Date(a.dateOfFirstSession);
+                var todaysDate = new Date();
+                var difference = todaysDate - dateOfSession;
+                if (difference > 3 * 30 * 24 * 60 * 60 * 100) {
+                    return false;
+                } else {
+                    return true;
+                }
+            });
             if (document.querySelector("#groupTemplate")) {
                 var template = Handlebars.compile(document.querySelector("#groupTemplate").innerHTML);
                 document.querySelector("#groupsList").innerHTML = template({ groups: resp.data });
