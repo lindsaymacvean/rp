@@ -155,13 +155,15 @@ globalThis.logout = logout;
     google.visualization.events.addListener(countiesChart, 'ready', () => {
       copyTable(countiesChart.VS);
       var a = document.createElement('div');
+      console.log(raw.data)
+      var total = Object.values(raw.data.counties).reduce((a,b) => a+b);
       a.innerHTML = `
         <table cellspacing="0" class="google-visualization-table-table" style="width: 100%; height: 100%;">
           <tbody>
             <tr class="google-visualization-table-tr-even ">
               <td class="google-visualization-table-td google-visualization-table-seq"></td>
               <td colspan="1" class="google-visualization-table-td"><strong>Total</strong></td>
-              <td colspan="1" class="google-visualization-table-type-number google-visualization-table-td"><strong>${raw.data.count}</strong></td>
+              <td colspan="1" class="google-visualization-table-type-number google-visualization-table-td"><strong>${total}</strong></td>
             </tr>
           </tbody>
         </table>
