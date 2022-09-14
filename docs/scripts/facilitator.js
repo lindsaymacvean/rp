@@ -18,7 +18,7 @@ globalThis.logout = logout;
         })
         .then(resp => {
             // Do not display groups older than a 3 months
-            resp.data = resp.data.filter((a) => {
+            resp.data.Item.groups = Object.values(resp.data.Item.groups).filter((a) => {
                 var dateOfSession = new Date(a.dateOfFirstSession);
                 var todaysDate = new Date();
                 var difference = todaysDate - dateOfSession;
