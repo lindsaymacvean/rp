@@ -17,6 +17,17 @@ globalThis.logout = logout;
             }
         })
         .then(resp => {
+            // Do not display groups older than a 3 months
+            resp.data = resp.data.filter((a) => {
+                var dateOfSession = new Date(a.dateOfFirstSession);
+                var todaysDate = new Date();
+                var difference = todaysDate - dateOfSession;
+                if (difference > 3 * 30 * 24 * 60 * 60 * 100) {
+                    return false;
+                } else {
+                    return true;
+                }
+            });
             var template = Handlebars.compile(document.querySelector("#facilitatorDataTemplate").innerHTML);
             document.querySelector("#facilitatorData").innerHTML = template({IsLeadFacilitator, data: resp.data.Item});
             return resp;
