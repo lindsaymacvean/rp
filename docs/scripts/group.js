@@ -3,6 +3,13 @@ import { IsLeadFacilitator, registerHandlebarHelpers } from "./utils/utils.js";
 import { logout }  from "./utils/logout.js";
 import { fillBreadcrumbs } from "./utils/breadcrumbs.js";
 import { IsLoggedIn } from "./utils/isLoggedIn.js";
+import { google_client_id } from "./utils/configs.js"
+import { CurrentUserEmail } from "./utils/utils.js"
+
+Date.prototype.addHours = function(h) {
+  this.setTime(this.getTime() + (h*60*60*1000));
+  return this;
+}
 
 globalThis.logout = logout;
 
@@ -15,6 +22,8 @@ window.addEventListener('load', function() {
   const groupId = urlParams.get('groupId');
   var groupInfo;
   var currentFacilitator;
+  var participants;
+  var emails;
   
   if (document.querySelector("#adapt_session_button")) {
     var adaptTemplate = Handlebars.compile(document.querySelector("#adapt_session_button").outerHTML);
@@ -52,6 +61,7 @@ window.addEventListener('load', function() {
   getGroup()
   .then(group => {
     currentFacilitator = group.data.facilitator;
+    console.log(currentFacilitator);
     if (document.querySelector("#group_info")) {
       groupInfo = { 
         facilitatorName: group.data.facilitator.name, 
@@ -83,11 +93,14 @@ window.addEventListener('load', function() {
   .then(resp => {
     if (document.querySelector("#studentsListTemplate")) {
       var template = Handlebars.compile(document.querySelector("#studentsListTemplate").innerHTML);
-      var participants = resp.data.Items.map(r => {
+      participants = resp.data.Items.map(r => {
         if (r.attend)
           r.attend = r.attend[r.groupId];
         return r;
       })
+      emails = participants.map(function(value) {
+        return {'email': value.email};
+      });
       document.querySelector("#studentsList").innerHTML = template({ participants });
     }
   })
@@ -99,6 +112,8 @@ window.addEventListener('load', function() {
       groupInfo.LeadFacilitator = IsLeadFacilitator();
       var template = Handlebars.compile(document.querySelector("#group_info").innerHTML);
       document.querySelector("#group_info_replace").outerHTML = template(groupInfo);
+      var time = new Date(groupInfo.firstSession+'T'+groupInfo.time+':00');
+      console.log(time);
     }
   })
   .then(() => {
@@ -265,6 +280,76 @@ window.addEventListener('load', function() {
     navigator.clipboard.writeText(text).then(function() {
     }, function(err) {
     });
+  }
+
+  globalThis.issue_invites = () => {
+    let SCOPES = "https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events";
+    let DISCOVERY_DOC = "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest";
+
+    gapi.load('client:auth2', () => {
+        return gapi.client.init({
+            client_id: google_client_id,
+            scope: SCOPES,
+            discoveryDocs: [DISCOVERY_DOC],
+            login_hint: CurrentUserEmail()
+        })
+        .then(checkSession)
+        .then(createEvent)
+        .then(() => {
+          var myModal = new bootstrap.Modal(document.getElementById("updatedConfirmation"), {});
+          myModal.show();
+        })
+    });
+
+    var startTime = groupInfo.firstSession+'T'+groupInfo.time+':00';
+    var endTime = groupInfo.firstSession+'T'+(parseInt(groupInfo.time.substring(0,2), 10)+1).toString()
+                  +groupInfo.time.substring(2)+':00';
+    var event = {
+      'summary': 'Readable Project '+groupInfo.themes,
+      'description': 'Here is your link to join the remote video session: '+currentFacilitator.zoom_link,
+      'start': {
+        'dateTime': startTime,
+        'timeZone': 'Europe/Dublin'
+      },
+      'end': {
+        'dateTime': endTime,
+        'timeZone': 'Europe/Dublin'
+      },
+      'recurrence': [
+        'RRULE:FREQ=WEEKLY;COUNT=6'
+      ],
+      'attendees': [
+        {'email': 'rptrial@dyslexia.ie'},
+        {'email': 'readableproject@dyslexia.ie', 'displayName': 'Eilis'},
+        {'email': currentFacilitator.email, 'displayName': currentFacilitator.name},
+        ...emails
+      ],
+      'reminders': {
+        'useDefault': false,
+        'overrides': [
+          {'method': 'email', 'minutes': 24 * 60}
+        ]
+      },
+      'guestsCanSeeOtherGuests': false,
+      'guestsCanModify': false,
+      'guestsCanInviteOthers': false,
+      'sendNotifications': true
+    };
+
+    async function createEvent(resp) {
+      var request = await gapi.client.calendar.events.insert({
+        'calendarId': 'primary',
+        'sendUpdates': 'all',
+        'resource': event
+      });
+    }
+
+    function checkSession(resp) {
+      if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
+          return gapi.auth2.getAuthInstance().signIn();
+      }
+    }
+
   }
 
 });

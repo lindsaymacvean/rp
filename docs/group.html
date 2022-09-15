@@ -120,7 +120,9 @@
         <div id="issue_calendar_invites">
           {{#if LeadFacilitator}}
           <div class="row" style="height: 2vh"></div>
-          <a href="empty_page.html "><button id="student_list-btn" class="btn btn-primary  w-50  ">Issue Calendar Invites</button></a>
+          <button id="student_list-btn" class="btn btn-primary w-50" onclick="issue_invites()">
+            Issue Calendar Invites
+          </button>
           {{/if}}
         </div>
         <div class="row" style="height: 2vh"></div>
@@ -424,6 +426,26 @@
       </div>
     </div>
   </div>
+
+  <!-- Sync Confirmation Modal -->
+  <div class="modal fade" id="updatedConfirmation" role="dialog" aria-labelledby="updatedModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="updatedModalLabel">Successfully Added Events</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <!-- <div class="modal-body">
+        </div> -->
+        <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue</button>
+        </div>
+    </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  <script src="https://apis.google.com/js/api.js"></script>
+  <script async defer src="https://accounts.google.com/gsi/client"></script>
   <script type="module" src="scripts/group.js"></script>
 </body>
 
