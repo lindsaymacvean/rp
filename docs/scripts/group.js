@@ -332,8 +332,7 @@ window.addEventListener('load', function() {
       },
       'guestsCanSeeOtherGuests': false,
       'guestsCanModify': false,
-      'guestsCanInviteOthers': false,
-      'sendNotifications': true
+      'guestsCanInviteOthers': false
     };
 
     async function createEvent(resp) {
