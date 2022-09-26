@@ -123,6 +123,7 @@ globalThis.logout = logout;
     var data = [['Week', 'Attendance']];
     for (const [key, value] of Object.entries(stats.data.attendance)) {
       var percentage = (value / stats.data.count)*100;
+      //var percentage = (Math.round(percentage*100)/100).toFixed(2);
       data = data.concat([[key, percentage]]);
       data.sort();
     }
@@ -204,12 +205,12 @@ globalThis.logout = logout;
     });
     attendanceChart.draw(data, options);
 
-    
     var attendanceArray = Object.keys(raw.data.attendance)
     .map(function(key) {
         return Math.round((raw.data.attendance[key]/raw.data.count)*100);
     });
-    const average = attendanceArray.reduce((a, b) => a + b, 0) / attendanceArray.length;
+    let average = attendanceArray.reduce((a, b) => a + b, 0) / attendanceArray.length;
+    average = (Math.round(average*100)/100).toFixed(2);
     document.getElementById('averageattendance').innerHTML = average + "%"
     document.getElementById('statsRing').outerHTML = "";
   }
