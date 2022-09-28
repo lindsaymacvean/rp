@@ -20,9 +20,12 @@ globalThis.logout = logout;
             // Do not display groups older than a 3 months
             resp.data.Item.groups = Object.values(resp.data.Item.groups).filter((a) => {
                 var dateOfSession = new Date(a.dateOfFirstSession);
+                
                 var todaysDate = new Date();
                 var difference = todaysDate - dateOfSession;
-                if (difference > 3 * 30 * 24 * 60 * 60 * 100) {
+                console.log(dateOfSession, todaysDate, difference)
+                if (difference > 3 * 30 * 24 * 60 * 60 * 100 * 3) {
+                    console.log(a, 'is too old')
                     return false;
                 } else {
                     return true;

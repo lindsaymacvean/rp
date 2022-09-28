@@ -29,7 +29,7 @@ globalThis.logout = logout;
                 var dateOfSession = new Date(a.dateOfFirstSession);
                 var todaysDate = new Date();
                 var difference = todaysDate - dateOfSession;
-                if (difference > 3 * 30 * 24 * 60 * 60 * 100) {
+                if (difference > 3 * 30 * 24 * 60 * 60 * 100 * 3) {
                     return false;
                 } else {
                     return true;
