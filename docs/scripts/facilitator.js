@@ -24,7 +24,7 @@ globalThis.logout = logout;
                 var todaysDate = new Date();
                 var difference = todaysDate - dateOfSession;
                 console.log(dateOfSession, todaysDate, difference)
-                if (difference > 3 * 30 * 24 * 60 * 60 * 100 * 3) {
+                if (difference > 1 * 1000 * 60 * 60 * 24 * 30 * 3) {
                     console.log(a, 'is too old')
                     return false;
                 } else {
