@@ -178,12 +178,12 @@
                           name="week1_{{child_name}}_reason"
                           style="{{#unless attend.week1.absent}}display:none;{{/unless}}">
                     <option>Reason Not Given</option>
-                    <option>Illness</option>
-                    <option>Holidays</option>
-                    <option>Exams</option>
-                    <option>School trip</option>
-                    <option>Home Work</option>
-                    <option>Other</option>
+                    <option {{#ifEquals attend.week1.reason 'Illness'}}selected="selected"{{/ifEquals}}>Illness</option>
+                    <option {{#ifEquals attend.week1.reason 'Holidays'}}selected="selected"{{/ifEquals}}>Holidays</option>
+                    <option {{#ifEquals attend.week1.reason 'Exams'}}selected="selected"{{/ifEquals}}>Exams</option>
+                    <option {{#ifEquals attend.week1.reason 'School trip'}}selected="selected"{{/ifEquals}}>School trip</option>
+                    <option {{#ifEquals attend.week1.reason 'Home Work'}}selected="selected"{{/ifEquals}}>Home Work</option>
+                    <option {{#ifEquals attend.week1.reason 'Other'}}selected="selected"{{/ifEquals}}>Other</option>
                   </select>
                 </td>
                 <td>
@@ -201,13 +201,13 @@
                           onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week2')"
                           name="week2_{{child_name}}_reason"
                           style="{{#unless attend.week2.absent}}display:none;{{/unless}}">
-                    <option>Reason Not Given</option>
-                    <option>Illness</option>
-                    <option>Holidays</option>
-                    <option>Exams</option>
-                    <option>School trip</option>
-                    <option>Home Work</option>
-                    <option>Other</option>
+                      <option>Reason Not Given</option>
+                      <option {{#ifEquals attend.week2.reason 'Illness'}}selected="selected"{{/ifEquals}}>Illness</option>
+                      <option {{#ifEquals attend.week2.reason 'Holidays'}}selected="selected"{{/ifEquals}}>Holidays</option>
+                      <option {{#ifEquals attend.week2.reason 'Exams'}}selected="selected"{{/ifEquals}}>Exams</option>
+                      <option {{#ifEquals attend.week2.reason 'School trip'}}selected="selected"{{/ifEquals}}>School trip</option>
+                      <option {{#ifEquals attend.week2.reason 'Home Work'}}selected="selected"{{/ifEquals}}>Home Work</option>
+                      <option {{#ifEquals attend.week2.reason 'Other'}}selected="selected"{{/ifEquals}}>Other</option>
                   </select>
                 </td>
                 <td>
@@ -226,12 +226,12 @@
                       name="week3_{{child_name}}_reason"
                       style="{{#unless attend.week3.absent}}display:none;{{/unless}}">
                     <option>Reason Not Given</option>
-                    <option>Illness</option>
-                    <option>Holidays</option>
-                    <option>Exams</option>
-                    <option>School trip</option>
-                    <option>Home Work</option>
-                    <option>Other</option>
+                    <option {{#ifEquals attend.week3.reason 'Illness'}}selected="selected"{{/ifEquals}}>Illness</option>
+                    <option {{#ifEquals attend.week3.reason 'Holidays'}}selected="selected"{{/ifEquals}}>Holidays</option>
+                    <option {{#ifEquals attend.week3.reason 'Exams'}}selected="selected"{{/ifEquals}}>Exams</option>
+                    <option {{#ifEquals attend.week3.reason 'School trip'}}selected="selected"{{/ifEquals}}>School trip</option>
+                    <option {{#ifEquals attend.week3.reason 'Home Work'}}selected="selected"{{/ifEquals}}>Home Work</option>
+                    <option {{#ifEquals attend.week3.reason 'Other'}}selected="selected"{{/ifEquals}}>Other</option>
                   </select>
                 </td>
                 <td>
@@ -250,12 +250,12 @@
                       name="week4_{{child_name}}_reason"
                       style="{{#unless attend.week4.absent}}display:none;{{/unless}}">
                     <option>Reason Not Given</option>
-                    <option>Illness</option>
-                    <option>Holidays</option>
-                    <option>Exams</option>
-                    <option>School trip</option>
-                    <option>Home Work</option>
-                    <option>Other</option>
+                    <option {{#ifEquals attend.week4.reason 'Illness'}}selected="selected"{{/ifEquals}}>Illness</option>
+                    <option {{#ifEquals attend.week4.reason 'Holidays'}}selected="selected"{{/ifEquals}}>Holidays</option>
+                    <option {{#ifEquals attend.week4.reason 'Exams'}}selected="selected"{{/ifEquals}}>Exams</option>
+                    <option {{#ifEquals attend.week4.reason 'School trip'}}selected="selected"{{/ifEquals}}>School trip</option>
+                    <option {{#ifEquals attend.week4.reason 'Home Work'}}selected="selected"{{/ifEquals}}>Home Work</option>
+                    <option {{#ifEquals attend.week4.reason 'Other'}}selected="selected"{{/ifEquals}}>Other</option>
                   </select>
                 </td>
                 <td>
@@ -274,12 +274,12 @@
                       name="week5_{{child_name}}_reason"
                       style="{{#unless attend.week5.absent}}display:none;{{/unless}}">
                     <option>Reason Not Given</option>
-                    <option>Illness</option>
-                    <option>Holidays</option>
-                    <option>Exams</option>
-                    <option>School trip</option>
-                    <option>Home Work</option>
-                    <option>Other</option>
+                    <option {{#ifEquals attend.week5.reason 'Illness'}}selected="selected"{{/ifEquals}}>Illness</option>
+                    <option {{#ifEquals attend.week5.reason 'Holidays'}}selected="selected"{{/ifEquals}}>Holidays</option>
+                    <option {{#ifEquals attend.week5.reason 'Exams'}}selected="selected"{{/ifEquals}}>Exams</option>
+                    <option {{#ifEquals attend.week5.reason 'School trip'}}selected="selected"{{/ifEquals}}>School trip</option>
+                    <option {{#ifEquals attend.week5.reason 'Home Work'}}selected="selected"{{/ifEquals}}>Home Work</option>
+                    <option {{#ifEquals attend.week5.reason 'Other'}}selected="selected"{{/ifEquals}}>Other</option>
                   </select>
                 </td>
                 <td>
@@ -298,12 +298,12 @@
                       name="week6_{{child_name}}_reason"
                       style="{{#unless attend.week6.absent}}display:none;{{/unless}}">
                     <option>Reason Not Given</option>
-                    <option>Illness</option>
-                    <option>Holidays</option>
-                    <option>Exams</option>
-                    <option>School trip</option>
-                    <option>Home Work</option>
-                    <option>Other</option>
+                    <option {{#ifEquals attend.week6.reason 'Illness'}}selected="selected"{{/ifEquals}}>Illness</option>
+                    <option {{#ifEquals attend.week6.reason 'Holidays'}}selected="selected"{{/ifEquals}}>Holidays</option>
+                    <option {{#ifEquals attend.week6.reason 'Exams'}}selected="selected"{{/ifEquals}}>Exams</option>
+                    <option {{#ifEquals attend.week6.reason 'School trip'}}selected="selected"{{/ifEquals}}>School trip</option>
+                    <option {{#ifEquals attend.week6.reason 'Home Work'}}selected="selected"{{/ifEquals}}>Home Work</option>
+                    <option {{#ifEquals attend.week6.reason 'Other'}}selected="selected"{{/ifEquals}}>Other</option>
                   </select>
                 </td>
               </tr>

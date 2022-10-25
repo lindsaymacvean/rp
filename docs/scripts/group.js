@@ -61,7 +61,6 @@ window.addEventListener('load', function() {
   getGroup()
   .then(group => {
     currentFacilitator = group.data.facilitator;
-    console.log(currentFacilitator);
     if (document.querySelector("#group_info")) {
       groupInfo = { 
         facilitatorName: group.data.facilitator.name, 
@@ -113,7 +112,6 @@ window.addEventListener('load', function() {
       var template = Handlebars.compile(document.querySelector("#group_info").innerHTML);
       document.querySelector("#group_info_replace").outerHTML = template(groupInfo);
       var time = new Date(groupInfo.firstSession+'T'+groupInfo.time+':00');
-      console.log(time);
     }
   })
   .then(() => {
@@ -200,7 +198,6 @@ window.addEventListener('load', function() {
     var tick = `${weekId}_${participantId}_tick`;
     var cross = `${weekId}_${participantId}_cross`;
     var reason = `${weekId}_${participantId}_reason`;
-    console.log(document.getElementById(reason).value);
     var present;
 
     // If event id is tick then present = true, if cross then present = false
@@ -231,7 +228,6 @@ window.addEventListener('load', function() {
       }
     })
     .then((response) => {
-      
     })
     .catch(error => {
       alert('The Attendance was not updated, possibly because of a network connection issue. Try exiting and reopening this window and see if it helps.')
