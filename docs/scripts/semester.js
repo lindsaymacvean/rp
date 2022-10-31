@@ -152,7 +152,7 @@ globalThis.logout = logout;
 
       }
 
-      data = data.concat([[week, absences]]);
+      data = data.concat([[week, ...absences]]);
 
       // data.sort();
 
