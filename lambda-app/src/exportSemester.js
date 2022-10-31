@@ -6,7 +6,7 @@ const dynamo = new AWS.DynamoDB.DocumentClient();
 
 exports.handler = async(event, context, callback) => {
 
-  let csvRows = ['"id","child_name","groupName","facilitatorname","email","phone","parent_first_name", "parent_last_name", "parent_name", "dayOfWeek", "time", "county", "studentYear", "themes",  "dateOfFirstSession", "eventId", "facilitatorId", "folderId", "created_at", "type"'];
+  let csvRows = ['"id","child_name","groupName","facilitatorname","email","phone","parent_first_name", "parent_last_name", "parent_name", "dayOfWeek", "time", "county", "studentYear", "themes",  "dateOfFirstSession", "eventId", "facilitatorId", "folderId", "created_at", "type", "week1", "week2", "week3", "week4", "week5", "week6"'];
 
   try {
     // Get all the group ids for the semester
@@ -54,24 +54,27 @@ exports.handler = async(event, context, callback) => {
           var phone = participant.phone;
           var type = participant.type;
 
-          // TODO: append weekly attendance for each participant
-          // if (participant.attend 
-          //   && Object.values(participant.attend).length > 0
-          //   && Object.values(Object.values(participant.attend)[0]).length > 0) {
-            
-          //   // For each group in the students attendance record
-          //   for (const [group, attend] of Object.entries(participant.attend)) {
-          //       // For each student check their attendance record
-          //       for (const [week, value] of Object.entries(attend)) {
-          //           // For each week in that group attendance
-          //           if (value.present) {
-          //               
-          //           }
-          //       }
-          //   };
-          // }
+          var attendance = {};
 
-          var participantCSVRow = `"${id}","${child_name}","${groupName}","${facilitatorname}","${email}","${phone}", "${parent_first_name}", "${parent_last_name}", "${parent_name}", "${dayOfWeek}", "${time}", "${county}", "${studentYear}", "${themes}", "${dateOfFirstSession}", "${eventId}", "${facilitatorId}", "${folderId}", "${created_at}", "${type}"`;
+          // append weekly attendance for each participant
+          if (participant.attend 
+            && Object.values(participant.attend).length > 0
+            && Object.values(Object.values(participant.attend)[0]).length > 0) {
+            
+            // For each group in the students attendance record
+            for (const [group, attend] of Object.entries(participant.attend)) {
+                // For each week in the group
+                for (const [week, value] of Object.entries(attend)) {
+                    if (value.present) {
+                        attendance[week] = value.present;
+                    } else {
+                        attendance[week] = value.reason;
+                    }
+                }
+            };
+          }
+
+          var participantCSVRow = `"${id}","${child_name}","${groupName}","${facilitatorname}","${email}","${phone}", "${parent_first_name}", "${parent_last_name}", "${parent_name}", "${dayOfWeek}", "${time}", "${county}", "${studentYear}", "${themes}", "${dateOfFirstSession}", "${eventId}", "${facilitatorId}", "${folderId}", "${created_at}", "${type}", "${attendance.week1}", "${attendance.week2}", "${attendance.week3}", "${attendance.week4}", "${attendance.week5}", "${attendance.week6}"`;
 
           csvRows.push(participantCSVRow);
       });
