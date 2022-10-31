@@ -253,8 +253,6 @@ globalThis.logout = logout;
     var options2 = {
       width: 600,
       height: 200,
-      legend: { position: 'top', maxLines: 3 },
-      bar: { groupWidth: '75%' },
       isStacked: 'absolute',
     };
 
