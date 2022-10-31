@@ -154,7 +154,7 @@ globalThis.logout = logout;
 
       data = data.concat([[week, ...absences, '']]);
 
-      // data.sort();
+      data.sort();
 
     }
 
@@ -250,16 +250,16 @@ globalThis.logout = logout;
     // Display absence chart
     var absence = await processAbsence(raw);
     data = google.visualization.arrayToDataTable(absence);
-    var options = {
+    var options2 = {
       width: 600,
-      height: 400,
+      height: 200,
       legend: { position: 'top', maxLines: 3 },
       bar: { groupWidth: '75%' },
-      isStacked: true,
+      isStacked: 'absolute',
     };
 
     var absenceChart = new google.charts.Bar(document.getElementById('absenceChart'));
-    absenceChart.draw(data, options);
+    absenceChart.draw(data, options2);
   }
 
   function flattenGroups(groups) {
