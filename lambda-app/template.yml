@@ -740,6 +740,8 @@ Resources:
             TableName: !Ref GroupsTable
          - DynamoDBReadPolicy:
             TableName: !Ref ParticipantsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
       Events:
         ApiEvent:
           Type: Api

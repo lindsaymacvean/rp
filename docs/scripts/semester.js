@@ -2,6 +2,7 @@ import { api_url, frontend_url } from "./utils/configs.js";
 import { IsLeadFacilitator } from "./utils/utils.js";
 import { logout }  from "./utils/logout.js";
 import { IsLoggedIn } from "./utils/isLoggedIn.js";
+import { downloadFile } from "./utils/downloadFile.js";
 
 globalThis.logout = logout;
 
@@ -28,6 +29,11 @@ globalThis.logout = logout;
   
   const urlParams = new URLSearchParams(window.location.search);
   const semesterId = urlParams.get('semesterId');
+
+  globalThis.archiveSemester = function(el) {
+    el.preventDefault();
+    downloadFile(api_url+'/semester/export?semesterid='+semesterId,'semester_export.csv');
+  }
   
   var template = Handlebars.compile(document.querySelector("#groups-btn").innerHTML);
   document.querySelector("#groups-btn").innerHTML = template({ semesterId });
@@ -121,6 +127,7 @@ globalThis.logout = logout;
 
   async function processAttendance(stats) {
     var data = [['Week', 'Attendance']];
+    console.log(stats.data);
     for (const [key, value] of Object.entries(stats.data.attendance)) {
       var percentage = (value / stats.data.count)*100;
       //var percentage = (Math.round(percentage*100)/100).toFixed(2);
