@@ -132,7 +132,7 @@ Resources:
       StageName: ReadableApiStage
       Cors: #"'*'"
         AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-        AllowMethods: "'GET,PUT,POST,OPTIONS'"
+        AllowMethods: "'GET,PUT,POST,DELETE,OPTIONS'"
         AllowOrigin: "'*'"
       Auth:
         Authorizers:
@@ -161,6 +161,13 @@ Resources:
       LayerName: DyslexiaService
       ContentUri: layers/dyslexiaService
       Description: Dyslexia general code layer
+      RetentionPolicy: Delete
+  CSVWriterLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: CSVWriterLayer
+      ContentUri: layers/CSVWriterLayer
+      Description: CSV Writer lambda layer
       RetentionPolicy: Delete
   PreSignUpFunction:
     Type: AWS::Serverless::Function 
@@ -269,6 +276,30 @@ Resources:
           Properties:
             Path: /group
             Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  DeleteGroup:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/deleteGroup.js
+      Handler: deleteGroup.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBCrudPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBCrudPolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBCrudPolicy:
+            TableName: !Ref SemestersTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /group
+            Method: delete
             Auth:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
@@ -689,6 +720,34 @@ Resources:
           Properties:
             Path: /facilitator
             Method: put
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  GetSemesterExport:
+    Type: AWS::Serverless::Function
+    Properties:
+      Layers:
+         - !Ref CSVWriterLayer
+      CodeUri: src/exportSemester.js
+      Handler: exportSemester.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBReadPolicy:
+            TableName: !Ref SemestersTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /semester/export
+            Method: get
             Auth:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:

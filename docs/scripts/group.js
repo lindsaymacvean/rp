@@ -1,4 +1,4 @@
-import { api_url } from "./utils/configs.js";
+import { api_url, frontend_url} from "./utils/configs.js";
 import { IsLeadFacilitator, registerHandlebarHelpers } from "./utils/utils.js";
 import { logout }  from "./utils/logout.js";
 import { fillBreadcrumbs } from "./utils/breadcrumbs.js";
@@ -24,6 +24,7 @@ window.addEventListener('load', function() {
   var currentFacilitator;
   var participants;
   var emails;
+  var group;
   
   if (document.querySelector("#adapt_session_button")) {
     var adaptTemplate = Handlebars.compile(document.querySelector("#adapt_session_button").outerHTML);
@@ -45,6 +46,7 @@ window.addEventListener('load', function() {
         'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
       }
     })
+    group = data;
     return data;
   }
 
@@ -276,6 +278,33 @@ window.addEventListener('load', function() {
     navigator.clipboard.writeText(text).then(function() {
     }, function(err) {
     });
+  }
+
+  globalThis.deleteGroup = () => {
+    axios.delete(`${api_url}/group`, {
+      data: {
+        groupId
+      },
+      headers: {
+        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+      }
+    })
+    .then((response) => {
+      console.log(response);
+      // Load success or failure modal
+      let myModal = new bootstrap.Modal(document.getElementById("groupDeletedModal"), {});
+      myModal.hide();
+      alert('Group has been deleted');
+    })
+    .then(() => {
+      // Load semester page
+      window.location.replace(`${frontend_url}/semester.html?semesterId=${group.data.semester.id}`)
+    })
+    .catch((error)=> {
+      let myModal = new bootstrap.Modal(document.getElementById("groupDeletedModal"), {});
+      myModal.hide();
+      alert(error)
+    })
   }
 
   globalThis.issue_invites = () => {
