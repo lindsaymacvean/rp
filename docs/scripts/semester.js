@@ -1,50 +1,50 @@
 import { api_url, frontend_url } from "./utils/configs.js";
 import { IsLeadFacilitator } from "./utils/utils.js";
-import { logout }  from "./utils/logout.js";
+import { logout } from "./utils/logout.js";
 import { IsLoggedIn } from "./utils/isLoggedIn.js";
 
 globalThis.logout = logout;
 
-(function() {
+(function () {
   IsLoggedIn();
   var flatGroupData;
 
-  globalThis.copyTable = function(el) {
+  globalThis.copyTable = function (el) {
     // create a Range object
-    var range = document.createRange();  
+    var range = document.createRange();
     // set the Node to select the "range"
     range.selectNode(el);
     // add the Range to the set of window selections
     var sel = window.getSelection();
     sel.addRange(range);
-    
+
     // execute 'copy', can't 'cut' in this case
     document.execCommand('copy');
     sel.removeAllRanges();
   }
-  
+
   if (!IsLeadFacilitator())
-        window.location.href = `${frontend_url}/facilitator_groups.html`;
-  
+    window.location.href = `${frontend_url}/facilitator_groups.html`;
+
   const urlParams = new URLSearchParams(window.location.search);
   const semesterId = urlParams.get('semesterId');
-  
+
   var template = Handlebars.compile(document.querySelector("#groups-btn").innerHTML);
   document.querySelector("#groups-btn").innerHTML = template({ semesterId });
 
   function getSemesterGroupList() {
     return axios.get(`${api_url}/group/semester?semesterId=${semesterId}`, {
-        headers: {
-            'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
-        }
+      headers: {
+        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+      }
     });
   }
 
   function getSemester() {
     return axios.get(`${api_url}/semester?id=${semesterId}`, {
-        headers: {
-            'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
-        }
+      headers: {
+        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+      }
     });
   }
 
@@ -53,10 +53,10 @@ globalThis.logout = logout;
       .split(' ')
       .map(word => word[0])
       .join('');
-  
+
     return firstLetters;
   }
-  
+
   getSemesterGroupList()
     .then(resp => {
       console.log(resp);
@@ -68,18 +68,18 @@ globalThis.logout = logout;
       }
       if (document.querySelector("#groupTemplate")) {
         const map = {
-          'Monday': 1,'Tuesday': 2,'Wednesday': 3,'Thursday': 4,'Friday': 5,'Saturday': 6,
+          'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6,
           'Sunday': 7
         };
         resp.data.groups.sort((a, b) => {
           let result = map[a.dayOfWeek] - map[b.dayOfWeek];
           if (result === 0)
             result = getTimeAsNumberOfMinutes(a.time) - getTimeAsNumberOfMinutes(b.time);
-          return  result;
+          return result;
         });
         var template = Handlebars.compile(document.querySelector("#groupTemplate").innerHTML);
         document.querySelector("#groupsList").innerHTML = template({ groups: resp.data.groups });
-        
+
       }
       return resp;
     })
@@ -92,22 +92,22 @@ globalThis.logout = logout;
       }
       return resp;
     });
-  
+
   if (document.querySelector("#stats")) {
     template = Handlebars.compile(document.querySelector("#stats").innerHTML);
     document.querySelector("#statsReplace").outerHTML = template({
-        IsLeadFacilitator
+      IsLeadFacilitator
     });
   }
 
   async function getStats() {
     return axios.get(`${api_url}/stats?semesterid=${semesterId}`, {
       headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
       }
     });
   }
-  
+
   async function processCounties(stats) {
     var data = [['County', 'Number of Participants']];
     for (const [key, value] of Object.entries(stats.data.counties)) {
@@ -115,14 +115,14 @@ globalThis.logout = logout;
     }
     // This is not needed if we append a total table below
     //data = data.concat([['Total', stats.data.count]]);
-    data.sort((a,b) => a[1]-b[1])
+    data.sort((a, b) => a[1] - b[1])
     return data;
   }
 
   async function processAttendance(stats) {
     var data = [['Week', 'Attendance']];
     for (const [key, value] of Object.entries(stats.data.attendance)) {
-      var percentage = (value / stats.data.count)*100;
+      var percentage = (value / stats.data.count) * 100;
       //var percentage = (Math.round(percentage*100)/100).toFixed(2);
       data = data.concat([[key, percentage]]);
       data.sort();
@@ -130,19 +130,44 @@ globalThis.logout = logout;
     return data;
   }
 
-  google.charts.load('current', {'packages':['corechart', 'bar', 'table']});
+  async function processAbsence(stats) {
+
+    var data = [['Week', ...stats.data.absenceReasons, { role: 'annotation' }]];
+
+    for (const [week, value] of Object.entries(stats.data.absence)) {
+
+      var absences = [];
+
+      for (const reason of stats.data.absenceReasons) {
+
+        var absenceStats = value[reason] ?? 0;
+        absences.push(absenceStats);
+
+      }
+
+      data = data.concat([[week, absences]]);
+
+      // data.sort();
+
+    }
+
+    return data;
+  }
+
+  google.charts.load('current', { 'packages': ['corechart', 'bar', 'table'] });
   google.charts.setOnLoadCallback(drawChart);
+
 
   async function drawChart() {
     var raw = await getStats();
     // Display counties table
-    var counties =  await processCounties(raw);
+    var counties = await processCounties(raw);
     var data = google.visualization.arrayToDataTable(counties);
 
     var options = {
       title: 'Participants by County',
-      showRowNumber: true, 
-      width: '100%', 
+      showRowNumber: true,
+      width: '100%',
       height: '100%',
       sort: 'disable',
       //sortColumn: 2,
@@ -157,7 +182,7 @@ globalThis.logout = logout;
       copyTable(countiesChart.VS);
       var a = document.createElement('div');
       console.log(raw.data)
-      var total = Object.values(raw.data.counties).reduce((a,b) => a+b);
+      var total = Object.values(raw.data.counties).reduce((a, b) => a + b);
       a.innerHTML = `
         <table cellspacing="0" class="google-visualization-table-table" style="width: 100%; height: 100%;">
           <tbody>
@@ -192,7 +217,7 @@ globalThis.logout = logout;
       },
       axes: {
         x: {
-            0: { side: 'bottom', label: ""}
+          0: { side: 'bottom', label: "" }
         }
       }
     };
@@ -206,13 +231,28 @@ globalThis.logout = logout;
     attendanceChart.draw(data, options);
 
     var attendanceArray = Object.keys(raw.data.attendance)
-    .map(function(key) {
-        return Math.round((raw.data.attendance[key]/raw.data.count)*100);
-    });
+      .map(function (key) {
+        return Math.round((raw.data.attendance[key] / raw.data.count) * 100);
+      });
     let average = attendanceArray.reduce((a, b) => a + b, 0) / attendanceArray.length;
-    average = (Math.round(average*100)/100).toFixed(2);
+    average = (Math.round(average * 100) / 100).toFixed(2);
     document.getElementById('averageattendance').innerHTML = average + "%"
     document.getElementById('statsRing').outerHTML = "";
+
+
+    // Display absence chart
+    var absence = await processAbsence(raw);
+    data = google.visualization.arrayToDataTable(absence);
+    var options = {
+      width: 600,
+      height: 400,
+      legend: { position: 'top', maxLines: 3 },
+      bar: { groupWidth: '75%' },
+      isStacked: true,
+    };
+
+    var absenceChart = new google.charts.Bar(document.getElementById('absenceChart'));
+    absenceChart.draw(data, options);
   }
 
   function flattenGroups(groups) {
@@ -227,16 +267,16 @@ globalThis.logout = logout;
     return groups;
   }
 
-  globalThis.filterGroups = function() {
+  globalThis.filterGroups = function () {
     var input = document.getElementById('search_input');
     var toSearch = input.value.toUpperCase();
     var results = [];
 
     // Search through each the groups and then each of the individual groups properties
-    for(var group in flatGroupData) {
+    for (var group in flatGroupData) {
       for (var field in flatGroupData[group]) {
         var txtValue = flatGroupData[group][field].toString().toUpperCase();
-        if(txtValue.indexOf(toSearch)!=-1) {
+        if (txtValue.indexOf(toSearch) != -1) {
           results.push(flatGroupData[group].eventId);
         }
       }
@@ -257,7 +297,7 @@ globalThis.logout = logout;
 })();
 
 function getTimeAsNumberOfMinutes(time) {
-    var timeParts = time.split(":");
-    var timeInMinutes = (timeParts[0] * 60) + timeParts[1];
-    return timeInMinutes;
+  var timeParts = time.split(":");
+  var timeInMinutes = (timeParts[0] * 60) + timeParts[1];
+  return timeInMinutes;
 }

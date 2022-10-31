@@ -2,9 +2,9 @@ let response;
 const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
-exports.handler = async(event, context) => {
-    
-    
+exports.handler = async (event, context) => {
+
+
     //TODO: check if current user is Lead Facilitator.
     if (event.requestContext.authorizer.claims['cognito:groups'].includes('LeadFacilitators')) {
         console.log('user is a lead facilitator');
@@ -22,6 +22,8 @@ exports.handler = async(event, context) => {
         var body = {
             counties: {},
             attendance: {},
+            absence: {},
+            absenceReasons: [],
             count: 0,
             noshows: 0
         };
@@ -35,7 +37,7 @@ exports.handler = async(event, context) => {
                         body.counties[participant.county] += 1;
                     } else {
                         body.counties[participant.county] = 1;
-                    } 
+                    }
                 }
             });
 
@@ -57,10 +59,20 @@ exports.handler = async(event, context) => {
                             for (const [week, value] of Object.entries(attend)) {
                                 // For each week in that group attendance
                                 if (value) {
-                                    if (body.attendance[week]) {
-                                        body.attendance[week] += 1;
+                                    if (value.absent) {
+                                        body.absence[week] = body.absence[week] ?? {};
+                                        body.absence[week][value.reason] = body.absence[week][value.reason] ?? 0;
+                                        body.absence[week][value.reason] += 1;
+
+                                        if (!body.absenceReasons.includes(value.reason)) {
+                                            body.absenceReasons.push(value.reason);
+                                        }
                                     } else {
-                                        body.attendance[week] = 1;
+                                        if (body.attendance[week]) {
+                                            body.attendance[week] += 1;
+                                        } else {
+                                            body.attendance[week] = 1;
+                                        }
                                     }
                                 }
                             }
@@ -84,8 +96,8 @@ exports.handler = async(event, context) => {
 
     return response;
 
-    
-        
+
+
     // for (key in semesterkeys) {
     //     var params = {
     //         TableName: 'participant',
@@ -95,14 +107,14 @@ exports.handler = async(event, context) => {
     //             ":semesterid": event.queryStringParameters.semesterid
     //         }
     //       };
-          
+
     //       var body = await dynamo.query(params).promise();
 
     // }
-    
+
 };
 
-const getSemester = async(semesterId) => {
+const getSemester = async (semesterId) => {
     var params = {
         TableName: 'semester',
         Key: {
@@ -113,7 +125,7 @@ const getSemester = async(semesterId) => {
     return await dynamo.get(params).promise();
 };
 
-const getGroup = async(groupId) => {
+const getGroup = async (groupId) => {
     var params = {
         TableName: 'group',
         Key: {
@@ -128,7 +140,7 @@ const getGroup = async(groupId) => {
     }
 }
 
-const getParticipants = async(groupId) => {
+const getParticipants = async (groupId) => {
     var params = {
         TableName: 'participant',
         IndexName: "gsiParticipantEventTable",
@@ -136,8 +148,8 @@ const getParticipants = async(groupId) => {
         ExpressionAttributeValues: {
             ":id": groupId
         }
-      };
-      
+    };
+
     participantDetails = await dynamo.query(params).promise();
     return participantDetails.Items;
 }
