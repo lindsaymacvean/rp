@@ -119,10 +119,7 @@
       <div class="col-6 text-center">
         <div id="issue_calendar_invites">
           {{#if LeadFacilitator}}
-          <div class="row" style="height: 2vh"></div>
-          <button id="student_list-btn" class="btn btn-primary w-50" onclick="issue_invites()">
-            Issue Calendar Invites
-          </button>
+            <!-- This was for the button to issue calendar invites, leaving this conditional here in case we want another lead facilitator button for something -->
           {{/if}}
         </div>
         <div class="row" style="height: 2vh"></div>
@@ -136,12 +133,11 @@
     <!-- use script instead of template https://stackoverflow.com/questions/15386276/why-should-we-wrap-our-templates-inside-script-blocks -->
     <script id="studentsListTemplate" type="text/template">
       {{#if participants}}
-      <div class="row text-center  mt-2 ">
-        <div class="col-2"></div>
-        <div class="col-8">
-          <p class="fs-5 w-100 ms-5">Attendance Register</p>
+      <div class="row mt-2 ">
+        <div class="col-12">
+          <p class="fs-5">Attendance Register</p>
+          <hr />
         </div>
-        <div class="col-2"></div>
       </div>
       <div class="row text-center mt-1">
         <div class="col-12">
@@ -312,12 +308,11 @@
           </table>
         </div>
       </div>
-      <div class="row text-center  mt-5 ">
-        <div class="col-2"></div>
-        <div class="col-8">
-          <p class="fs-5 w-100 ms-5">Group Details</p>
+      <div class="row mt-5 ">
+        <div class="col-12">
+          <p class="fs-5">Group Details</p>
+          <hr />
         </div>
-        <div class="col-2"></div>
       </div>
       <div class="row text-center mt-1">
         <div class="col-12">
@@ -366,22 +361,24 @@
   
     <template id="optionsTemplate">
       {{#if LeadFacilitator}}
-      <div class="row text-center  mt-2">
-        <div class="col-2"></div>
-        <div class="col-8">
-          <p class="fs-5 w-100 ms-5">Options</p>
+      <div class="row mt-2">
+        <div class="fs-5 col-12">
+          <p>Options</p>
+          <hr />
         </div>
-        <div class="col-2"></div>
       </div>
       
       <div class="row text-center mt-2">
-        <div class="col-5">
+        <div class="col-3">
           
         </div>
         <div class="col-3">
           <span href="#" class=""><button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#syncConfirmation">Synchronise with Ticket Tailor</button></span>
         </div>
-        <div class="col-5"></div>
+        <div class="col-3">
+          <span href="#"><button class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#groupDeletedModal">Delete</button></span>
+        </div>
+        <div class="col-3"></div>
       </div>
       {{/if}}
       <div class="row" style="height: 5vh"></div>
@@ -422,6 +419,25 @@
         </div> -->
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Group deletion Modal -->
+  <div class="modal fade" id="groupDeletedModal" role="dialog" aria-labelledby="groupDeletedModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="groupDeletedModalLabel">Warning</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you wish to delete this Group?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="deleteGroup(event)">Delete</button>
         </div>
       </div>
     </div>
