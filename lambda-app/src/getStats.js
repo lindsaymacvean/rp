@@ -55,13 +55,13 @@ exports.handler = async (event, context) => {
                             body.noshows += 1;
                             body.count -= 1;
                         } else {
-                            let absentWeek = 0;
+                            let weeksAbsent = Object.entries(attend).length;
                             // For each student check their attendance record
                             for (const [week, value] of Object.entries(attend)) {
                                 // For each week in that group attendance
                                 if (value) {
                                     if (value.absent) {
-                                        absentWeek += 1;
+                                        weeksAbsent -= 1;
                                         body.absence[week] = body.absence[week] ?? {};
                                         body.absence[week][value.reason] = body.absence[week][value.reason] ?? 0;
                                         body.absence[week][value.reason] += 1;
@@ -77,8 +77,9 @@ exports.handler = async (event, context) => {
                                         }
                                     }
                                 }
-                                // If absent all 6 weeks then noshow
-                                if (absentWeek === 6) {
+                                // If absent or no entry all 6 weeks then noshow
+                                if (weeksAbsent === 0) {
+                                    console.log(participant);
                                     body.noshows += 1;
                                     body.count -= 1;
                                 }
@@ -102,22 +103,6 @@ exports.handler = async (event, context) => {
     }
 
     return response;
-
-
-
-    // for (key in semesterkeys) {
-    //     var params = {
-    //         TableName: 'participant',
-    //         IndexName: "gsiParticipantEventTable",
-    //         KeyConditionExpression: "groupId = :semesterid",
-    //         ExpressionAttributeValues: {
-    //             ":semesterid": event.queryStringParameters.semesterid
-    //         }
-    //       };
-
-    //       var body = await dynamo.query(params).promise();
-
-    // }
 
 };
 
