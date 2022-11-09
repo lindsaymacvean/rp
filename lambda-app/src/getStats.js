@@ -55,11 +55,13 @@ exports.handler = async (event, context) => {
                             body.noshows += 1;
                             body.count -= 1;
                         } else {
+                            let absentWeek = 0;
                             // For each student check their attendance record
                             for (const [week, value] of Object.entries(attend)) {
                                 // For each week in that group attendance
                                 if (value) {
                                     if (value.absent) {
+                                        absentWeek += 1;
                                         body.absence[week] = body.absence[week] ?? {};
                                         body.absence[week][value.reason] = body.absence[week][value.reason] ?? 0;
                                         body.absence[week][value.reason] += 1;
@@ -74,6 +76,11 @@ exports.handler = async (event, context) => {
                                             body.attendance[week] = 1;
                                         }
                                     }
+                                }
+                                // If absent all 6 weeks then noshow
+                                if (absentWeek === 6) {
+                                    body.noshows += 1;
+                                    body.count -= 1;
                                 }
                             }
                         }
