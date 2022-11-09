@@ -1,3 +1,6 @@
 package-lock.json
 node_modules
 .history
+
+docs/package-lock.json
+docs/node_modules
