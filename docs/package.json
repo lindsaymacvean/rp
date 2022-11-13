@@ -4,11 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "http-server . -p 3030",
+    "cy:run": "cypress run",
+    "test": "start-server-and-test start http://localhost:3030 cy:run"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "cypress": "^11.0.0"
+    "aws-amplify": "^4.3.43",
+    "aws-sdk": "^2.1253.0",
+    "cypress": "^11.0.0",
+    "cypress-social-logins": "^1.14.0",
+    "start-server-and-test": "^1.14.0"
+  },
+  "dependencies": {
+    "dot-env": "^0.0.1",
+    "dotenv": "^16.0.3"
   }
 }
