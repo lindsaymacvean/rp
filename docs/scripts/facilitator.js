@@ -1,9 +1,8 @@
 import { api_url } from "./utils/configs.js";
-import { logout }  from "./utils/logout.js";
-import { IsLeadFacilitator } from "./utils/utils.js";
+import { IsLeadFacilitator, Logout } from "./utils/utils.js";
 import { IsLoggedIn } from "./utils/isLoggedIn.js";
 
-globalThis.logout = logout;
+globalThis.logout = Logout;
 
 (function() {
     IsLoggedIn();

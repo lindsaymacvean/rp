@@ -1,7 +1,15 @@
+import { readable_cognito_logout_url } from "./configs.js";
+
 export const IsLeadFacilitator = () => {
   let token = sessionStorage.getItem('id_token')
   let jsonToken = parseJwt(token);
   return jsonToken["cognito:groups"].includes("LeadFacilitators");
+}
+
+export function Logout(e) {
+    e.preventDefault();
+    sessionStorage.removeItem('id_token');
+    window.location.href = readable_cognito_logout_url;
 }
 
 export const CurrentUserEmail = () => {

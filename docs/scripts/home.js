@@ -1,8 +1,7 @@
-import { frontend_url } from "./utils/configs.js"
-import { IsLeadFacilitator } from "./utils/utils.js"
-import { logout }  from "./utils/logout.js";
+import { frontend_url } from "./utils/configs.js";
+import { IsLeadFacilitator, Logout } from "./utils/utils.js";
 
-globalThis.logout = logout;
+globalThis.logout = Logout;
 
 (function() {
 

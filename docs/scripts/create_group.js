@@ -2,10 +2,10 @@ import { getSemester } from "./utils/api.js";
 import { getTicketTailorEvents } from "./utils/ticketTailor.js";
 import { api_url, frontend_url } from "./utils/configs.js"
 import { createGroupFolder, initDrive, shareFileWithDomain, transferOwnership } from "./utils/drive.js"
-import { logout }  from "./utils/logout.js";
+import { Logout }  from "./utils/utils.js";
 import { IsLoggedIn } from "./utils/isLoggedIn.js";
 
-globalThis.logout = logout;
+globalThis.logout = Logout;
 
 (function () {
     IsLoggedIn();

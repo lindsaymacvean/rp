@@ -1,12 +1,11 @@
-import { template_file_id, google_client_id } from "./utils/configs.js"
-import { CurrentUserEmail } from "./utils/utils.js"
-import { getTemplateFolder, getWeeksFiles, getFolderFiles, copyFile } from "./utils/drive.js"
+import { template_file_id, google_client_id } from "./utils/configs.js";
+import { CurrentUserEmail, Logout } from "./utils/utils.js";
+import { getTemplateFolder, getWeeksFiles, getFolderFiles, copyFile } from "./utils/drive.js";
 import { getFacilitator, getGroup, getSemester } from "./utils/api.js";
 import { stopLoading } from "./utils/loader.js";
-import { logout }  from "./utils/logout.js";
 import { IsLoggedIn } from "./utils/isLoggedIn.js";
 
-globalThis.logout = logout;
+globalThis.logout = Logout;
 
 (function () {
     IsLoggedIn();

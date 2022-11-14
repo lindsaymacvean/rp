@@ -1,17 +1,15 @@
 import { api_url, frontend_url} from "./utils/configs.js";
-import { IsLeadFacilitator, registerHandlebarHelpers } from "./utils/utils.js";
-import { logout }  from "./utils/logout.js";
+import { IsLeadFacilitator, registerHandlebarHelpers, Logout, CurrentUserEmail } from "./utils/utils.js";
 import { fillBreadcrumbs } from "./utils/breadcrumbs.js";
 import { IsLoggedIn } from "./utils/isLoggedIn.js";
-import { google_client_id } from "./utils/configs.js"
-import { CurrentUserEmail } from "./utils/utils.js"
+import { google_client_id } from "./utils/configs.js";
 
 Date.prototype.addHours = function(h) {
   this.setTime(this.getTime() + (h*60*60*1000));
   return this;
 }
 
-globalThis.logout = logout;
+globalThis.logout = Logout;
 
 window.addEventListener('load', function() {
   IsLoggedIn();

@@ -1,8 +1,8 @@
 import { api_url, frontend_url } from "./utils/configs.js"
-import { logout }  from "./utils/logout.js";
+import { Logout }  from "./utils/utils.js";
 import { IsLoggedIn } from "./utils/isLoggedIn.js";
 
-globalThis.logout = logout;
+globalThis.logout = Logout;
 
 (function() {
     IsLoggedIn();
