@@ -5,16 +5,13 @@
   "main": "index.js",
   "scripts": {
     "start": "http-server . -p 3030",
-    "cy:run": "cypress run",
+    "cy:run": "cypress run --headed --no-exit",
     "test": "start-server-and-test start http://localhost:3030 cy:run"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "aws-amplify": "^4.3.43",
-    "aws-sdk": "^2.1253.0",
-    "cypress": "^11.0.0",
-    "cypress-social-logins": "^1.14.0",
+    "cypress": "^11.0.1",
     "start-server-and-test": "^1.14.0"
   },
   "dependencies": {
