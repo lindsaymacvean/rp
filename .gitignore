@@ -5,4 +5,5 @@ node_modules
 docs/package-lock.json
 docs/node_modules
 docs/cypress/videos
+docs/cypress/screenshots
 docs/.env

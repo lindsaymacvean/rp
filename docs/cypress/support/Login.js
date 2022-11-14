@@ -1,7 +1,7 @@
 
-Cypress.Commands.add('loginByGoogle', () => {
-        
-        cy.visit('http://localhost:3030')
+Cypress.Commands.add('loginByGoogle', (name, { cachedSession = true } = {}) => {
+    const login = () => {
+        cy.visit('/')
 
         cy.origin('https://readable.auth.eu-west-1.amazoncognito.com', () => {
             cy.contains('button', 'Continue with Google')
@@ -23,7 +23,26 @@ Cypress.Commands.add('loginByGoogle', () => {
             .get('div#password input[type="password"]')
             .type(Cypress.env('googleSocialLoginPassword'))
             .get('button[type="button"]').contains('Next')
-            .click();
+            .click()
+            .wait(20000);
         });
-    
+
+        cy.url().should('contain', 'home.html');
+    }
+    if (cachedSession) {
+        cy.session(name, login, 
+            {   
+                validate() {
+                    cy.visit('/home.html');
+                    cy.window()
+                    .its("sessionStorage")
+                    .invoke("getItem", "id_token")
+                    .should("exist");
+                },
+                cacheAcrossSpecs: true
+            });
+    } else {
+        login();
+    }
+        
 });

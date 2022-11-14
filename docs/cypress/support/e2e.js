@@ -14,7 +14,8 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './Login/index'
+import './Login'
+import './ValidateMenu'
 
 
 // Alternatively you can use CommonJS syntax:
