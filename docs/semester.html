@@ -19,6 +19,7 @@
 
 <body style="background-color: rgb(221, 238, 232);">
     <div class="container  mt-5">
+        <div id="overlay"><div class="lds-dual-ring"></div></div>
         <nav class="navbar navbar-expand-md navbar-dark bg-primary">
             <div class="container-fluid">
                 <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNavbar">
@@ -118,7 +119,7 @@
                 </div>
                 <div class="row text-center mt-2">
                     <div class="col-12">
-                        <a href="#" onClick="archiveSemester(event)" class="w-100">
+                        <a href="#" onClick="exportSemester(event)" class="w-100">
                             <button id="grabFiles" class="btn btn-primary w-100">Export Semester</button>
                         </a>
                     </div>

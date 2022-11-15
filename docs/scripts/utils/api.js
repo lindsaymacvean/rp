@@ -47,20 +47,20 @@ export const getFacilitator = (facilitatorId) => {
  }
 
 export const getFacilitators = async () => {
-    const { data } = await axios.get(`${api_url}/facilitator/list`, {
-      headers: {
-        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
-      }
-    })
-    return data.Items;
+  const { data } = await axios.get(`${api_url}/facilitator/list`, {
+    headers: {
+      'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+    }
+  })
+  return data.Items;
 }
 
-export async function getStats() {
-    return axios.get(`${api_url}/stats?semesterid=${semesterId}`, {
-      headers: {
-        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
-      }
-    });
-  }
+export async function getStats(semesterId) {
+  return axios.get(`${api_url}/stats?semesterid=${semesterId}`, {
+    headers: {
+      'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+    }
+  });
+}
 
 

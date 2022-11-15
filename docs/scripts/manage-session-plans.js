@@ -107,13 +107,14 @@ globalThis.logout = Logout;
                     if (groupResponse instanceof Error) {
                         return groupResponse;
                     };
-                    group = groupResponse.data; return getFolderFiles(groupResponse.data.folderId)
+                    group = groupResponse.data; 
+                    return getFolderFiles(groupResponse.data.folderId)
                 })
                 .then((weekFolders) => {
                     if (weekFolders instanceof Error) {
                         return weekFolders;
                     };
-                    getWeeksFiles(weekFolders)
+                    return getWeeksFiles(weekFolders)
                 })
                 .then((weeks) => { 
                     if (weeks instanceof Error) {
@@ -128,9 +129,13 @@ globalThis.logout = Logout;
                         console.log(group);
                         return group;
                     };
-                    getSemester(group.semesterId)
+                    return getSemester(group.semesterId)
                 })
-                .then((semesterResponse) => { 
+                .then((semesterResponse) => {
+                    if (typeof semesterResponse === 'undefined' || semesterResponse === null) {
+                        console.log('semesterResponse is empty');
+                        return new Error('semesterResponse is empty.');
+                    }
                     if (semesterResponse instanceof Error) {
                         console.log(semesterResponse);
                         return;
@@ -143,9 +148,13 @@ globalThis.logout = Logout;
                         console.log(group);
                         return group;
                     };
-                    getFacilitator(group.facilitatorId);
+                    return getFacilitator(group.facilitatorId);
                 })
                 .then((facilitatorResponse) => { 
+                    if (typeof facilitatorResponse === 'undefined' || facilitatorResponse === null) {
+                        console.log('facilitatorResponse is empty');
+                        return new Error('facilitatorResponse is empty.');
+                    }
                     if (facilitatorResponse instanceof Error) {
                         console.log(facilitatorResponse);
                         return;
@@ -164,6 +173,8 @@ globalThis.logout = Logout;
         try {
             if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
                 return gapi.auth2.getAuthInstance().signIn();
+            } else {
+                return gapi.auth2.getAuthInstance().isSignedIn.get();
             }
         } catch(e) {
             return e;
@@ -221,7 +232,6 @@ globalThis.logout = Logout;
             })
     }
 
-    console.log('GROUPID', groupId);
     if (typeof groupId !== 'undefined' && groupId !== null) init();
 })();
 

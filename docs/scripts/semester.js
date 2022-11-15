@@ -1,12 +1,12 @@
 import { api_url, frontend_url } from "./utils/configs.js";
 import { IsLeadFacilitator, Logout } from "./utils/utils.js";
 import { IsLoggedIn } from "./utils/isLoggedIn.js";
-import { filterGroups } from "./utils/filterGroups.js";
-import { getSemester, getSemesterGroupList } from "./utils/api.js";
+import { getSemester, getSemesterGroupList, getStats } from "./utils/api.js";
 import { copyTable } from "./utils/copyTable.js";
 import { exportSemester } from "./utils/exportSemester.js";
 import { archiveSemester } from "./utils/archiveSemester.js";
 
+let flattenedGroups;
 globalThis.logout = Logout;
 globalThis.filterGroups = filterGroups;
 globalThis.copyTable = copyTable;
@@ -15,7 +15,6 @@ globalThis.archiveSemester = archiveSemester;
 
 (function () {
   IsLoggedIn();
-  var flatGroupData;
 
   if (!IsLeadFacilitator())
     window.location.href = `${frontend_url}/facilitator_groups.html`;
@@ -37,8 +36,7 @@ globalThis.archiveSemester = archiveSemester;
 
   getSemesterGroupList(semesterId)
     .then(resp => {
-      console.log(resp);
-      flatGroupData = flattenGroups(resp.data.groups);
+      flattenedGroups = flattenGroups(resp.data.groups);
 
       for (let group of resp.data.groups) {
         let initials = getFirstLetters(group.facilitatorname);
@@ -62,7 +60,7 @@ globalThis.archiveSemester = archiveSemester;
       return resp;
     })
 
-  getSemester()
+  getSemester(semesterId)
     .then(resp => {
       if (document.querySelector('#semesterBreadcrumb')) {
         var template = Handlebars.compile(document.querySelector("#semesterBreadcrumb").innerHTML);
@@ -130,7 +128,7 @@ globalThis.archiveSemester = archiveSemester;
 
 
   async function drawChart() {
-    var raw = await getStats();
+    var raw = await getStats(semesterId);
     // Display counties table
     var counties = await processCounties(raw);
     var data = google.visualization.arrayToDataTable(counties);
@@ -224,22 +222,50 @@ globalThis.archiveSemester = archiveSemester;
     absenceChart.draw(data, options2);
   }
 
-  function flattenGroups(groups) {
-    for (var group in groups) {
-      groups[group].flatParticipants = "";
-      for (var participant in groups[group].participants) {
-        for (var field in groups[group].participants[participant]) {
-          groups[group].flatParticipants = groups[group].flatParticipants + groups[group].participants[participant][field];
-        }
-      }
-    }
-    return groups;
-  }
-
 })();
 
 function getTimeAsNumberOfMinutes(time) {
   var timeParts = time.split(":");
   var timeInMinutes = (timeParts[0] * 60) + timeParts[1];
   return timeInMinutes;
+}
+
+function filterGroups() {
+  let groups = flattenedGroups;
+  let input = document.getElementById('search_input');
+  let toSearch = input.value.toUpperCase();
+  let results = [];
+
+  // Search through each the groups and then each of the individual groups properties
+  for (let group in groups) {
+      for (let field in groups[group]) {
+      let txtValue = groups[group][field].toString().toUpperCase();
+      if (txtValue.indexOf(toSearch) != -1) {
+          results.push(groups[group].eventId);
+      }
+      }
+  }
+
+  // Loop through all list items, and hide those who don't match the search query
+  let searchGroups = document.getElementById("groupsList");
+  let items = searchGroups.getElementsByClassName('searchItems');
+  for (let i = 0; i < items.length; i++) {
+      if (results.includes(items[i].id)) {
+      items[i].style.display = "";
+      } else {
+      items[i].style.display = "none";
+      }
+  }
+};
+
+function flattenGroups(groups) {
+  for (let group in groups) {
+    groups[group].flatParticipants = "";
+    for (let participant in groups[group].participants) {
+      for (let field in groups[group].participants[participant]) {
+        groups[group].flatParticipants = groups[group].flatParticipants + groups[group].participants[participant][field];
+      }
+    }
+  }
+  return groups;
 }
