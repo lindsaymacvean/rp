@@ -22,8 +22,11 @@ globalThis.archiveSemester = archiveSemester;
   const urlParams = new URLSearchParams(window.location.search);
   const semesterId = urlParams.get('semesterId');
 
-  var template = Handlebars.compile(document.querySelector("#groups-btn").innerHTML);
-  document.querySelector("#groups-btn").innerHTML = template({ semesterId });
+  let groupsbtn = Handlebars.compile(document.querySelector("#groups-btn").innerHTML);
+  document.querySelector("#groups-btn").innerHTML = groupsbtn({ semesterId });
+
+  let exportbtn = Handlebars.compile(document.querySelector("#export-btn").innerHTML);
+  document.querySelector("#export-btn").innerHTML = exportbtn({ semesterId });
 
   function getFirstLetters(str) {
     const firstLetters = str
@@ -53,8 +56,8 @@ globalThis.archiveSemester = archiveSemester;
             result = getTimeAsNumberOfMinutes(a.time) - getTimeAsNumberOfMinutes(b.time);
           return result;
         });
-        var template = Handlebars.compile(document.querySelector("#groupTemplate").innerHTML);
-        document.querySelector("#groupsList").innerHTML = template({ groups: resp.data.groups });
+        let groupTemplate = Handlebars.compile(document.querySelector("#groupTemplate").innerHTML);
+        document.querySelector("#groupsList").innerHTML = groupTemplate({ groups: resp.data.groups });
 
       }
       return resp;
@@ -63,15 +66,15 @@ globalThis.archiveSemester = archiveSemester;
   getSemester(semesterId)
     .then(resp => {
       if (document.querySelector('#semesterBreadcrumb')) {
-        var template = Handlebars.compile(document.querySelector("#semesterBreadcrumb").innerHTML);
-        document.querySelector("#semesterBreadcrumb").innerHTML = template({ semesterId: resp.data.id, semesterName: resp.data.name });
+        let semesterBreadcrumb = Handlebars.compile(document.querySelector("#semesterBreadcrumb").innerHTML);
+        document.querySelector("#semesterBreadcrumb").innerHTML = semesterBreadcrumb({ semesterId: resp.data.id, semesterName: resp.data.name });
       }
       return resp;
     });
 
   if (document.querySelector("#stats")) {
-    template = Handlebars.compile(document.querySelector("#stats").innerHTML);
-    document.querySelector("#statsReplace").outerHTML = template({
+    let stats = Handlebars.compile(document.querySelector("#stats").innerHTML);
+    document.querySelector("#statsReplace").outerHTML = stats({
       IsLeadFacilitator
     });
   }
