@@ -3,6 +3,7 @@ import { IsLeadFacilitator, registerHandlebarHelpers, Logout, CurrentUserEmail }
 import { fillBreadcrumbs } from "./utils/breadcrumbs.js";
 import { IsLoggedIn } from "./utils/isLoggedIn.js";
 import { google_client_id } from "./utils/configs.js";
+import { getFacilitators, getGroup, getParticipants } from "./utils/api.js";
 
 Date.prototype.addHours = function(h) {
   this.setTime(this.getTime() + (h*60*60*1000));
@@ -13,7 +14,6 @@ globalThis.logout = Logout;
 
 window.addEventListener('load', function() {
   IsLoggedIn();
-
   registerHandlebarHelpers();
   
   const urlParams = new URLSearchParams(window.location.search);
@@ -29,37 +29,12 @@ window.addEventListener('load', function() {
     document.querySelector("#adapt_session_button").outerHTML = adaptTemplate({ groupId });
   }
 
-  const getFacilitators = async () => {
-    const { data } = await axios.get(`${api_url}/facilitator/list`, {
-      headers: {
-        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
-      }
-    })
-    return data.Items;
-  }
-
-  const getGroup = async () => {
-    const data = await axios.get(`${api_url}/group?id=${groupId}`, {
-      headers: {
-        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
-      }
-    })
-    group = data;
-    return data;
-  }
-
-  const getParticipants = async () => {
-    const data = await axios.get(`${api_url}/participants?id=${groupId}`, {
-      headers: {
-        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
-      }
-    })
-    return data;
-  }
-
   // Fill out students in the Group
-  getGroup()
+  getGroup(groupId)
   .then(group => {
+    if (group instanceof Error) {
+        return group;
+    };
     currentFacilitator = group.data.facilitator;
     if (document.querySelector("#group_info")) {
       groupInfo = { 
@@ -77,10 +52,17 @@ window.addEventListener('load', function() {
     return group;            
   })
   .then((group) => {
+    if (group instanceof Error) {
+      return group;
+    };
     return fillBreadcrumbs(group);
   })
   // Fill title on Group page
   .then(group => {
+    if (group instanceof Error) {
+      console.log(group);
+      return group;
+    };
     if (document.querySelector("#groupName")) {
       var template = Handlebars.compile(document.querySelector("#groupName").innerHTML);
       document.querySelector("#groupName").innerHTML = template({ groupId, groupName: group.data.name });
@@ -88,8 +70,12 @@ window.addEventListener('load', function() {
     return group;
   })
   // Fill out students list in the Group
-  .then(() => getParticipants())
+  .then(() => getParticipants(groupId))
   .then(resp => {
+    if (resp instanceof Error) {
+      console.log(resp);
+      return resp;
+    };
     if (document.querySelector("#studentsListTemplate")) {
       var template = Handlebars.compile(document.querySelector("#studentsListTemplate").innerHTML);
       participants = resp.data.Items.map(r => {
@@ -105,6 +91,10 @@ window.addEventListener('load', function() {
   })
   .then(() => getFacilitators())
   .then(facilitators => {
+    if (facilitators instanceof Error) {
+      console.log(facilitators);
+      return facilitators;
+    };
     if (document.querySelector("#group_info")) {
       groupInfo.facilitators = facilitators;
       groupInfo.currentFacilitator = currentFacilitator;
@@ -115,6 +105,7 @@ window.addEventListener('load', function() {
     }
   })
   .then(() => {
+    if (typeof currentFacilitator === 'undefined' || currentFacilitator === null) return;
     if (IsLeadFacilitator() && document.querySelector("#facilitatorSelect")) document.querySelector("#facilitatorSelect").value = currentFacilitator.id;
   });
   
@@ -304,74 +295,4 @@ window.addEventListener('load', function() {
       alert(error)
     })
   }
-
-  globalThis.issue_invites = () => {
-    let SCOPES = "https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events";
-    let DISCOVERY_DOC = "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest";
-
-    gapi.load('client:auth2', () => {
-        return gapi.client.init({
-            client_id: google_client_id,
-            scope: SCOPES,
-            discoveryDocs: [DISCOVERY_DOC],
-            login_hint: CurrentUserEmail()
-        })
-        .then(checkSession)
-        .then(createEvent)
-        .then(() => {
-          var myModal = new bootstrap.Modal(document.getElementById("updatedConfirmation"), {});
-          myModal.show();
-        })
-    });
-
-    var startTime = groupInfo.firstSession+'T'+groupInfo.time+':00';
-    var endTime = groupInfo.firstSession+'T'+(parseInt(groupInfo.time.substring(0,2), 10)+1).toString()
-                  +groupInfo.time.substring(2)+':00';
-    var event = {
-      'summary': 'Readable Project '+groupInfo.themes,
-      'description': 'Here is your link to join the remote video session: '+currentFacilitator.zoom_link,
-      'start': {
-        'dateTime': startTime,
-        'timeZone': 'Europe/Dublin'
-      },
-      'end': {
-        'dateTime': endTime,
-        'timeZone': 'Europe/Dublin'
-      },
-      'recurrence': [
-        'RRULE:FREQ=WEEKLY;COUNT=6'
-      ],
-      'attendees': [
-        {'email': 'rptrial@dyslexia.ie'},
-        {'email': 'readableproject@dyslexia.ie', 'displayName': 'Eilis'},
-        {'email': currentFacilitator.email, 'displayName': currentFacilitator.name},
-        ...emails
-      ],
-      'reminders': {
-        'useDefault': false,
-        'overrides': [
-          {'method': 'email', 'minutes': 24 * 60}
-        ]
-      },
-      'guestsCanSeeOtherGuests': false,
-      'guestsCanModify': false,
-      'guestsCanInviteOthers': false
-    };
-
-    async function createEvent(resp) {
-      var request = await gapi.client.calendar.events.insert({
-        'calendarId': 'primary',
-        'sendUpdates': 'all',
-        'resource': event
-      });
-    }
-
-    function checkSession(resp) {
-      if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
-          return gapi.auth2.getAuthInstance().signIn();
-      }
-    }
-
-  }
-
 });

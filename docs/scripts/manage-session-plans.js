@@ -87,31 +87,92 @@ globalThis.logout = Logout;
                 login_hint: CurrentUserEmail()
             })
                 .then(checkSession)
-                .then(function () {
+                .then(function (signedin) {
+                    if (typeof signedin === 'undefined' || signedin === null) return new Error('Google is not signed in.');
+                    if (signedin instanceof Error) {
+                        return signedin;
+                    };
                     return getTemplateFolder();
                 })
                 .then(function (folder) {
+                    if (folder instanceof Error) {
+                        console.log(folder);
+                        return;
+                    }
                     return getFiles(folder);
                 })
                 .then(() => getGroup(groupId))
-                .then((groupResponse) => { group = groupResponse.data; return getFolderFiles(groupResponse.data.folderId)})
-                .then((weekFolders) => getWeeksFiles(weekFolders))
-                .then((weeks) => { weeks = weeks; setWeeksView(weeks); } )
-                .then(() => getSemester(group.semesterId))
-                .then((semesterResponse) => { semester = semesterResponse.data })
-                .then(() => getFacilitator(group.facilitatorId))
-                .then((facilitatorResponse) => { facilitator = facilitatorResponse.data.Item; stopLoading() })
+                .then((groupResponse) => { 
+                    if (typeof groupResponse === 'undefined' || groupResponse === null) return new Error('No Group Data.');
+                    if (groupResponse instanceof Error) {
+                        return groupResponse;
+                    };
+                    group = groupResponse.data; return getFolderFiles(groupResponse.data.folderId)
+                })
+                .then((weekFolders) => {
+                    if (weekFolders instanceof Error) {
+                        return weekFolders;
+                    };
+                    getWeeksFiles(weekFolders)
+                })
+                .then((weeks) => { 
+                    if (weeks instanceof Error) {
+                        console.log(weeks);
+                        return weeks;
+                    };
+                    weeks = weeks; setWeeksView(weeks); 
+                } )
+                .then(() => {
+                    if (typeof group === 'undefined' || group === null) return new Error('No Group Found');
+                    if (group instanceof Error) {
+                        console.log(group);
+                        return group;
+                    };
+                    getSemester(group.semesterId)
+                })
+                .then((semesterResponse) => { 
+                    if (semesterResponse instanceof Error) {
+                        console.log(semesterResponse);
+                        return;
+                    };
+                    semester = semesterResponse.data 
+                })
+                .then(() => {
+                    if (typeof group === 'undefined' || group === null) return new Error('No Group Found');
+                    if (group instanceof Error) {
+                        console.log(group);
+                        return group;
+                    };
+                    getFacilitator(group.facilitatorId);
+                })
+                .then((facilitatorResponse) => { 
+                    if (facilitatorResponse instanceof Error) {
+                        console.log(facilitatorResponse);
+                        return;
+                    };
+                    facilitator = facilitatorResponse.data.Item; 
+                    stopLoading(); 
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         });
     }
    
 
-    function checkSession(resp) {
-        if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
-            return gapi.auth2.getAuthInstance().signIn();
+    function checkSession() {
+        try {
+            if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
+                return gapi.auth2.getAuthInstance().signIn();
+            }
+        } catch(e) {
+            return e;
         }
+        
     }
 
     function getFiles(templateFolder) {
+        if (typeof templateFolder === 'undefined' || templateFolder === null) return new Error('No template folder defined');
         return gapi.client.drive.files.list({
             q: `'${templateFolder.id}' in parents and trashed = false`,
             pageSize: 100,
@@ -160,6 +221,7 @@ globalThis.logout = Logout;
             })
     }
 
-    init();
+    console.log('GROUPID', groupId);
+    if (typeof groupId !== 'undefined' && groupId !== null) init();
 })();
 

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "http-server . -p 3030",
-    "cy:run": "cypress run --headed --no-exit",
+    "cy:run": "cypress run --headed",
     "test": "start-server-and-test start http://localhost:3030 cy:run"
   },
   "author": "",

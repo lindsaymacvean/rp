@@ -1,6 +1,8 @@
 
 
 export async function downloadFile(fileUrl, outputLocationPath) {
+    // start circle loader
+    document.getElementById('overlay').style.display = 'block';
     axios.get(fileUrl, {
         responseType: 'arraybuffer', 
         headers: {
@@ -13,5 +15,9 @@ export async function downloadFile(fileUrl, outputLocationPath) {
         link.href = window.URL.createObjectURL(blob);
         link.download = outputLocationPath;
         link.click();
+    })
+    .then(() => {
+        // stop circle loader
+        document.getElementById('overlay').style.display = 'none';
     });
 }

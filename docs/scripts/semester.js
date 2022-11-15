@@ -1,28 +1,21 @@
 import { api_url, frontend_url } from "./utils/configs.js";
-import { IsLeadFacilitator } from "./utils/utils.js";
-import { logout } from "./utils/logout.js";
+import { IsLeadFacilitator, Logout } from "./utils/utils.js";
 import { IsLoggedIn } from "./utils/isLoggedIn.js";
-import { downloadFile } from "./utils/downloadFile.js";
+import { filterGroups } from "./utils/filterGroups.js";
+import { getSemester, getSemesterGroupList } from "./utils/api.js";
+import { copyTable } from "./utils/copyTable.js";
+import { exportSemester } from "./utils/exportSemester.js";
+import { archiveSemester } from "./utils/archiveSemester.js";
 
-globalThis.logout = logout;
+globalThis.logout = Logout;
+globalThis.filterGroups = filterGroups;
+globalThis.copyTable = copyTable;
+globalThis.exportSemester = exportSemester;
+globalThis.archiveSemester = archiveSemester;
 
 (function () {
   IsLoggedIn();
   var flatGroupData;
-
-  globalThis.copyTable = function (el) {
-    // create a Range object
-    var range = document.createRange();
-    // set the Node to select the "range"
-    range.selectNode(el);
-    // add the Range to the set of window selections
-    var sel = window.getSelection();
-    sel.addRange(range);
-
-    // execute 'copy', can't 'cut' in this case
-    document.execCommand('copy');
-    sel.removeAllRanges();
-  }
 
   if (!IsLeadFacilitator())
     window.location.href = `${frontend_url}/facilitator_groups.html`;
@@ -30,29 +23,8 @@ globalThis.logout = logout;
   const urlParams = new URLSearchParams(window.location.search);
   const semesterId = urlParams.get('semesterId');
 
-  globalThis.archiveSemester = function (el) {
-    el.preventDefault();
-    downloadFile(api_url + '/semester/export?semesterid=' + semesterId, 'semester_export.csv');
-  }
-
   var template = Handlebars.compile(document.querySelector("#groups-btn").innerHTML);
   document.querySelector("#groups-btn").innerHTML = template({ semesterId });
-
-  function getSemesterGroupList() {
-    return axios.get(`${api_url}/group/semester?semesterId=${semesterId}`, {
-      headers: {
-        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
-      }
-    });
-  }
-
-  function getSemester() {
-    return axios.get(`${api_url}/semester?id=${semesterId}`, {
-      headers: {
-        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
-      }
-    });
-  }
 
   function getFirstLetters(str) {
     const firstLetters = str
@@ -63,7 +35,7 @@ globalThis.logout = logout;
     return firstLetters;
   }
 
-  getSemesterGroupList()
+  getSemesterGroupList(semesterId)
     .then(resp => {
       console.log(resp);
       flatGroupData = flattenGroups(resp.data.groups);
@@ -103,14 +75,6 @@ globalThis.logout = logout;
     template = Handlebars.compile(document.querySelector("#stats").innerHTML);
     document.querySelector("#statsReplace").outerHTML = template({
       IsLeadFacilitator
-    });
-  }
-
-  async function getStats() {
-    return axios.get(`${api_url}/stats?semesterid=${semesterId}`, {
-      headers: {
-        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
-      }
     });
   }
 
@@ -270,33 +234,6 @@ globalThis.logout = logout;
       }
     }
     return groups;
-  }
-
-  globalThis.filterGroups = function () {
-    var input = document.getElementById('search_input');
-    var toSearch = input.value.toUpperCase();
-    var results = [];
-
-    // Search through each the groups and then each of the individual groups properties
-    for (var group in flatGroupData) {
-      for (var field in flatGroupData[group]) {
-        var txtValue = flatGroupData[group][field].toString().toUpperCase();
-        if (txtValue.indexOf(toSearch) != -1) {
-          results.push(flatGroupData[group].eventId);
-        }
-      }
-    }
-
-    // Loop through all list items, and hide those who don't match the search query
-    var searchGroups = document.getElementById("groupsList");
-    var items = searchGroups.getElementsByClassName('searchItems');
-    for (var i = 0; i < items.length; i++) {
-      if (results.includes(items[i].id)) {
-        items[i].style.display = "";
-      } else {
-        items[i].style.display = "none";
-      }
-    }
   }
 
 })();
