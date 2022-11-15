@@ -201,6 +201,7 @@ globalThis.archiveSemester = archiveSemester;
       insertAfter(a, attendanceChart.container);
     });
     attendanceChart.draw(data, options);
+    document.getElementById('attendanceChart').style.visibility = "visible";
 
     var attendanceArray = Object.keys(raw.data.attendance)
       .map(function (key) {
@@ -208,7 +209,7 @@ globalThis.archiveSemester = archiveSemester;
       });
     let average = attendanceArray.reduce((a, b) => a + b, 0) / attendanceArray.length;
     average = (Math.round(average * 100) / 100).toFixed(2);
-    document.getElementById('averageattendance').innerHTML = average + "%"
+    document.getElementById('averageattendance').innerHTML = "Average attendance is " + average + "%";
     document.getElementById('statsRing').outerHTML = "";
 
 
@@ -216,13 +217,17 @@ globalThis.archiveSemester = archiveSemester;
     var absence = await processAbsence(raw);
     data = google.visualization.arrayToDataTable(absence);
     var options2 = {
+      chart: {
+        title: 'Reasons for Absence'
+      },
       width: 600,
-      height: 200,
+      height: 250,
       isStacked: 'absolute',
     };
 
     var absenceChart = new google.charts.Bar(document.getElementById('absenceChart'));
     absenceChart.draw(data, options2);
+    document.getElementById('absenceChart').style.visibility = "visible";
   }
 
 })();
