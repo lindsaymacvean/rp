@@ -1,5 +1,5 @@
 import { template_file_id, google_client_id } from "./utils/configs.js";
-import { CurrentUserEmail, Logout } from "./utils/utils.js";
+import { CurrentUserEmail, Logout, IsLeadFacilitator } from "./utils/utils.js";
 import { getTemplateFolder, getWeeksFiles, getFolderFiles, copyFile } from "./utils/drive.js";
 import { getFacilitator, getGroup, getSemester } from "./utils/api.js";
 import { stopLoading } from "./utils/loader.js";
@@ -16,6 +16,7 @@ globalThis.logout = Logout;
     let group = null;
     let semester = null;
     let facilitator = null;
+    let parentDirectory = null;
 
     globalThis.search = (event) => {
 
@@ -162,6 +163,10 @@ globalThis.logout = Logout;
                     facilitator = facilitatorResponse.data.Item; 
                     stopLoading(); 
                 })
+                .then(() => {
+                    let openDirectoryTemplate = Handlebars.compile(document.querySelector("#openDirectoryTemplate").innerHTML);
+                    document.querySelector("#openDirectory").outerHTML = openDirectoryTemplate({ IsLeadFacilitator });
+                })
                 .catch((error) => {
                     console.log(error);
                 });
@@ -214,13 +219,17 @@ globalThis.logout = Logout;
         });
     }
 
+    globalThis.openDirectory = function (e) {
+        e.preventDefault();
+        window.open('https://drive.google.com/drive/folders/'+group.folderId, '_blank').focus();
+        return null;
+    }
+
     globalThis.openTemplate = function (e) {
         //e.preventDefault();
 
         var nameProp = e.currentTarget.getAttribute('filename');
         var id = e.currentTarget.getAttribute('fileid');
-        if (e.srcElement.innerHTML  === "Creating from Template ...")
-            return;
 
         e.srcElement.innerHTML = "Creating from Template ..."
 

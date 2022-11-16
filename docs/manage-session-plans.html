@@ -81,6 +81,12 @@
         <div class="row text-left">
           <div class="col-12">
             <h2>My Session Plans</h2>
+            <template id="openDirectoryTemplate">
+              {{#if IsLeadFacilitator}}
+              <button class="btn btn-danger" onclick="openDirectory(event)">Open Google Directory</button>
+              {{/if}}
+            </template>
+            <div id="openDirectory"></div>
           </div>
         </div>
       </div>
@@ -126,7 +132,7 @@
                   <div class="row row-cols-1 row-cols-md-1 g-2 mt-2 mb-2">
                     <div class="col">
                       <div class="card">
-                        <button fileid="{{id}}" filename="{{name}}" style="user-select: none;" onclick="openTemplate(event)">
+                        <button fileid="{{id}}" filename="{{name}}" style="user-select: none;" onclick="openTemplate(event); this.onclick=null;">
                           <div>
                             <div class="m-2">
                               <svg
