@@ -2,48 +2,50 @@ const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const crypto = require("crypto");
 const axios = require('axios');
-var ssm = new AWS.SSM();
+const ssm = new AWS.SSM();
 
 exports.handler = async(event, context, callback) => {
 
-    var data = JSON.parse(event.body);
+    let data = JSON.parse(event.body);
 
-    const ticketTailorWebhookSk = await ssm.getParameter({
-        Name: process.env.TICKET_TAILOR_WEBHOOK_SK,
-        WithDecryption: true
-    }).promise();
+    console.log(data);
 
-    headerParts = event.headers['tickettailor-webhook-signature'].split(',')
-    timestamp = headerParts[0].split('=')[1]
-    signature = headerParts[1].split('=')[1]
-
-    let hash = crypto.createHmac('sha256', ticketTailorWebhookSk.Parameter.Value).update(timestamp + event.body).digest("hex");
-
-    if (!crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(signature))){
+    if (!validateSignature(event)) {
+        console.log('Signature was invalid');
         return {
             'statusCode': 403,
             'headers': {
                 'Access-Control-Allow-Origin': '*',
             }
-        };
+        }
     }
 
     if (data.event === 'Issued ticket' || data.event === 'ISSUED_TICKET.CREATED'){
+        let group = (await getGroupByEventId(data.payload.event_id)).Items[0];
+        if (!group){
+            console.log('That group has not been created in RP.');
+            return {
+                'statusCode': 200,
+                'body': 'ok',
+                'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                }
+            };
+        }
 
-        var group = (await getGroupByEventId(data.payload.event_id)).Items[0];
-        var orders = (await getOrders(group.eventId)).data.data;
+        let orders = (await getOrders(group.eventId)).data.data;
 
-        var participants = [];
+        let participants = [];
 
-        for (var order of orders){
+        for (let order of orders){
             try {
                 if (order.issued_tickets[0].status !== 'valid') {
                     // remove student manually from participants in group table
-                    var participantIndexToDelete = group.participants.findIndex(r => r.id == order.id);
+                    let participantIndexToDelete = group.participants.findIndex(r => r.id == order.id);
                     if (participantIndexToDelete > -1) {
                         group.participants.splice(participantIndexToDelete, 1);
-                        var UpdateExpression = 'REMOVE participants['+participantIndexToDelete+']';
-                        var removeParticipantParams = {
+                        let UpdateExpression = 'REMOVE participants['+participantIndexToDelete+']';
+                        let removeParticipantParams = {
                             TableName: 'group',
                             Key: {
                                 'id': event.queryStringParameters.id
@@ -58,7 +60,7 @@ exports.handler = async(event, context, callback) => {
                         }
                     }
 
-                    var removeParticipantParams2 = {
+                    let removeParticipantParams2 = {
                         TableName: 'participant',
                         Key: {
                             'id': order.id
@@ -72,7 +74,7 @@ exports.handler = async(event, context, callback) => {
                     }
                     continue;
                 }
-                var participant = await createOrUpdateParticipant(order, group.id);
+                let participant = await createOrUpdateParticipant(order, group.id);
                 participants.push(participant)
             } catch(e) {
                 console.log(e);
@@ -82,8 +84,8 @@ exports.handler = async(event, context, callback) => {
         if (!group.participants)
             group.participants = [];
 
-        for (var participant of participants){
-            var existingParticipantIndex = group.participants.findIndex(r => r.id == participant.id);
+        for (let participant of participants){
+            let existingParticipantIndex = group.participants.findIndex(r => r.id == participant.id);
 
             if (existingParticipantIndex === -1)
                 group.participants.push(participant);
@@ -92,7 +94,7 @@ exports.handler = async(event, context, callback) => {
             }
         }
 
-        var params = {
+        let params = {
             TableName: 'group',
             Item: group
         };
@@ -100,42 +102,43 @@ exports.handler = async(event, context, callback) => {
         await dynamo.put(params).promise();    
     }
 
+    /**
+     * ORDER.CREATED is the data.event seen on a webhook 16th Nov 2022 (they might be changing their webhook event types)
+     */
 
+    if (data.event === 'ORDER.CREATED'){
+        let group = (await getGroupByEventId(data.payload.event_summary.id)).Items[0];
+        if (!group){
+            console.log('That group has not been created in RP.');
+            return {
+                'statusCode': 200,
+                'body': 'ok',
+                'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                }
+            };
+        }
 
-    // if (data.event === 'ORDER.CREATED'){
-    //     var group = (await getGroupByEventId(data.payload.event_id)).Items[0];
-
-    //     if (!group){
-    //         return {
-    //             'statusCode': 200,
-    //             'body': 'ok',
-    //             'headers': {
-    //                 'Access-Control-Allow-Origin': '*',
-    //             }
-    //         };
-    //     }
-
-    //     if (!group.participants)
-    //         group.participants = [];
+        if (!group.participants) group.participants = [];
     
-    //     var participant = await createOrUpdateParticipant(data.payload, group.id);
+        let participant = await createOrUpdateParticipant(data.payload, group.id);
 
-    //     var existingParticipantIndex = group.participants.findIndex(r => r.id == participant.id);
+        let existingParticipantIndex = group.participants.findIndex(r => r.id == participant.id);
 
-    //     if (existingParticipantIndex === -1)
-    //         group.participants.push(participant);
-    //     else{
-    //         group.participants[existingParticipantIndex] = participant;
-    //     }
+        if (existingParticipantIndex === -1)
+            group.participants.push(participant);
+        else{
+            group.participants[existingParticipantIndex] = participant;
+        }
 
-    //     var params = {
-    //         TableName: 'group',
-    //         Item: group
-    //     };
+        let params = {
+            TableName: 'group',
+            Item: group
+        };
 
-    //     await dynamo.put(params).promise();
+        await dynamo.put(params).promise();
 
-    // }
+    }
 
     response = {
         'statusCode': 200,
@@ -149,7 +152,7 @@ exports.handler = async(event, context, callback) => {
 };
 
 const getGroupByEventId = async(eventId) => {
-    var params = {
+    let params = {
         TableName: 'group',
         IndexName: "gsiGroupEventTable",
         KeyConditionExpression: "eventId = :eventId",
@@ -158,60 +161,37 @@ const getGroupByEventId = async(eventId) => {
         },
     };
 
-    return await dynamo.query(params).promise();
+    let group;
+
+    try {
+        group = await dynamo.query(params).promise();
+    } catch(e) {
+        console.log(e);
+    }
+
+    return group;
 };
 
-// const createOrUpdateParticipant = async (order, groupId) => {
-
-//     var participant = await getParticipant(order.id);
-
-//     participant.groupId = groupId;
-
-//     participant.parent_name = order.buyer_details.name;
-//     participant.type = order.issued_tickets[0].description;
-//     participant.created_at = order.issued_tickets[0].created_at;
-//     participant.county = order.buyer_details.custom_questions[0].answer;
-//     participant.child_name = order.buyer_details.custom_questions[2].answer;
-//     participant.class = order.buyer_details.custom_questions[3].answer;
-//     participant.email = order.buyer_details.email;
-//     participant.phone = order.buyer_details.phone;
-
-//     var params = {
-//         TableName: 'participant',
-//         Item: participant
-//     };
-
-//     await dynamo.put(params).promise();
-
-//     return participant;
-// }
-
-// const getParticipant = async(participantId) => {
-//     var participant = null;
-
-//     try{
-//         var params = {
-//             TableName: 'participant',
-//             Key: {
-//                 'id': participantId
-//             }
-//         };
-//         participant = await dynamo.get(params).promise();
-//     } catch(e){
-//         return null;
-//     }
-  
-//     return participant
-// };
-
-
+/**
+ * getOrders is only needed for the Issued Ticket type of webhook (which we probably don't need any more)
+ * 
+ * @param {String} eventId 
+ * @returns promise of response from ticket tailor
+ */
 const getOrders = async(eventId) => {
-    const ticketTailorSk = await ssm.getParameter({
-        Name: process.env.TICKET_TAILOR_SK,
-        WithDecryption: true
-    }).promise();
+    let ticketTailorSk;
+    try {
+        ticketTailorSk = await ssm.getParameter({
+            Name: process.env.TICKET_TAILOR_SK,
+            WithDecryption: true
+        }).promise();
+    } catch(e) {
+        console.log(e);
+    }
 
-    return await axios.get(`https://api.tickettailor.com/v1/orders?event_id=${eventId}&status=completed`, 
+    let orders;
+    try {
+        orders = await axios.get(`https://api.tickettailor.com/v1/orders?event_id=${eventId}&status=completed`, 
             {
                 auth:{
                     username: ticketTailorSk.Parameter.Value,
@@ -219,12 +199,17 @@ const getOrders = async(eventId) => {
                 }
             }
         );
+    } catch(e) {
+        console.log(e);
+    }
+
+    return orders;
 }
 
 const findQuestion = (searchString, questions) => {
-    var reg = new RegExp(searchString, 'g');
-    var answer = {
-        answer: undefined
+    let reg = new RegExp(searchString, 'i');
+    let answer = {
+        answer:undefined
     };
     try {
         answer = questions.find(o => {  
@@ -242,7 +227,9 @@ const findQuestion = (searchString, questions) => {
 }
 
 const createOrUpdateParticipant = async (order, groupId) => {
-    var participant = (await getParticipant(order.id))?.Item;
+    if (!order || !order.id) return false;
+    if (!groupId) return false;
+    let participant = (await getParticipant(order.id))?.Item;
 
     if (!participant || !participant.id ){
         participant = {
@@ -255,29 +242,32 @@ const createOrUpdateParticipant = async (order, groupId) => {
     participant.type = order.issued_tickets[0].description;
     participant.created_at = order.issued_tickets[0].created_at;
 
-    var questions = order.buyer_details.custom_questions;
+    // let questions = order.buyer_details.custom_questions;
+    let questions = order.issued_tickets[0].custom_questions;
     participant.county = findQuestion('county', questions);
     participant.child_name = findQuestion('name', questions);
     participant.class = findQuestion('class', questions);
-    
     participant.email = order.buyer_details.email;
     participant.phone = order.buyer_details.phone;
 
-    var params = {
-        TableName: 'participant',
-        Item: participant
-    };
-
-    await dynamo.put(params).promise();
-
+    console.log('participant', participant);
+    
+    try {
+        let params = {
+            TableName: 'participant',
+            Item: participant
+        };
+        await dynamo.put(params).promise();
+    } catch(e) {
+        console.log(e);
+    }
     return participant;
 }
 
 const getParticipant = async(participantId) => {
-    var participant = null;
-
+    let participant;
     try{
-        var params = {
+        let params = {
             TableName: 'participant',
             Key: {
                 'id': participantId
@@ -285,8 +275,28 @@ const getParticipant = async(participantId) => {
         };
         participant = await dynamo.get(params).promise();
     } catch(e){
-        return null;
+        console.log(e);
     }
-  
     return participant
 };
+
+const validateSignature = async(event) => {
+    const ticketTailorWebhookSk = await ssm.getParameter({
+        Name: process.env.TICKET_TAILOR_WEBHOOK_SK,
+        WithDecryption: true
+    }).promise();
+
+    headerParts = event.headers['tickettailor-webhook-signature'].split(',')
+    timestamp = headerParts[0].split('=')[1]
+    signature = headerParts[1].split('=')[1]
+
+    let hash = crypto.createHmac('sha256', ticketTailorWebhookSk.Parameter.Value).update(timestamp + event.body).digest("hex");
+
+    if (!crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(signature))){
+        // Authenticate request is from ticket Tailor and correct account
+        console.log('The signature was not correct so 403.')
+        return false;
+    }
+
+    return true;
+}

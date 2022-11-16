@@ -110,10 +110,10 @@ const getOrders = async(eventId) => {
 }
 
 const findQuestion = (searchString, questions) => {
-    var reg = new RegExp(searchString, 'g');
-    var answer = {
+    let reg = new RegExp(searchString, 'i');
+    let answer = {
         answer: undefined
-    };
+    }
     try {
         answer = questions.find(o => {  
             if (typeof o === 'object') {
@@ -143,20 +143,24 @@ const createOrUpdateParticipant = async (order, groupId) => {
     participant.type = order.issued_tickets[0].description;
     participant.created_at = order.issued_tickets[0].created_at;
     
-    var questions = order.buyer_details.custom_questions;
+    // let questions = order.buyer_details.custom_questions;
+    let questions = order.issued_tickets[0].custom_questions;
     participant.county = findQuestion('county', questions);
     participant.child_name = findQuestion('name', questions);
     participant.class = findQuestion('class', questions);
     participant.email = order.buyer_details.email;
     participant.phone = order.buyer_details.phone;
 
-    var params = {
-        TableName: 'participant',
-        Item: participant
-    };
-
-    await dynamo.put(params).promise();
-
+    try {
+        let params = {
+            TableName: 'participant',
+            Item: participant
+        };
+        await dynamo.put(params).promise();
+    } catch {
+        console.log(e);
+    }
+    
     return participant;
 }
 
