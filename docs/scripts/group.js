@@ -18,11 +18,12 @@ window.addEventListener('load', function() {
   
   const urlParams = new URLSearchParams(window.location.search);
   const groupId = urlParams.get('groupId');
-  var groupInfo;
-  var currentFacilitator;
-  var participants;
-  var emails;
-  var group;
+  let groupInfo;
+  let currentFacilitator;
+  let semesterId;
+  let participants;
+  let emails;
+  let group;
   
   if (document.querySelector("#adapt_session_button")) {
     var adaptTemplate = Handlebars.compile(document.querySelector("#adapt_session_button").outerHTML);
@@ -36,6 +37,7 @@ window.addEventListener('load', function() {
         return group;
     };
     currentFacilitator = group.data.facilitator;
+    semesterId = group.data.semester.id;
     if (document.querySelector("#group_info")) {
       groupInfo = { 
         facilitatorName: group.data.facilitator.name, 
@@ -77,7 +79,6 @@ window.addEventListener('load', function() {
       return resp;
     };
     if (document.querySelector("#studentsListTemplate")) {
-      var template = Handlebars.compile(document.querySelector("#studentsListTemplate").innerHTML);
       participants = resp.data.Items.map(r => {
         if (r.attend)
           r.attend = r.attend[r.groupId];
@@ -86,6 +87,7 @@ window.addEventListener('load', function() {
       emails = participants.map(function(value) {
         return {'email': value.email};
       });
+      var template = Handlebars.compile(document.querySelector("#studentsListTemplate").innerHTML);
       document.querySelector("#studentsList").innerHTML = template({ participants });
     }
   })
@@ -287,11 +289,12 @@ window.addEventListener('load', function() {
     })
     .then(() => {
       // Load semester page
-      window.location.replace(`${frontend_url}/semester.html?semesterId=${group.data.semester.id}`)
+      window.location.replace(`${frontend_url}/semester.html?semesterId=${semesterId}`)
     })
     .catch((error)=> {
       let myModal = new bootstrap.Modal(document.getElementById("groupDeletedModal"), {});
       myModal.hide();
+      console.log(error);
       alert(error)
     })
   }
