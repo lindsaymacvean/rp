@@ -4,14 +4,14 @@ import { IsLoggedIn } from "./utils/isLoggedIn.js";
 import { getSemester, getSemesterGroupList, getStats } from "./utils/api.js";
 import { copyTable } from "./utils/copyTable.js";
 import { exportSemester } from "./utils/exportSemester.js";
-import { archiveSemester } from "./utils/archiveSemester.js";
+import { deleteSemester } from "./utils/deleteSemester.js";
 
 let flattenedGroups;
 globalThis.logout = Logout;
 globalThis.filterGroups = filterGroups;
 globalThis.copyTable = copyTable;
 globalThis.exportSemester = exportSemester;
-globalThis.archiveSemester = archiveSemester;
+globalThis.deleteSemester = deleteSemester;
 
 (function () {
   IsLoggedIn();
@@ -22,6 +22,10 @@ globalThis.archiveSemester = archiveSemester;
   const urlParams = new URLSearchParams(window.location.search);
   const semesterId = urlParams.get('semesterId');
 
+  let deleteSemesterPopup = Handlebars.compile(document.querySelector("#deleteConfirmation").innerHTML);
+  document.querySelector("#deleteConfirmation").innerHTML = deleteSemesterPopup({semesterId});
+
+  console.log(semesterId);
   let groupsbtn = Handlebars.compile(document.querySelector("#groups-btn").innerHTML);
   document.querySelector("#groups-btn").innerHTML = groupsbtn({ semesterId });
 

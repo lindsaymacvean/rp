@@ -17,7 +17,6 @@ exports.handler = async(event, context) => {
 
             // Delete students associated with group
             for (let participant of group.participants) {
-                
                 var removeParticipantParams = {
                     TableName: 'participant',
                     Key: {
@@ -25,8 +24,8 @@ exports.handler = async(event, context) => {
                     }
                 }
                 try {
-                    dynamo.delete(removeParticipantParams).promise();
-                    console.log(`removed from participant ${participant.child_name} from participant table`);
+                    await dynamo.delete(removeParticipantParams).promise();
+                    console.log(`removed participant ${participant.child_name} from participant table`);
                 } catch (e) {
                     console.log(e);
                 }
@@ -46,7 +45,7 @@ exports.handler = async(event, context) => {
                     UpdateExpression
                 }
                 try {
-                    dynamo.update(removeGroupParams).promise();
+                    await dynamo.update(removeGroupParams).promise();
                     console.log(`removed ${data.groupId} from semester in semesters table`);
                 } catch (e) {
                     console.log(e);
@@ -67,7 +66,7 @@ exports.handler = async(event, context) => {
                     UpdateExpression
                 }
                 try {
-                    dynamo.update(removeGroupParamsFromFacilitator).promise();
+                    await dynamo.update(removeGroupParamsFromFacilitator).promise();
                     console.log(`removed ${data.groupId} from facilitator in facilitators table`);
                 } catch (e) {
                     console.log(e);
@@ -82,8 +81,8 @@ exports.handler = async(event, context) => {
                 }
             }
             try {
-                dynamo.delete(removeGroupParams).promise();
-                console.log(`removed group ${group.name} from group table`);
+                await dynamo.delete(removeGroupParams).promise();
+                console.log(`removed ${group.name} from group table`);
             } catch (e) {
                 console.log(e);
             }
@@ -123,7 +122,15 @@ const getGroup = async(groupId) => {
         }
     };
 
-    return await dynamo.get(params).promise();
+    let resp;
+
+    try {
+        resp = await dynamo.get(params).promise();
+    } catch(e) {
+        console.log(e);
+    }
+
+    return resp;
 };
 
 const getSemester = async(semesterId) => {
@@ -134,7 +141,15 @@ const getSemester = async(semesterId) => {
         }
     };
 
-    return await dynamo.get(params).promise();
+    let resp;
+
+    try {
+        resp = await dynamo.get(params).promise();
+    } catch(e) {
+        console.log(e);
+    }
+
+    return resp;
 };
 
 const getFacilitator = async(facilitatorId) => {
@@ -145,5 +160,12 @@ const getFacilitator = async(facilitatorId) => {
         }
     };
 
-    return await dynamo.get(params).promise();
+    let resp;
+    try {
+        resp = await dynamo.get(params).promise();
+    } catch(e) {
+        console.log(e);
+    }
+
+    return resp;
 };

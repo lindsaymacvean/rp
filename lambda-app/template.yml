@@ -289,6 +289,8 @@ Resources:
       Timeout: 60
       Policies:
          - DynamoDBCrudPolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBCrudPolicy:
             TableName: !Ref FacilitatorsTable
          - DynamoDBCrudPolicy:
             TableName: !Ref GroupsTable
@@ -606,6 +608,32 @@ Resources:
           Properties:
             Path: /semester
             Method: get
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  DeleteSemester:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/deleteSemester.js
+      Handler: deleteSemester.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBCrudPolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBCrudPolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBCrudPolicy:
+            TableName: !Ref GroupsTable
+         - DynamoDBCrudPolicy:
+            TableName: !Ref SemestersTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /semester
+            Method: delete
             Auth:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
