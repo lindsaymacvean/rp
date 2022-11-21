@@ -272,6 +272,7 @@ window.addEventListener('load', function() {
   }
 
   globalThis.deleteGroup = () => {
+    document.getElementById('overlay').style.display = 'block';
     axios.delete(`${api_url}/group`, {
       data: {
         groupId
@@ -283,8 +284,7 @@ window.addEventListener('load', function() {
     .then((response) => {
       console.log(response);
       // Load success or failure modal
-      let myModal = new bootstrap.Modal(document.getElementById("groupDeletedModal"), {});
-      myModal.hide();
+      document.getElementById('overlay').style.display = 'none';
       alert('Group has been deleted');
     })
     .then(() => {
@@ -292,9 +292,8 @@ window.addEventListener('load', function() {
       window.location.replace(`${frontend_url}/semester.html?semesterId=${semesterId}`)
     })
     .catch((error)=> {
-      let myModal = new bootstrap.Modal(document.getElementById("groupDeletedModal"), {});
-      myModal.hide();
       console.log(error);
+      document.getElementById('overlay').style.display = 'none';
       alert(error)
     })
   }
