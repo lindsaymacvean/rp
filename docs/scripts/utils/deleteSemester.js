@@ -5,7 +5,7 @@ export const deleteSemesterMethod = async(el) => {
     let semesterId = el.target.dataset.name;
     // Load Spinner
     document.getElementById('overlay').style.display = 'block';
-    
+    // TODO: delete all google directories for the groups
     deleteSemester(semesterId)
     .then((response) => {
       //remove spinner

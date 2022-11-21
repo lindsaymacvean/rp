@@ -126,7 +126,11 @@ const findQuestion = (searchString, questions) => {
         console.log(e);
     }
     
-    return answer.answer;
+    if (!answer || !answer.answer) {
+        return null;
+    } else {
+        return answer.answer;
+    }
 }
 
 const createOrUpdateParticipant = async (order, groupId) => {

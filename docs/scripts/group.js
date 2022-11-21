@@ -273,6 +273,7 @@ window.addEventListener('load', function() {
 
   globalThis.deleteGroup = () => {
     document.getElementById('overlay').style.display = 'block';
+    // TODO: delete groups google directory
     axios.delete(`${api_url}/group`, {
       data: {
         groupId

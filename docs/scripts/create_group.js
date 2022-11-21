@@ -1,9 +1,9 @@
-import { getSemester } from "./utils/api.js";
 import { getTicketTailorEvents } from "./utils/ticketTailor.js";
-import { api_url, frontend_url } from "./utils/configs.js"
+import { frontend_url } from "./utils/configs.js"
 import { createGroupFolder, initDrive, shareFileWithDomain, transferOwnership } from "./utils/drive.js"
 import { Logout }  from "./utils/utils.js";
 import { IsLoggedIn } from "./utils/isLoggedIn.js";
+import { getSemester, saveFolderIdToGroup, postGroup, getFacilitatorList } from "./utils/api.js";
 
 globalThis.logout = Logout;
 
@@ -13,11 +13,7 @@ globalThis.logout = Logout;
     var facilitators = [];
     var ticketTailorEvents = [];
 
-    axios.get(`${api_url}/facilitator/list`, {
-        headers: {
-            'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
-        }
-    })
+    getFacilitatorList()
     .then(resp => {
         facilitators = resp.data.Items;
         var template = Handlebars.compile(document.querySelector("#facilitatorId").outerHTML);
@@ -63,20 +59,6 @@ globalThis.logout = Logout;
             document.getElementById("dateOfFirstSession").value = ticketTailorEvents[0].start.date;
 
         })
-
-    const saveFolderIdToGroup = (folderId, groupData) => {
-        const data = {
-            id: groupData.id,
-            folderId
-        }
-
-        return axios.put(`${api_url}/group`, data, {
-            headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
-            }
-        }).then(() => folderId);
-
-    }
 
     globalThis.onTicketTailorEventChange = (ev, el) => {
         // Name should look like: 'Readable (1st & 2nd Year) - JUNIOR CERT NOVELS'
@@ -134,15 +116,15 @@ globalThis.logout = Logout;
         document.getElementsByTagName('body')[0].innerHTML = spinner; 
 
 
-        axios.post(`${api_url}/group/create`, groupData, {
-            headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
-            }
-        }).then((groupResponse) => {
+        postGroup(groupData)
+        .then((groupResponse) => {
             initDrive()
                 .then(() => getSemester(groupData.semesterId))
                 .then((semesterResponse) => createGroupFolder(semesterResponse.data.name, groupData.name, groupData.themes, groupData.studentYear, groupData.facilitatorId, groupData.year, facilitatorEmail))
-                .then((parentFolderId) => saveFolderIdToGroup(parentFolderId, groupResponse.data))
+                .then((parentFolderId) => {
+                    saveFolderIdToGroup(parentFolderId, groupResponse.data);
+                    return parentFolderId;
+                } )
                 .then((parentFolderId) => shareFileWithDomain(parentFolderId))
                 // TODO: figure out how to transfer ownership to main lead facilitator
                 .then((parentFolderId) => transferOwnership(parentFolderId, 'readableproject@dyslexia.ie'))
