@@ -43,6 +43,11 @@ globalThis.deleteSemester = deleteSemester;
 
   getSemesterGroupList(semesterId)
     .then(resp => {
+      if (!resp) {
+        let groupTemplate = Handlebars.compile(document.querySelector("#groupTemplate").innerHTML);
+        document.querySelector("#groupsList").innerHTML = groupTemplate(resp);
+        return;
+      };
       flattenedGroups = flattenGroups(resp.data.groups);
 
       for (let group of resp.data.groups) {
@@ -69,6 +74,11 @@ globalThis.deleteSemester = deleteSemester;
 
   getSemester(semesterId)
     .then(resp => {
+      if (!resp) {
+        let semesterBreadcrumb = Handlebars.compile(document.querySelector("#semesterBreadcrumb").innerHTML);
+        document.querySelector("#semesterBreadcrumb").innerHTML = semesterBreadcrumb(resp);
+        return;
+      };
       if (document.querySelector('#semesterBreadcrumb')) {
         let semesterBreadcrumb = Handlebars.compile(document.querySelector("#semesterBreadcrumb").innerHTML);
         document.querySelector("#semesterBreadcrumb").innerHTML = semesterBreadcrumb({ semesterId: resp.data.id, semesterName: resp.data.name });
