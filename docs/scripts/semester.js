@@ -4,14 +4,14 @@ import { IsLoggedIn } from "./utils/isLoggedIn.js";
 import { getSemester, getSemesterGroupList, getStats } from "./utils/api.js";
 import { copyTable } from "./utils/copyTable.js";
 import { exportSemester } from "./utils/exportSemester.js";
-import { deleteSemester } from "./utils/deleteSemester.js";
+import { deleteSemesterMethod } from "./utils/deleteSemester.js";
 
 let flattenedGroups;
 globalThis.logout = Logout;
 globalThis.filterGroups = filterGroups;
 globalThis.copyTable = copyTable;
 globalThis.exportSemester = exportSemester;
-globalThis.deleteSemester = deleteSemester;
+globalThis.deleteSemester = deleteSemesterMethod;
 
 (function () {
   IsLoggedIn();

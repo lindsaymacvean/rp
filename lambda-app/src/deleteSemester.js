@@ -5,27 +5,30 @@ const dynamo = new AWS.DynamoDB.DocumentClient();
 exports.handler = async(event, context) => {
 
     try {
+
         //TODO: check if current user is Lead Facilitator.
         if (event.requestContext.authorizer.claims['cognito:groups'].includes('LeadFacilitators')) {
             
-            var data = JSON.parse(event.body)
-            var semester = (await getSemester(data.semesterId)).Item;
+            let data = JSON.parse(event.body)
+            let semester = (await getSemester(data.semesterId)).Item;
+            console.log('Deleting semester', semester);
 
             // delete each group
-            for (let group in semester.groupsIds) {
-                await deleteGroup(group, semester);
+            for (let groupId of semester.groupsIds) {
+                await deleteGroup(groupId, semester);
+                console.log(`Group ${groupId} deleted.`);
             }
 
             // delete semester
-            var removeSemesterParams = {
-                TableName: 'group',
+            let removeSemesterParams = {
+                TableName: 'semester',
                 Key: {
                     'id': data.semesterId
                 }
             }
             try {
                 await dynamo.delete(removeSemesterParams).promise();
-                console.log(`removed semester ${semester.name} from semesters table`);
+                console.log(`removed ${semester.name} from semesters table`);
             } catch (e) {
                 console.log(e);
             }
@@ -51,7 +54,14 @@ exports.handler = async(event, context) => {
         
 
     } catch (err) {
-        return err;
+        console.log(err);
+        response = {
+            'statusCode': 501,
+            'body': 'There was a problem with the request.',
+            'headers': {
+                'Access-Control-Allow-Origin': '*'
+            }
+        }
     }
 
     return response
@@ -64,8 +74,15 @@ const getGroup = async(groupId) => {
             'id': groupId
         }
     };
+    console.log('PARAMs', params);
+    let resp;
+    try {
+        resp = await dynamo.get(params).promise();
+    } catch (e) {
+        console.log(e);
+    }
 
-    return await dynamo.get(params).promise();
+    return resp;
 };
 
 const getSemester = async(semesterId) => {
@@ -92,8 +109,8 @@ const getFacilitator = async(facilitatorId) => {
 
 const deleteGroup = async(groupId, semester) => {
 
-            var group = (await getGroup(groupId)).Item;
-            var facilitator = (await getFacilitator(group.facilitatorId)).Item;
+            let group = (await getGroup(groupId)).Item;
+            let facilitator = (await getFacilitator(group.facilitatorId)).Item;
 
             // Delete students associated with group
             for (let participant of group.participants) {

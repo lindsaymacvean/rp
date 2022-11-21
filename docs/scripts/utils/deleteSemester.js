@@ -1,19 +1,12 @@
-import { api_url } from "./configs.js";
+import { deleteSemester } from "./api.js";
 
-export const deleteSemester = async(el) => {
+export const deleteSemesterMethod = async(el) => {
     el.preventDefault();
     let semesterId = el.target.dataset.name;
     // Load Spinner
     document.getElementById('overlay').style.display = 'block';
     
-    axios.delete(`${api_url}/semester`, {
-      data: {
-        semesterId
-      },
-      headers: {
-        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
-      }
-    })
+    deleteSemester(semesterId)
     .then((response) => {
       //remove spinner
       document.getElementById('overlay').style.display = 'none';

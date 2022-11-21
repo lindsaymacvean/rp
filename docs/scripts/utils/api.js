@@ -15,6 +15,24 @@ export const getSemester = async (semesterId) => {
    return response;
 }
 
+export const deleteSemester = async (semesterId) => {
+  if (typeof semesterId === 'undefined' || semesterId === null ) return;
+   let response = Promise.resolve();
+   try {
+      response = await axios.delete(`${api_url}/semester`, {
+        data: {
+          semesterId
+        },
+        headers: {
+          'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+        }
+      })
+    } catch(e) {
+      console.log(e);
+     }
+     return response;
+}
+
 export const getGroup = async (groupId) => {
     if (typeof groupId === 'undefined' || groupId === null) return new Error('There is no groupId key.');
     let response = Promise.resolve();
