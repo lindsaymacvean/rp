@@ -1,15 +1,15 @@
 import { api_url } from "./configs.js";
 
-export const deleteSemester = (el) => {
+export const deleteSemester = async(el) => {
     el.preventDefault();
-    console.log(el.target.dataset.name);
     let semesterId = el.target.dataset.name;
     // Load Spinner
-    let myModal = new bootstrap.Modal(document.getElementById("deleteConfirmation"), {});
-    myModal.hide();
     document.getElementById('overlay').style.display = 'block';
     
-    axios.get(`${api_url}/semester/delete?id=${semesterId}`, {
+    axios.delete(`${api_url}/semester`, {
+      data: {
+        semesterId
+      },
       headers: {
         'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
       }
@@ -18,7 +18,13 @@ export const deleteSemester = (el) => {
       //remove spinner
       document.getElementById('overlay').style.display = 'none';
       // Load success or failure modal
+      let deletedConfirmation = new bootstrap.Modal(document.getElementById("deletedConfirmation"), {});
+      deletedConfirmation.show();
       
-      alert('Group has been deleted');
-    });
+    })
+    .catch((response) => {
+      //remove spinner
+      document.getElementById('overlay').style.display = 'none';
+      alert('There was an error and the semester has not been deleted. Please try again or contact support.');
+    })
 }
