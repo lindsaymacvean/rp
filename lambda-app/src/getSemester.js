@@ -1,11 +1,20 @@
-let response;
 const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
 exports.handler = async(event, context) => {
-
+    let response;
+    const semesterId = event.queryStringParameters.id;
+    if (!semesterId) {
+        response = {
+            'statusCode': 500,
+            'body': 'The request had no semesterId',
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+            }
+        }
+    }
     try {
-        var semester = (await getSemester(event.queryStringParameters.id)).Item;
+        var semester = (await getSemester(semesterId)).Item;
 
         response = {
             'statusCode': 200,
@@ -16,7 +25,13 @@ exports.handler = async(event, context) => {
         }
 
     } catch (err) {
-        return err;
+        response = {
+            'statusCode': 502,
+            'body': 'There was an error looking for that semester.',
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+            }
+        }
     }
 
     return response

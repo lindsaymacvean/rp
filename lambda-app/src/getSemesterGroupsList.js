@@ -3,6 +3,16 @@ const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
 exports.handler = async(event, context) => {
+    let semesterId = event.queryStringParameters.semesterId;
+    if (!semesterId) {
+        return {
+            'statusCode': 500,
+            'body': 'The request had no semesterId',
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+            }
+        }
+    }
 
     try {
 
@@ -16,7 +26,7 @@ exports.handler = async(event, context) => {
         var params = {
             TableName: "semester",
             Key: {
-                "id": event.queryStringParameters.semesterId
+                "id": semesterId
             }
         };
 
@@ -66,7 +76,13 @@ exports.handler = async(event, context) => {
         }
 
     } catch (err) {
-        return err;
+        response = {
+            'statusCode': 500,
+            'body': 'There was an error looking for that group list.',
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+            }
+        }
     }
 
     return response
