@@ -110,9 +110,10 @@ const getOrders = async(eventId) => {
 }
 
 const findQuestion = (searchString, questions) => {
+    console.log(questions);
     let reg = new RegExp(searchString, 'i');
     let answer = {
-        answer: undefined
+        answer: null
     }
     try {
         answer = questions.find(o => {  
@@ -147,11 +148,11 @@ const createOrUpdateParticipant = async (order, groupId) => {
     participant.type = order.issued_tickets[0].description;
     participant.created_at = order.issued_tickets[0].created_at;
     
-    // let questions = order.buyer_details.custom_questions;
-    let questions = order.issued_tickets[0].custom_questions;
-    participant.county = findQuestion('county', questions);
-    participant.child_name = findQuestion('name', questions);
-    participant.class = findQuestion('class', questions);
+    let buyerquestions = order.buyer_details.custom_questions;
+    let attendeequestions = order.issued_tickets[0].custom_questions;
+    participant.county = findQuestion('county', attendeequestions.concat(buyerquestions));
+    participant.child_name = findQuestion('name', attendeequestions);
+    participant.class = findQuestion('(class|year)', attendeequestions.concat(buyerquestions));
     participant.email = order.buyer_details.email;
     participant.phone = order.buyer_details.phone;
 
