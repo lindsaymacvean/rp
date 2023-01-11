@@ -128,16 +128,17 @@ const createParticipants = async(groupId, eventId) => {
         try {
             if (order.issued_tickets[0].status !== 'valid') continue;
             
-            let questions = order.issued_tickets[0].custom_questions;
+            let buyerquestions = order.buyer_details.custom_questions;
+            let attendeequestions = order.issued_tickets[0].custom_questions;
             let participant = {
                 groupId,
                 id: order.id,
                 parent_name: order.buyer_details.name,
                 type: order.issued_tickets[0].description,
                 created_at: order.issued_tickets[0].created_at,
-                county: findQuestion('county', questions),
-                child_name: findQuestion('name', questions),
-                class: findQuestion('class', questions),
+                county: findQuestion('county', attendeequestions.concat(buyerquestions)),
+                child_name: findQuestion('name', attendeequestions),
+                class: findQuestion('(class|year)', attendeequestions.concat(buyerquestions)),
                 email: order.buyer_details.email,
                 phone: order.buyer_details.phone
             };
@@ -190,9 +191,9 @@ const getOrders = async(eventId) => {
 }
 
 const findQuestion = (searchString, questions) => {
-    let reg = new RegExp(searchString, 'g');
+    let reg = new RegExp(searchString, 'i');
     let answer = {
-        answer: undefined
+        answer: null
     };
     try {
         answer = questions.find(o => {  
