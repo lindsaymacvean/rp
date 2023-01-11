@@ -9,15 +9,15 @@ exports.handler = async(event, context) => {
         //TODO: check if current user is Lead Facilitator.
         if (event.requestContext.authorizer.claims['cognito:groups'].includes('LeadFacilitators')) {
             console.log('user is a lead facilitator');
-            var data = JSON.parse(event.body);
+            let data = JSON.parse(event.body);
 
-            var group = (await getGroup(data.groupId)).Item;
-            var semester = (await getSemester(group.semesterId)).Item;
-            var facilitator = (await getFacilitator(group.facilitatorId)).Item;
+            let group = (await getGroup(data.groupId)).Item;
+            let semester = (await getSemester(group.semesterId)).Item;
+            let facilitator = (await getFacilitator(group.facilitatorId)).Item;
 
             // Delete students associated with group
             for (let participant of group.participants) {
-                var removeParticipantParams = {
+                let removeParticipantParams = {
                     TableName: 'participant',
                     Key: {
                         'id': participant.id
@@ -53,7 +53,7 @@ exports.handler = async(event, context) => {
             }
 
             // Delete group from facilitator
-            var groupIndexToDeleteFromFacilitator = facilitator.groupsIds.findIndex(r => r == data.groupId);
+            let groupIndexToDeleteFromFacilitator = facilitator.groupsIds.findIndex(r => r == data.groupId);
             console.log(groupIndexToDeleteFromFacilitator);
             if (groupIndexToDeleteFromFacilitator > -1) {
                 facilitator.groupsIds.splice(groupIndexToDeleteFromFacilitator, 1);
