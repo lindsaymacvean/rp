@@ -10,6 +10,7 @@ import { IsLoggedIn } from "./utils/isLoggedIn.js";
         })
         .then(resp => {
             var template = Handlebars.compile(document.querySelector("#semesterTemplate").innerHTML);
-            document.querySelector("#semestersList").innerHTML = template({ semesters: resp.data.Items });
+            let semesters = resp.data.Items.sort((a, b) => a.name.localeCompare(b.name))
+            document.querySelector("#semestersList").innerHTML = template({ semesters });
         })
 })();
