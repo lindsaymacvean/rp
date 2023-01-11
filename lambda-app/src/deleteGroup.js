@@ -74,7 +74,7 @@ exports.handler = async(event, context) => {
             }
 
             // Delete group
-            var removeGroupParams = {
+            let removeGroupParams = {
                 TableName: 'group',
                 Key: {
                     'id': data.groupId
@@ -115,7 +115,7 @@ exports.handler = async(event, context) => {
 };
 
 const getGroup = async(groupId) => {
-    var params = {
+    let params = {
         TableName: 'group',
         Key: {
             'id': groupId
@@ -134,7 +134,7 @@ const getGroup = async(groupId) => {
 };
 
 const getSemester = async(semesterId) => {
-    var params = {
+    let params = {
         TableName: 'semester',
         Key: {
             'id': semesterId
@@ -153,7 +153,7 @@ const getSemester = async(semesterId) => {
 };
 
 const getFacilitator = async(facilitatorId) => {
-    var params = {
+    let params = {
         TableName: 'facilitator',
         Key: {
             'id': facilitatorId
