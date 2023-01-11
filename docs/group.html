@@ -326,18 +326,25 @@
                 <th scope="col">Parent Phone</th>
                 <th scope="col">Class</th>
                 <th scope="col">County</th>
+                <th scope="col"></th>
               </tr>
             </thead>
             <tbody>
               {{#each participants}}
               <tr>
-                <td class="btn-group-sm align-items-right"><a href="/participant_profile.html?participantId={{id}}" class="btn btn-secondary" style="margin-top:-0.3vw;margin-right:-1.5vw;">Edit</a></td>
+                <td class="btn-group-sm align-items-right">
+                  <a href="/participant_profile.html?participantId={{id}}" class="btn btn-secondary" style="margin-top:-0.3vw;margin-right:-1.5vw;">Edit</a></td>
                 <td>{{child_name}}</td>
                 <td>{{parent_name}}</td>
                 <td>{{email}}</td>
                 <td>{{phone}}</td>
                 <td>{{class}}</td>
                 <td>{{county}}</td>
+                <td>
+                  {{#if LeadFacilitator}}
+                    <i class="fa-solid fa-trash btn box-shadow" onclick="deleteStudent('{{id}}')" style="color:red;"></i>
+                  {{/if}}
+                </td>
               </tr>
               {{/each}}
             </tbody>

@@ -350,6 +350,28 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
+  DeleteParticipant:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/deleteParticipant.js
+      Handler: deleteParticipant.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBCrudPolicy:
+            TableName: !Ref ParticipantsTable
+         - DynamoDBCrudPolicy:
+            TableName: !Ref GroupsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /participant
+            Method: delete
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
   GetParticipants:
     Type: AWS::Serverless::Function
     Properties:

@@ -1,8 +1,7 @@
 import { api_url, frontend_url} from "./utils/configs.js";
-import { IsLeadFacilitator, registerHandlebarHelpers, Logout, CurrentUserEmail } from "./utils/utils.js";
+import { IsLeadFacilitator, registerHandlebarHelpers, Logout } from "./utils/utils.js";
 import { fillBreadcrumbs } from "./utils/breadcrumbs.js";
 import { IsLoggedIn } from "./utils/isLoggedIn.js";
-import { google_client_id } from "./utils/configs.js";
 import { getFacilitators, getGroup, getParticipants } from "./utils/api.js";
 
 Date.prototype.addHours = function(h) {
@@ -24,6 +23,7 @@ window.addEventListener('load', function() {
   let participants;
   let emails;
   let group;
+  let LeadFacilitator = IsLeadFacilitator();
   
   if (document.querySelector("#adapt_session_button")) {
     var adaptTemplate = Handlebars.compile(document.querySelector("#adapt_session_button").outerHTML);
@@ -82,6 +82,10 @@ window.addEventListener('load', function() {
       participants = resp.data.Items.map(r => {
         if (r.attend)
           r.attend = r.attend[r.groupId];
+        // Slightly hacky way of doing this but easiest way at short notice
+        // The LeadFacilitator Bool is included with every participant
+        // In order to display the delete button or not
+        r.LeadFacilitator = IsLeadFacilitator();
         return r;
       })
       emails = participants.map(function(value) {
@@ -295,7 +299,33 @@ window.addEventListener('load', function() {
     .catch((error)=> {
       console.log(error);
       document.getElementById('overlay').style.display = 'none';
-      alert(error)
+      alert(error);
+    })
+  }
+
+  globalThis.deleteStudent = (participantId) => {
+    document.getElementById('overlay').style.display = 'block';
+    axios.delete(`${api_url}/participant`, {
+      data: {
+        participantId
+      },
+      headers: {
+        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+      }
+    })
+    .then((response) => {
+      console.log(response);
+      // Load success or failure modal
+      document.getElementById('overlay').style.display = 'none';
+      alert('Participant has been deleted');
+    })
+    .then(() => {
+      window.location.reload();
+    })
+    .catch((error)=> {
+      console.log(error);
+      document.getElementById('overlay').style.display = 'none';
+      alert(error);
     })
   }
 });
