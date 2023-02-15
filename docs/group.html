@@ -152,6 +152,8 @@
                 <th scope="col">Week 4</th>
                 <th scope="col">Week 5</th>
                 <th scope="col">Week 6</th>
+                <th scope="col">Week 7</th>
+                <th scope="col">Week 8</th>
               </tr>
             </thead>
             <tbody>
@@ -300,6 +302,56 @@
                     <option {{#ifEquals attend.week6.reason 'School trip'}}selected="selected"{{/ifEquals}}>School trip</option>
                     <option {{#ifEquals attend.week6.reason 'Home Work'}}selected="selected"{{/ifEquals}}>Home Work</option>
                     <option {{#ifEquals attend.week6.reason 'Other'}}selected="selected"{{/ifEquals}}>Other</option>
+                  </select>
+                </td>
+                <td>
+                  <i class="fa-solid fa-circle-check box-shadow" 
+                      {{#if attend.week7.present}}style="color:green"{{else}}style="color:grey;"{{/if}} 
+                      onclick="checkAttendee(event, '{{id}}', '{{groupId}}', 'week7')" 
+                      id="week7_{{id}}_tick" 
+                      name="week7_{{child_name}}_tick"></i>
+                  <i class="fa-solid fa-circle-xmark box-shadow" 
+                      {{#if attend.week7.absent}}style="color:red;"{{else}}style="color:grey;"{{/if}} 
+                      onclick="checkAttendee(event, '{{id}}', '{{groupId}}', 'week7')" 
+                      id="week7_{{id}}_cross" 
+                      name="week7_{{child_name}}_cross"></i>
+                  <select id="week7_{{id}}_reason" 
+                      onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week7')"
+                      name="week7_{{child_name}}_reason"
+                      style="{{#unless attend.week7.absent}}display:none;{{/unless}}">
+                    <option>Not Applicable</option>
+                    <option {{#ifEquals attend.week8.reason 'Reason Not Given'}}selected="selected"{{/ifEquals}}>Reason Not Given</option>
+                    <option {{#ifEquals attend.week7.reason 'Illness'}}selected="selected"{{/ifEquals}}>Illness</option>
+                    <option {{#ifEquals attend.week7.reason 'Holidays'}}selected="selected"{{/ifEquals}}>Holidays</option>
+                    <option {{#ifEquals attend.week7.reason 'Exams'}}selected="selected"{{/ifEquals}}>Exams</option>
+                    <option {{#ifEquals attend.week7.reason 'School trip'}}selected="selected"{{/ifEquals}}>School trip</option>
+                    <option {{#ifEquals attend.week7.reason 'Home Work'}}selected="selected"{{/ifEquals}}>Home Work</option>
+                    <option {{#ifEquals attend.week7.reason 'Other'}}selected="selected"{{/ifEquals}}>Other</option>
+                  </select>
+                </td>
+                <td>
+                  <i class="fa-solid fa-circle-check box-shadow" 
+                      {{#if attend.week8.present}}style="color:green"{{else}}style="color:grey;"{{/if}} 
+                      onclick="checkAttendee(event, '{{id}}', '{{groupId}}', 'week8')" 
+                      id="week8_{{id}}_tick" 
+                      name="week8_{{child_name}}_tick"></i>
+                  <i class="fa-solid fa-circle-xmark box-shadow" 
+                      {{#if attend.week8.absent}}style="color:red;"{{else}}style="color:grey;"{{/if}} 
+                      onclick="checkAttendee(event, '{{id}}', '{{groupId}}', 'week8')" 
+                      id="week8_{{id}}_cross" 
+                      name="week8_{{child_name}}_cross"></i>
+                  <select id="week8_{{id}}_reason" 
+                      onchange="checkAttendee(event, '{{id}}', '{{groupId}}', 'week8')"
+                      name="week8_{{child_name}}_reason"
+                      style="{{#unless attend.week8.absent}}display:none;{{/unless}}">
+                    <option>Not Applicable</option>
+                    <option {{#ifEquals attend.week8.reason 'Reason Not Given'}}selected="selected"{{/ifEquals}}>Reason Not Given</option>
+                    <option {{#ifEquals attend.week8.reason 'Illness'}}selected="selected"{{/ifEquals}}>Illness</option>
+                    <option {{#ifEquals attend.week8.reason 'Holidays'}}selected="selected"{{/ifEquals}}>Holidays</option>
+                    <option {{#ifEquals attend.week8.reason 'Exams'}}selected="selected"{{/ifEquals}}>Exams</option>
+                    <option {{#ifEquals attend.week8.reason 'School trip'}}selected="selected"{{/ifEquals}}>School trip</option>
+                    <option {{#ifEquals attend.week8.reason 'Home Work'}}selected="selected"{{/ifEquals}}>Home Work</option>
+                    <option {{#ifEquals attend.week8.reason 'Other'}}selected="selected"{{/ifEquals}}>Other</option>
                   </select>
                 </td>
               </tr>
