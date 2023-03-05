@@ -115,6 +115,7 @@ globalThis.logout = Logout;
                     if (weekFolders instanceof Error) {
                         return weekFolders;
                     };
+                    console.log('weekFolders', weekFolders);
                     return getWeeksFiles(weekFolders)
                 })
                 .then((weeks) => { 
@@ -122,7 +123,9 @@ globalThis.logout = Logout;
                         console.log(weeks);
                         return weeks;
                     };
-                    weeks = weeks; setWeeksView(weeks); 
+                    weeks = weeks; 
+                    console.log('weeks',weeks);
+                    setWeeksView(weeks); 
                 } )
                 .then(() => {
                     if (typeof group === 'undefined' || group === null) return new Error('No Group Found');

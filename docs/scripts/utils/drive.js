@@ -106,6 +106,7 @@ export const getFolderFiles = (parentId) => {
         pageSize: 10,
         fields: 'nextPageToken, files(id, name, parents, thumbnailLink, webViewLink, iconLink, webContentLink)',
     }).then(function(response) {
+        console.log(response.result.files);
         return response.result.files;
     });
 }
@@ -120,8 +121,10 @@ export const getWeeksFiles = (parents) => {
         .then((weekFiles) => { weeks[2].files = weekFiles; return getFolderFiles(weeks[3].id) })
         .then((weekFiles) => { weeks[3].files = weekFiles; return getFolderFiles(weeks[4].id) })
         .then((weekFiles) => { weeks[4].files = weekFiles; return getFolderFiles(weeks[5].id) })
+        .then((weekFiles) => { weeks[5].files = weekFiles; return getFolderFiles(weeks[6].id) })
+        .then((weekFiles) => { weeks[6].files = weekFiles; return getFolderFiles(weeks[7].id) })
         .then((weekFiles) => { 
-            weeks[5].files = weekFiles; 
+            weeks[7].files = weekFiles; 
             return weeks.sort(function(a, b){
                 if(a.name < b.name) { return -1; }
                 if(a.name > b.name) { return 1; }
