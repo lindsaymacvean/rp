@@ -121,10 +121,27 @@ export const getWeeksFiles = (parents) => {
         .then((weekFiles) => { weeks[2].files = weekFiles; return getFolderFiles(weeks[3].id) })
         .then((weekFiles) => { weeks[3].files = weekFiles; return getFolderFiles(weeks[4].id) })
         .then((weekFiles) => { weeks[4].files = weekFiles; return getFolderFiles(weeks[5].id) })
-        .then((weekFiles) => { weeks[5].files = weekFiles; return getFolderFiles(weeks[6].id) })
-        .then((weekFiles) => { weeks[6].files = weekFiles; return getFolderFiles(weeks[7].id) })
         .then((weekFiles) => { 
-            weeks[7].files = weekFiles; 
+            weeks[5].files = weekFiles; 
+            // This is needed in the case of semester 5 where some groups did not have 8 weeks
+            if (weeks[6]) {
+                return getFolderFiles(weeks[6].id);
+            } else {
+                return weeks[5].files;
+            }    
+        })
+        .then((weekFiles) => {  
+            if (weeks[6] && weeks[7]) {
+                weeks[6].files = weekFiles;
+                return getFolderFiles(weeks[7].id);
+            } else {
+                return weeks[5].files;
+            }
+        })
+        .then((weekFiles) => {
+            if (weeks[6] && weeks[7]) {
+                weeks[7].files = weekFiles;
+            } 
             return weeks.sort(function(a, b){
                 if(a.name < b.name) { return -1; }
                 if(a.name > b.name) { return 1; }
