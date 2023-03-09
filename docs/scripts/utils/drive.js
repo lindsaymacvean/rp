@@ -157,5 +157,7 @@ export const createGroupSubFolders = (parentFolderId) => {
         .then(() => createFolder("Week 4", parentFolderId))
         .then(() => createFolder("Week 5", parentFolderId))
         .then(() => createFolder("Week 6", parentFolderId))
+        .then(() => createFolder("Week 7", parentFolderId))
+        .then(() => createFolder("Week 8", parentFolderId))
         .then(() => parentFolderId);
 }
