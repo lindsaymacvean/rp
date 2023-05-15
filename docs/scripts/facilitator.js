@@ -34,6 +34,29 @@ globalThis.logout = Logout;
             document.querySelector("#facilitatorData").innerHTML = template({IsLeadFacilitator, data: resp.data.Item});
             return resp;
         });
+    
+    globalThis.deleteFacilitator = function (e) {
+        e.preventDefault();
+        let confirmAction = confirm(`Warning! You are about to delete this facilitator. 
+            If they still have groups associated with them this will break things and will require technical support to fix it. Do you wish to continue?`);
+        if (confirmAction) {
+            axios.delete(`${api_url}/facilitator?id=${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+                    }
+                })
+                .then((response) => {
+                    alert('Facilitator was successfully deleted!');
+                    window.location.replace(`${frontend_url}/home.html`);
+                })
+                .catch(function(error) {
+                    alert('Participant was not updated, possibly because of a network connection error.')
+                });
+            return;
+        } else {
+            return;
+        }
+    }
 
     globalThis.updateFacilitator = function (e) {
         e.preventDefault();

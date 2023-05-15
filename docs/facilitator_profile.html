@@ -62,7 +62,7 @@
                                     </div>
                                     <div class="col-8 text-start ps-4">{{data.email}}</div>
                                 </div>
-                                {{#if IsLeadFacilitator}}
+                                <!-- {{#if IsLeadFacilitator}}
                                 <form id="facilitator_details" name="facilitator_details" 
                                     class="needs-validation" onSubmit="updateFacilitator(event)">
                                     <div class="row text-start ps-2">
@@ -87,21 +87,10 @@
                                         <a href="{{data.zoom_link}}" target="_blank">{{data.zoom_link}}</a>
                                     </div>
                                 </div>
-                                {{/if}}
+                                {{/if}} -->
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="row mt-4 mb-5">
-                                <div class="col">
-                                    <div class="row text-center mt-2">
-                                        <div id="zoom_link_button" class="col-10">
-                                            <a href="{{data.zoom_link}}" class="w-100 ms-5 p-2" target="_blank">
-                                                <button class="btn btn-secondary  w-100 p-2">Open Zoom Room</button>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             <h2>Groups</h2>
                             <div class="row mt-1 mb-4">
                                 <div class="col">
@@ -118,8 +107,30 @@
                                     {{/each}}
                                 </div>
                             </div>
+                            <div class="row mt-4 mb-5">
+                                <div class="col">
+                                    <div class="row text-center mt-2">
+                                        <!-- <div id="zoom_link_button" class="col-10">
+                                            <a href="{{data.zoom_link}}" class="w-100 ms-5 p-2" target="_blank">
+                                                <button class="btn btn-secondary  w-100 p-2">Open Zoom Room</button>
+                                            </a>
+                                        </div> -->
+                                    </div>
+                                </div>
+                            </div>
                         </div>    
                     </div>
+                    {{#if IsLeadFacilitator}}
+                    <div id="delete_facilitator_button"  class="row text-center mt-2" id="export-btn">
+                        <div class="col-2"></div>
+                        <div class="col-8">
+                            <a onClick="deleteFacilitator(event)" class="w-100 p-2" target="_blank">
+                                <button class="btn btn-danger  w-100 p-2">Delete Facilitator</button>
+                            </a>
+                        </div>
+                        <div class="col-2"></div>
+                    </div>
+                    {{/if}}
                 </div>    
             </div>
         </template>
