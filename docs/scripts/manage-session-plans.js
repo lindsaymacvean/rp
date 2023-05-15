@@ -1,4 +1,4 @@
-import { template_file_id, google_client_id } from "./utils/configs.js";
+import { template_file_id, first_second_file_id, google_client_id } from "./utils/configs.js";
 import { CurrentUserEmail, Logout, IsLeadFacilitator } from "./utils/utils.js";
 import { getTemplateFolder, getWeeksFiles, getFolderFiles, copyFile } from "./utils/drive.js";
 import { getFacilitator, getGroup, getSemester } from "./utils/api.js";
@@ -237,6 +237,11 @@ globalThis.logout = Logout;
         e.srcElement.innerHTML = "Creating from Template ..."
 
         var name =  `${semester.name}-${group.studentYear}/${group.themes}-${nameProp.slice(-1)}/6-${facilitator.email}`;
+        // If the group is a 1st/2nd year it should have a different template
+         // Regex to match 1st or 2nd Class
+        const classMatch = new RegExp("(1st|2nd)", "gi");
+        firstorsecond = classMatch.test(group.name);
+        if (firstorsecond) template_file_id = first_second_file_id;
         copyFile(template_file_id, id, name)
             .then((result) => {
                 window.open(result.result.webViewLink, '_blank').focus();
