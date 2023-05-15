@@ -115,7 +115,6 @@ globalThis.logout = Logout;
                     if (weekFolders instanceof Error) {
                         return weekFolders;
                     };
-                    console.log('weekFolders', weekFolders);
                     return getWeeksFiles(weekFolders)
                 })
                 .then((weeks) => { 
@@ -123,8 +122,7 @@ globalThis.logout = Logout;
                         console.log(weeks);
                         return weeks;
                     };
-                    weeks = weeks; 
-                    console.log('weeks',weeks);
+                    weeks = weeks;
                     setWeeksView(weeks); 
                 } )
                 .then(() => {
@@ -240,7 +238,7 @@ globalThis.logout = Logout;
         // If the group is a 1st/2nd year it should have a different template
          // Regex to match 1st or 2nd Class
         const classMatch = new RegExp("(1st|2nd)", "gi");
-        firstorsecond = classMatch.test(group.name);
+        let firstorsecond = classMatch.test(group.name);
         if (firstorsecond) template_file_id = first_second_file_id;
         copyFile(template_file_id, id, name)
             .then((result) => {

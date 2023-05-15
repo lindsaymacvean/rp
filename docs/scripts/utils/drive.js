@@ -106,7 +106,6 @@ export const getFolderFiles = (parentId) => {
         pageSize: 10,
         fields: 'nextPageToken, files(id, name, parents, thumbnailLink, webViewLink, iconLink, webContentLink)',
     }).then(function(response) {
-        console.log(response.result.files);
         return response.result.files;
     });
 }
