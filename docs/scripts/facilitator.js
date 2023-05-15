@@ -1,6 +1,7 @@
 import { api_url } from "./utils/configs.js";
 import { IsLeadFacilitator, Logout } from "./utils/utils.js";
 import { IsLoggedIn } from "./utils/isLoggedIn.js";
+import { frontend_url } from "./utils/configs.js"
 
 globalThis.logout = Logout;
 
@@ -38,7 +39,7 @@ globalThis.logout = Logout;
     globalThis.deleteFacilitator = function (e) {
         e.preventDefault();
         let confirmAction = confirm(`Warning! You are about to delete this facilitator. 
-            If they still have groups associated with them this will break things and will require technical support to fix it. Do you wish to continue?`);
+If they still have groups associated with them this will break things and will require technical support to fix it. Do you wish to continue?`);
         if (confirmAction) {
             axios.delete(`${api_url}/facilitator?id=${id}`, {
                     headers: {
