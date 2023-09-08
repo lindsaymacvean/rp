@@ -33,7 +33,7 @@ globalThis.logout = Logout;
                     return true;
                 }
             });
-            facilitatorEnabled = data.facilitatorEnabled === null || data.facilitatorEnabled === undefined ? true : data.Item.facilitatorEnabled;
+            facilitatorEnabled = data.facilitatorEnabled === null || data.facilitatorEnabled === undefined ? true : data.facilitatorEnabled;
             let template = Handlebars.compile(document.querySelector("#facilitatorDataTemplate").innerHTML);
             document.querySelector("#facilitatorData").innerHTML = template({
                 IsLeadFacilitator, 
@@ -49,7 +49,7 @@ globalThis.logout = Logout;
         let confirmAction = confirm(`Warning! You are about to ${actionWord} this facilitator.`);
         if (confirmAction) {
             let requestEndpoint = facilitatorEnabled ? `${api_url}/facilitator/disable?id=${id}` : `${api_url}/facilitator/enable?id=${id}`;
-            axios.put(requestEndpoint, {
+            axios.put(requestEndpoint, {}, {
                 headers: {
                     'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
                 }
@@ -58,7 +58,8 @@ globalThis.logout = Logout;
                 facilitatorEnabled = !facilitatorEnabled;
                 alert(`Facilitator was successfully ${actionWord}d!`);
                 document.querySelector("#disable_facilitator_button button").textContent = facilitatorEnabled ? "Disable Facilitator" : "Enable Facilitator";
-                window.location.replace(`${frontend_url}/home.html`);
+                window.location.reload();
+
             })
             .catch(function(error) {
                 alert(`Facilitator was not ${actionWord}d, possibly because of a network connection error.`)
