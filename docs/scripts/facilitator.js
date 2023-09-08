@@ -10,6 +10,7 @@ globalThis.logout = Logout;
 
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
+    let facilitatorEnabled;
 
     axios.get(`${api_url}/facilitator?id=${id}`, {
             headers: {
@@ -32,7 +33,7 @@ globalThis.logout = Logout;
                     return true;
                 }
             });
-            let facilitatorEnabled = data.facilitatorEnabled === null || data.facilitatorEnabled === undefined ? true : data.Item.facilitatorEnabled;
+            facilitatorEnabled = data.facilitatorEnabled === null || data.facilitatorEnabled === undefined ? true : data.Item.facilitatorEnabled;
             let template = Handlebars.compile(document.querySelector("#facilitatorDataTemplate").innerHTML);
             document.querySelector("#facilitatorData").innerHTML = template({
                 IsLeadFacilitator, 
@@ -48,7 +49,7 @@ globalThis.logout = Logout;
         let confirmAction = confirm(`Warning! You are about to ${actionWord} this facilitator.`);
         if (confirmAction) {
             let requestEndpoint = facilitatorEnabled ? `${api_url}/facilitator/disable?id=${id}` : `${api_url}/facilitator/enable?id=${id}`;
-            axios.post(requestEndpoint, {
+            axios.put(requestEndpoint, {
                 headers: {
                     'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
                 }
