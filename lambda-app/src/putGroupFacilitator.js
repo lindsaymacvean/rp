@@ -74,10 +74,24 @@ const removeOldFacilitator = async(data) => {
         }
     }
     var facilitator = await dynamo.get(facilitatorParams).promise();
+
+    // Check if groupsIds exists and has elements
+    if (!facilitator.Item.groupsIds || facilitator.Item.groupsIds.length === 0) {
+        console.log('No groups to remove for this facilitator.');
+        return;
+    }
+
     var groupList = facilitator.Item.groupsIds;
 
     // Remove the group from the list of groups associated with the old facilitator
     var groupIndex = groupList.findIndex(i => i === data.id);
+
+    // If the group isn't found in the facilitator's list, exit the function
+    if (groupIndex === -1) {
+        console.log('Group not found in facilitator groups list.');
+        return;
+    }
+    
     // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html
     var UpdateExpression = 'REMOVE groupsIds['+groupIndex+']';
     var removeGroupParams = {
@@ -97,13 +111,19 @@ const removeOldFacilitator = async(data) => {
 
 const addNewFacilitator = async(data) => {
     // Add group to new facilitator
+
+    // This checks if groupsIds exists and appends to it, 
+    // otherwise it initializes the list with the new group ID.
+    var UpdateExpression = 'SET #ri = list_append(if_not_exists(#ri, :emptyList), :vals)';
+
     var ExpressionAttributeNames = {
         '#ri': 'groupsIds'
     };
     var ExpressionAttributeValues = {
-        ':vals': [data.id]
+        ':vals': [data.id],  // This will be appended to the existing list, or become the new list
+        ':emptyList': []     // An empty list to initialize groupsIds if it doesn't exist
     };
-    var UpdateExpression = 'SET #ri = list_append(#ri, :vals)';
+    
     var addGroupParams = {
         TableName: 'facilitator',
         Key: {
