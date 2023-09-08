@@ -15,7 +15,7 @@ globalThis.logout = Logout;
 
     getFacilitatorList()
     .then(resp => {
-        facilitators = resp.data.Items;
+        facilitators = resp.data.Items.filter(facilitator => facilitator.facilitatorEnabled !== false);
         var template = Handlebars.compile(document.querySelector("#facilitatorId").outerHTML);
         document.querySelector("#facilitatorId").outerHTML = template({ facilitators });
     })
