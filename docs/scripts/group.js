@@ -101,6 +101,10 @@ window.addEventListener('load', function() {
       console.log(facilitators);
       return facilitators;
     };
+
+    // Filter out facilitators that are not enabled
+    facilitators = facilitators.filter(facilitator => facilitator.facilitatorEnabled !== false);
+
     if (document.querySelector("#group_info")) {
       groupInfo.facilitators = facilitators;
       groupInfo.currentFacilitator = currentFacilitator;
