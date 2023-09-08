@@ -1,38 +1,31 @@
-let response;
 const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
 exports.handler = async(event, context) => {
-
+    let response;
     try {
-
-        //TODO: check if current user is Lead Facilitator.
         if (event.requestContext.authorizer.claims['cognito:groups'].includes('LeadFacilitators')) {
-            console.log('user is a lead facilitator');
             let facilitatorId = event.queryStringParameters.id;
 
-            // Delete facilitator
-            let removeFacilitatorParams = {
+            let updateParams = {
                 TableName: 'facilitator',
                 Key: {
                     'id': facilitatorId
+                },
+                UpdateExpression: "set facilitatorEnabled = :falseValue",
+                ExpressionAttributeValues: {
+                    ":falseValue": false
                 }
-            }
-            try {
-                await dynamo.delete(removeFacilitatorParams).promise();
-                console.log(`removed ${facilitatorId} from participant table`);
-            } catch (e) {
-                console.log(e);
-            }
+            };
 
+            await dynamo.update(updateParams).promise();
             response = {
                 'statusCode': 200,
-                'body': 'Facilitator Deleted',
+                'body': 'Facilitator Disabled',
                 'headers': {
                     'Access-Control-Allow-Origin': '*'
                 }
-            }
-
+            };
         } else {
             response = {
                 'statusCode': 403,
@@ -40,14 +33,10 @@ exports.handler = async(event, context) => {
                 'headers': {
                     'Access-Control-Allow-Origin': '*'
                 }
-            }
+            };
         }
-
-        
-
     } catch (err) {
         return err;
     }
-
-    return response
+    return response;
 };

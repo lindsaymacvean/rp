@@ -121,11 +121,13 @@
                         </div>    
                     </div>
                     {{#if IsLeadFacilitator}}
-                    <div id="delete_facilitator_button"  class="row text-center mt-2" id="export-btn">
+                    <div id="disable_facilitator_button"  class="row text-center mt-2" id="export-btn">
                         <div class="col-2"></div>
                         <div class="col-8">
-                            <a onClick="deleteFacilitator(event)" class="w-100 p-2" target="_blank">
-                                <button class="btn btn-danger  w-100 p-2">Delete Facilitator</button>
+                            <a onClick="disableFacilitator(event)" class="w-100 p-2" target="_blank">
+                                <button class="btn btn-danger w-100 p-2">
+                                    {{#if facilitatorEnabled}} Disable Facilitator {{else}} Enable Facilitator {{/if}}
+                                </button>
                             </a>
                         </div>
                         <div class="col-2"></div>

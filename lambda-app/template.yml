@@ -256,22 +256,46 @@ Resources:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
               Ref: ReadableApiGateway
-  DeleteFacilitator:
+  EnableFacilitator:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/deleteFacilitator.js
-      Handler: deleteFacilitator.handler
+      CodeUri: src/enableFacilitator.js
+      Handler: enableFacilitator.handler
       Runtime: nodejs14.x
       Timeout: 60
       Policies:
-         - DynamoDBCrudPolicy:
+         - DynamoDBWritePolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
             TableName: !Ref FacilitatorsTable
       Events:
         ApiEvent:
           Type: Api
           Properties:
-            Path: /facilitator
-            Method: delete
+            Path: /facilitator/enable
+            Method: put
+            Auth:
+              Authorizer: ReadableApiCognitoAuthorizer
+            RestApiId:
+              Ref: ReadableApiGateway
+  DisableFacilitator:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/disableFacilitator.js
+      Handler: disableFacilitator.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+      Policies:
+         - DynamoDBWritePolicy:
+            TableName: !Ref FacilitatorsTable
+         - DynamoDBReadPolicy:
+            TableName: !Ref FacilitatorsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /facilitator/disable
+            Method: put
             Auth:
               Authorizer: ReadableApiCognitoAuthorizer
             RestApiId:
