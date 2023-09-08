@@ -14,7 +14,15 @@ import { IsLoggedIn } from "./utils/isLoggedIn.js";
             resp.data.Items.sort((a,b)=> {
                 return (a.given_name+a.family_name).localeCompare((b.given_name+b.family_name));
             })
-            var template = Handlebars.compile(document.querySelector("#facilitatorTemplate").innerHTML);
-            document.querySelector("#facilitatorsList").innerHTML = template({ facilitators: resp.data.Items });
+
+            const enabledFacilitators = resp.data.Items.filter(facilitator => facilitator.facilitatorEnabled !== false);
+            const disabledFacilitators = resp.data.Items.filter(facilitator => facilitator.facilitatorEnabled === false);
+
+
+            const enabledFacilitatorTemplate = Handlebars.compile(document.getElementById("enabledFacilitatorTemplate").innerHTML);
+            const disabledFacilitatorTemplate = Handlebars.compile(document.getElementById("disabledFacilitatorTemplate").innerHTML);
+
+            document.getElementById("enabledFacilitatorsList").innerHTML = enabledFacilitatorTemplate({enabledFacilitators});
+            document.getElementById("disabledFacilitatorsList").innerHTML = disabledFacilitatorTemplate({disabledFacilitators});
         })
 })();

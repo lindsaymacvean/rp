@@ -67,14 +67,10 @@
                 <div id="semestersList"></div>
                 <div class="row" style="height: 5vh"></div>
 
-                <div class="row text-center  mt-5 ">
-                    <div class="col-12">
-                        <p class="fs-5 w-100">Facilitator List</p>
-                    </div>
-                </div>
-
-                <template type="text/x-handlebars-template" id="facilitatorTemplate">
-                    {{#each facilitators}}
+                <!-- Active Facilitators -->
+                <template type="text/x-handlebars-template" id="enabledFacilitatorTemplate">
+                    {{#if enabledFacilitators.length}}
+                    {{#each enabledFacilitators}}
                     <div class="row text-center mt-2">
                         <div class="col-12">
                             <a href="facilitator_profile.html?id={{id}}" class="w-100"><button
@@ -82,9 +78,54 @@
                         </div>
                     </div>
                     {{/each}}
+                    {{else}}
+                    <div class="row text-center mt-2">
+                        <div class="col-12">
+                            <p>No enabled facilitators.</p>
+                        </div>
+                    </div>
+                    {{/if}}
                 </template>
 
-                <div id="facilitatorsList" class="mb-4"></div>
+                <!-- Disabled Facilitators -->
+                <template type="text/x-handlebars-template" id="disabledFacilitatorTemplate">
+                    {{#if disabledFacilitators.length}}
+                    {{#each disabledFacilitators}}
+                    <div class="row text-center mt-2">
+                        <div class="col-12">
+                            <a href="facilitator_profile.html?id={{id}}" class="w-100"><button
+                                    id="facilitator_list-btn" class="btn btn-secondary w-100">{{name}} | {{email}}</button></a>
+                        </div>
+                    </div>
+                    {{/each}}
+                    {{else}}
+                    <div class="row text-center mt-2">
+                        <div class="col-12">
+                            <p>No disabled facilitators.</p>
+                        </div>
+                    </div>
+                    {{/if}}
+                </template>
+                
+                <!-- Active Facilitators -->
+                <div class="row text-center mt-5">
+                    <div class="col-12">
+                        <p class="fs-5 w-100">Enabled Facilitators</p>
+                    </div>
+                </div>
+                <div id="enabledFacilitatorsList" class="mb-4"></div>
+
+                <!-- Space Between Lists -->
+                <div class="row mt-3"></div>
+
+                <!-- Disabled Facilitators -->
+                <div class="row text-center mt-5">
+                    <div class="col-12">
+                        <p class="fs-5 w-100">Disabled Facilitators</p>
+                    </div>
+                </div>
+                <div id="disabledFacilitatorsList" class="mb-4"></div>
+
             </div>
         </div>
     </div>
