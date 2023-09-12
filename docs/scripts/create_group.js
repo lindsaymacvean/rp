@@ -41,7 +41,7 @@ globalThis.logout = Logout;
             document.getElementById("themes").value = theme_name[1];
 
             // Student Year
-            var class_pattern = /.*\((.*)\).*/g;
+            var class_pattern = /^[^\(]*\(([^\)]*)\)/i;
             var class_name = class_pattern.exec(ticketTailorEvents[0].name);
             document.getElementById("studentYear").value = class_name[1];
 
