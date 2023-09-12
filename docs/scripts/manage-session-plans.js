@@ -79,100 +79,56 @@ globalThis.logout = Logout;
         }
     });
 
-    function init(){
-        gapi.load('client:auth2', (aa) => {
-            gapi.client.init({
-                client_id: google_client_id,
-                scope: 'https://www.googleapis.com/auth/drive',
-                discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
-                login_hint: CurrentUserEmail()
-            })
-                .then(checkSession)
-                .then(function (signedin) {
-                    if (typeof signedin === 'undefined' || signedin === null) return new Error('Google is not signed in.');
-                    if (signedin instanceof Error) {
-                        return signedin;
-                    };
-                    return getTemplateFolder();
-                })
-                .then(function (folder) {
-                    if (folder instanceof Error) {
-                        console.log(folder);
-                        return;
-                    }
-                    return getFiles(folder);
-                })
-                .then(() => getGroup(groupId))
-                .then((groupResponse) => { 
-                    if (typeof groupResponse === 'undefined' || groupResponse === null) return new Error('No Group Data.');
-                    if (groupResponse instanceof Error) {
-                        return groupResponse;
-                    };
-                    group = groupResponse.data; 
-                    return getFolderFiles(groupResponse.data.folderId)
-                })
-                .then((weekFolders) => {
-                    if (weekFolders instanceof Error) {
-                        return weekFolders;
-                    };
-                    return getWeeksFiles(weekFolders)
-                })
-                .then((weeks) => { 
-                    if (weeks instanceof Error) {
-                        console.log(weeks);
-                        return weeks;
-                    };
-                    weeks = weeks;
-                    setWeeksView(weeks); 
-                } )
-                .then(() => {
-                    if (typeof group === 'undefined' || group === null) return new Error('No Group Found');
-                    if (group instanceof Error) {
-                        console.log(group);
-                        return group;
-                    };
-                    return getSemester(group.semesterId)
-                })
-                .then((semesterResponse) => {
-                    if (typeof semesterResponse === 'undefined' || semesterResponse === null) {
-                        console.log('semesterResponse is empty');
-                        return new Error('semesterResponse is empty.');
-                    }
-                    if (semesterResponse instanceof Error) {
-                        console.log(semesterResponse);
-                        return;
-                    };
-                    semester = semesterResponse.data 
-                })
-                .then(() => {
-                    if (typeof group === 'undefined' || group === null) return new Error('No Group Found');
-                    if (group instanceof Error) {
-                        console.log(group);
-                        return group;
-                    };
-                    return getFacilitator(group.facilitatorId);
-                })
-                .then((facilitatorResponse) => { 
-                    if (typeof facilitatorResponse === 'undefined' || facilitatorResponse === null) {
-                        console.log('facilitatorResponse is empty');
-                        return new Error('facilitatorResponse is empty.');
-                    }
-                    if (facilitatorResponse instanceof Error) {
-                        console.log(facilitatorResponse);
-                        return;
-                    };
-                    facilitator = facilitatorResponse.data.Item; 
-                    stopLoading(); 
-                })
-                .then(() => {
-                    let openDirectoryTemplate = Handlebars.compile(document.querySelector("#openDirectoryTemplate").innerHTML);
-                    document.querySelector("#openDirectory").outerHTML = openDirectoryTemplate({ IsLeadFacilitator });
-                })
-                .catch((error) => {
-                    console.log(error);
+    async function init() {
+        try {
+            await new Promise((resolve, reject) => {
+                gapi.load('client:auth2', (aa) => {
+                    gapi.client.init({
+                        client_id: google_client_id,
+                        scope: 'https://www.googleapis.com/auth/drive',
+                        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+                        login_hint: CurrentUserEmail()
+                    }).then(resolve).catch(reject);
                 });
-        });
-    }
+            });
+    
+            const signedIn = await checkSession();
+            if (!signedIn) throw new Error('Google is not signed in.');
+    
+            const templateFolder = await getTemplateFolder();
+            if (!templateFolder) throw new Error('No template folder defined');
+    
+            await getFiles(templateFolder);
+    
+            const groupResponse = await getGroup(groupId);
+            if (!groupResponse || !groupResponse.data) throw new Error('No Group Data.');
+            group = groupResponse.data;
+    
+            const weekFolders = await getFolderFiles(group.folderId);
+            if (!weekFolders) throw new Error('Failed to get week folders.');
+    
+            const weeks = await getWeeksFiles(weekFolders);
+            if (!weeks) throw new Error('Failed to get weeks files.');
+            setWeeksView(weeks);
+    
+            if (!group) throw new Error('No Group Found');
+            const semesterResponse = await getSemester(group.semesterId);
+            if (!semesterResponse || !semesterResponse.data) throw new Error('semesterResponse is empty');
+            semester = semesterResponse.data;
+    
+            const facilitatorResponse = await getFacilitator(group.facilitatorId);
+            if (!facilitatorResponse || !facilitatorResponse.data || !facilitatorResponse.data.Item) throw new Error('facilitatorResponse is empty');
+            facilitator = facilitatorResponse.data.Item;
+            
+            stopLoading();
+    
+            const openDirectoryTemplate = Handlebars.compile(document.querySelector("#openDirectoryTemplate").innerHTML);
+            document.querySelector("#openDirectory").outerHTML = openDirectoryTemplate({ IsLeadFacilitator });
+    
+        } catch (error) {
+            console.log(error);
+        }
+    }    
    
 
     function checkSession() {
@@ -234,6 +190,8 @@ globalThis.logout = Logout;
 
         e.srcElement.innerHTML = "Creating from Template ..."
 
+        console.log(facilitator);
+
         var name =  `${semester.name}-${group.studentYear}/${group.themes}-${nameProp.slice(-1)}/6-${facilitator.email}`;
         // If the group is a 1st/2nd year it should have a different template
          // Regex to match 1st or 2nd Class
@@ -243,7 +201,8 @@ globalThis.logout = Logout;
         copyFile(template_file_id, id, name)
             .then((result) => {
                 window.open(result.result.webViewLink, '_blank').focus();
-                init();
+                location.reload(true);
+                //init();
             })
     }
 
