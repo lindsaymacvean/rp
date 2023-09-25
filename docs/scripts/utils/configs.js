@@ -1,5 +1,5 @@
-export const template_file_id = "14n_3hhDxZczEKvRIuHxWf0jA2Ie4zQ_jSMLX3nIEync";
-export const first_second_file_id = "1me_8rHbOXRVjV7vsOnhxGdjtyS37-Yccw4EUD2DDdGM";
+export let template_file_id = "14n_3hhDxZczEKvRIuHxWf0jA2Ie4zQ_jSMLX3nIEync";
+export let first_second_file_id = "1me_8rHbOXRVjV7vsOnhxGdjtyS37-Yccw4EUD2DDdGM";
 
 let a, b, c, d, e;
 
