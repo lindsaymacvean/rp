@@ -1,4 +1,4 @@
-import { template_file_id, first_second_file_id, google_client_id } from "./utils/configs.js";
+import { general_template_file_id, first_second_file_id, google_client_id } from "./utils/configs.js";
 import { CurrentUserEmail, Logout, IsLeadFacilitator } from "./utils/utils.js";
 import { getTemplateFolder, getWeeksFiles, getFolderFiles, copyFile } from "./utils/drive.js";
 import { getFacilitator, getGroup, getSemester } from "./utils/api.js";
@@ -103,6 +103,12 @@ globalThis.logout = Logout;
             const groupResponse = await getGroup(groupId);
             if (!groupResponse || !groupResponse.data) throw new Error('No Group Data.');
             group = groupResponse.data;
+
+            const facilitatorResponse = await getFacilitator(group.facilitatorId);
+            if (!facilitatorResponse || !facilitatorResponse.data || !facilitatorResponse.data.Item) throw new Error('facilitatorResponse is empty');
+            // Here asign the global facilitator variable to the returned data
+            console.log(facilitatorResponse);
+            facilitator = facilitatorResponse.data.Item;
     
             const weekFolders = await getFolderFiles(group.folderId);
             if (!weekFolders) throw new Error('Failed to get week folders.');
@@ -115,10 +121,6 @@ globalThis.logout = Logout;
             const semesterResponse = await getSemester(group.semesterId);
             if (!semesterResponse || !semesterResponse.data) throw new Error('semesterResponse is empty');
             semester = semesterResponse.data;
-    
-            const facilitatorResponse = await getFacilitator(group.facilitatorId);
-            if (!facilitatorResponse || !facilitatorResponse.data || !facilitatorResponse.data.Item) throw new Error('facilitatorResponse is empty');
-            facilitator = facilitatorResponse.data.Item;
             
             stopLoading();
     
@@ -190,19 +192,16 @@ globalThis.logout = Logout;
 
         e.srcElement.innerHTML = "Creating from Template ..."
 
-        console.log(facilitator);
-
         var name =  `${semester.name}-${group.studentYear}/${group.themes}-${nameProp.slice(-1)}/6-${facilitator.email}`;
         // If the group is a 1st/2nd year it should have a different template
          // Regex to match 1st or 2nd Class
         const classMatch = new RegExp("(1st|2nd)", "gi");
         let firstorsecond = classMatch.test(group.name);
-        if (firstorsecond) template_file_id = first_second_file_id;
-        copyFile(template_file_id, id, name)
+        let file_id = firstorsecond ? general_template_file_id:first_second_file_id;
+        copyFile(file_id, id, name)
             .then((result) => {
                 window.open(result.result.webViewLink, '_blank').focus();
                 location.reload(true);
-                //init();
             })
     }
 
