@@ -197,7 +197,7 @@ globalThis.logout = Logout;
          // Regex to match 1st or 2nd Class
         const classMatch = new RegExp("(1st|2nd)", "gi");
         let firstorsecond = classMatch.test(group.name);
-        let file_id = firstorsecond ? general_template_file_id:first_second_file_id;
+        let file_id = firstorsecond ? first_second_file_id: general_template_file_id;
         copyFile(file_id, id, name)
             .then((result) => {
                 window.open(result.result.webViewLink, '_blank').focus();
