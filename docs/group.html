@@ -76,16 +76,17 @@
         <div class="col-4 text-left mt-2">
           <p class="">
             <div class="row justify-content-start">
-              <div class="col-3 pe-0">
+              <div class="col-3 pe-0 align-items-center" id="facilitatorLabel">
                 <strong><label for="facilitatorId" class="form-label">Facilitator &nbsp;&nbsp;-</label></strong>
               </div>
                 {{#if LeadFacilitator}}
-                <div class="col">
-                  <select id="facilitatorSelect" type="text" class="form-select" onchange="changeFacilitator(this)" name="facilitatorId" list="facilitatorsDatalist" autocomplete="off">
+                <div class="col d-flex align-items-center">
+                  <select id="facilitatorSelect" type="text" class="form-select flex-grow-1 me-2" onchange="changeFacilitator(this)" name="facilitatorId" list="facilitatorsDatalist" autocomplete="off">
                     {{#each facilitators}}
                     <option value="{{id}}">{{name}} | {{email}}</option>    
                     {{/each}}
                   </select>
+                  <button onclick="addAdditionalFacilitatorDropdown()" class="btn btn-primary btn-sm">+</button> <!-- Add this button -->
                 </div>
                 {{else}}
                 {{currentFacilitator.name}} | {{currentFacilitator.email}} 
@@ -320,7 +321,7 @@
                       name="week7_{{child_name}}_reason"
                       style="{{#unless attend.week7.absent}}display:none;{{/unless}}">
                     <option>Not Applicable</option>
-                    <option {{#ifEquals attend.week8.reason 'Reason Not Given'}}selected="selected"{{/ifEquals}}>Reason Not Given</option>
+                    <option {{#ifEquals attend.week7.reason 'Reason Not Given'}}selected="selected"{{/ifEquals}}>Reason Not Given</option>
                     <option {{#ifEquals attend.week7.reason 'Illness'}}selected="selected"{{/ifEquals}}>Illness</option>
                     <option {{#ifEquals attend.week7.reason 'Holidays'}}selected="selected"{{/ifEquals}}>Holidays</option>
                     <option {{#ifEquals attend.week7.reason 'Exams'}}selected="selected"{{/ifEquals}}>Exams</option>
