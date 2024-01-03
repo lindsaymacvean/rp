@@ -114,6 +114,7 @@ function getAttendanceArray(raw) {
   return attendanceArray;
 }
 
+// I want to move the legend up slightly
 export const displayAbsenceChart = async (raw) => {
     // Display absence chart
     let absence = await processAbsence(raw);
@@ -123,7 +124,7 @@ export const displayAbsenceChart = async (raw) => {
         title: 'Reasons for Absence'
       },
       width: 600,
-      height: 250,
+      height: 300,
       isStacked: 'absolute',
     };
 
