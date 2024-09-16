@@ -32,6 +32,9 @@ globalThis.deleteSemester = deleteSemesterMethod;
   let exportbtn = Handlebars.compile(document.querySelector("#export-btn").innerHTML);
   document.querySelector("#export-btn").innerHTML = exportbtn({ semesterId });
 
+  let deletesemesterbtn = Handlebars.compile(document.querySelector("#delete-semester-btn").innerHTML);
+  document.querySelector("#delete-semester-btn").innerHTML = deletesemesterbtn({ semesterId });
+
   getSemesterGroupList(semesterId)
   .then(resp => {
     if (!resp) {

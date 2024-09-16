@@ -102,10 +102,15 @@
                         </a>
                     </div>
                 </div>
-                <div class="row text-center mt-2">
+                <div class="row text-center mt-2" id="delete-semester-btn">
                     <div class="col-12">
-                        <a href="#" class="w-100"><button data-bs-toggle="modal" data-bs-target="#deleteConfirmation"
-                                id="grabFiles" class="btn btn-danger w-100">Delete Semester</button></a>
+                        <!-- there is no need to do an onClick here because it does in the modal -->
+                        <a href="#" class="w-100">
+                            <button class="btn btn-danger w-100" data-name="{{semesterId}}"
+                                data-bs-toggle="modal" data-bs-target="#deleteConfirmation">
+                                Delete Semester
+                            </button>
+                        </a>
                     </div>
                 </div>    
             </div>

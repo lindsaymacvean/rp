@@ -14,9 +14,13 @@ exports.handler = async(event, context) => {
             console.log('Deleting semester', semester);
 
             // delete each group
-            for (let groupId of semester.groupsIds) {
-                await deleteGroup(groupId, semester);
-                console.log(`Group ${groupId} deleted.`);
+            if (semester && Array.isArray(semester.groupsIds) && semester.groupsIds.length > 0) {
+                for (let groupId of semester.groupsIds) {
+                    await deleteGroup(groupId, semester);
+                    console.log(`Group ${groupId} deleted.`);
+                }
+            } else {
+                console.log('No groups associated with this semester or semester is undefined.');
             }
 
             // delete semester
