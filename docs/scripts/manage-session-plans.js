@@ -95,8 +95,12 @@ globalThis.logout = Logout;
             const signedIn = await checkSession();
             if (!signedIn) throw new Error('Google is not signed in.');
     
-            const templateFolder = await getTemplateFolder();
-            if (!templateFolder) throw new Error('No template folder defined');
+            try {
+                const templateFolder = await getTemplateFolder();
+                if (!templateFolder) throw new Error('No template folder defined');
+            } catch (error) {
+                console.log(error);
+            }
     
             await getFiles(templateFolder);
     
