@@ -98,11 +98,11 @@ globalThis.logout = Logout;
             try {
                 const templateFolder = await getTemplateFolder();
                 if (!templateFolder) throw new Error('No template folder defined');
+                await getFiles(templateFolder);
             } catch (error) {
                 console.log(error);
+                alert("Warning: You don't have access to the Golden Session Library. Please contact the administrator.");
             }
-    
-            await getFiles(templateFolder);
     
             const groupResponse = await getGroup(groupId);
             if (!groupResponse || !groupResponse.data) throw new Error('No Group Data.');
