@@ -54,6 +54,9 @@ globalThis.logout = Logout;
         var data = {};
         data.child_name = e.target.child_name.value;
         data.parent_name = e.target.parent_name.value;
+        data.email = e.target.parent_email.value;
+        data.phone = e.target.parent_phone.value;
+        data.county = e.target.child_county.value;
         axios.put(`${api_url}/participant?id=${participantId}`, data, {
             headers: {
               'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`

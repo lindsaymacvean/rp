@@ -55,11 +55,28 @@ const updateParticipant = async(data) => {
     UpdateExpression += ' parent_name = :parent_name,';
     UpdateExpression += ' parent_first_name = :parent_first_name,';
     UpdateExpression += ' parent_last_name = :parent_last_name';
+    
     var ExpressionAttributeValues = {
         ':child_name': data.child_name,
         ':parent_name': data.parent_name,
         ':parent_first_name': data.parent_name.split(' ')[0],
         ':parent_last_name': data.parent_name.split(' ')[1]
+    }
+
+    // Add email, phone, and county if provided
+    if (data.email) {
+        UpdateExpression += ', email = :email';
+        ExpressionAttributeValues[':email'] = data.email;
+    }
+    
+    if (data.phone) {
+        UpdateExpression += ', phone = :phone';
+        ExpressionAttributeValues[':phone'] = data.phone;
+    }
+    
+    if (data.county) {
+        UpdateExpression += ', county = :county';
+        ExpressionAttributeValues[':county'] = data.county;
     }
 
     var params = {
