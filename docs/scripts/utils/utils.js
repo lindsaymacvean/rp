@@ -1,9 +1,22 @@
 import { readable_cognito_logout_url } from "./configs.js";
 
 export const IsLeadFacilitator = () => {
-  let token = sessionStorage.getItem('id_token')
-  let jsonToken = parseJwt(token);
-  return jsonToken["cognito:groups"].includes("LeadFacilitators");
+  try {
+    let token = sessionStorage.getItem('id_token')
+    if (!token) {
+      console.error('No id_token found in sessionStorage for lead facilitator check');
+      return false;
+    }
+    let jsonToken = parseJwt(token);
+    if (!jsonToken || !jsonToken["cognito:groups"]) {
+      console.error('Invalid token structure for lead facilitator check');
+      return false;
+    }
+    return jsonToken["cognito:groups"].includes("LeadFacilitators");
+  } catch (error) {
+    console.error('Error checking lead facilitator status:', error);
+    return false;
+  }
 }
 
 export function Logout(e) {
@@ -13,9 +26,18 @@ export function Logout(e) {
 }
 
 export const CurrentUserEmail = () => {
-  let token = sessionStorage.getItem('id_token')
-  let jsonToken = parseJwt(token);
-  return jsonToken["email"];
+  try {
+    let token = sessionStorage.getItem('id_token')
+    if (!token) {
+      console.error('No id_token found in sessionStorage');
+      return null;
+    }
+    let jsonToken = parseJwt(token);
+    return jsonToken["email"];
+  } catch (error) {
+    console.error('Error parsing JWT token for email:', error);
+    return null;
+  }
 }
 
 export const CurrentUserName = () => {

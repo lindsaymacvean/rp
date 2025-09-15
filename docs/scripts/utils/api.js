@@ -65,27 +65,26 @@ export const postGroup = async (groupData) => {
 }
 
 export const saveFolderIdToGroup = (folderId, groupData) => {
-  if (typeof folderId === 'undefined' || groupData === null) return new Error('There is no folderId key.');
-  if (typeof groupData === 'undefined' || groupData === null) return new Error('There is no groupData key.');
-  let response = Promise.resolve();
+  if (typeof folderId === 'undefined' || groupData === null) {
+    return Promise.reject(new Error('There is no folderId key.'));
+  }
+  if (typeof groupData === 'undefined' || groupData === null) {
+    return Promise.reject(new Error('There is no groupData key.'));
+  }
 
   const data = {
     id: groupData.id,
     folderId
   };
 
-  try {
-    response = axios.put(`${api_url}/group`, data, {
-      headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
-      }
-    });
-  } catch(e) {
-    console(e);
-  }
-
-  return response;
-
+  return axios.put(`${api_url}/group`, data, {
+    headers: {
+        'Authorization': `Bearer ${sessionStorage.getItem('id_token')}`
+    }
+  }).catch((error) => {
+    console.error('Error saving folderId to group:', error);
+    throw new Error(`Failed to save folder ID to group: ${error.message}`);
+  });
 }
 
 export const getParticipants = async (groupId) => {

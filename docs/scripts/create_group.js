@@ -127,7 +127,17 @@ globalThis.logout = Logout;
                 } )
                 .then((parentFolderId) => shareFileWithDomain(parentFolderId))
                 .then((parentFolderId) => transferOwnership(parentFolderId, 'readableproject@dyslexia.ie'))
-                .then(() => window.location.href = `${frontend_url}/semester.html?semesterId=${semesterId}`);
+                .then(() => window.location.href = `${frontend_url}/semester.html?semesterId=${semesterId}`)
+                .catch((error) => {
+                    console.error('Error creating group folder:', error);
+                    alert(`Error creating group folder: ${error.message}\n\nGroup created but folder setup failed. Please contact the administrator to set up the group folder manually.`);
+                    window.location.href = `${frontend_url}/semester.html?semesterId=${semesterId}`;
+                });
+        })
+        .catch((error) => {
+            console.error('Error creating group:', error);
+            alert(`Error creating group: ${error.message}`);
+            document.getElementsByTagName('body')[0].innerHTML = '<div style="text-align:center;"><h2>Error Creating Group</h2><p>Please try again or contact the administrator.</p></div>';
         });
     }
 })();

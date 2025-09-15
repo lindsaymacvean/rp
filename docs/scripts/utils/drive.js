@@ -6,17 +6,34 @@ import { google_client_id } from "./configs.js"
 
 export const initDrive = () => {
     return new Promise((resolve, reject) => {
+        const userEmail = CurrentUserEmail();
+        console.log('Initializing Google Drive for user:', userEmail);
+        
+        if (!userEmail) {
+            reject(new Error('Unable to get user email from authentication token. Please log out and log back in.'));
+            return;
+        }
+        
         gapi.load('client:auth2', () => {
-            return gapi.client.init({
+            gapi.client.init({
                 client_id: google_client_id,
                 scope: 'https://www.googleapis.com/auth/drive',
                 discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
-                login_hint: CurrentUserEmail()
+                login_hint: userEmail
             })
-            .then(checkSession)
-            .then(resolve)
-        })
-
+            .then(() => {
+                console.log('Google API client initialized successfully');
+                return checkSession();
+            })
+            .then((sessionResult) => {
+                console.log('Google Drive session check result:', sessionResult);
+                resolve(sessionResult);
+            })
+            .catch((error) => {
+                console.error('Error initializing Google Drive for user', userEmail, ':', error);
+                reject(new Error(`Failed to initialize Google Drive for ${userEmail}: ${error.message}`));
+            });
+        });
     });
 }
 
@@ -67,6 +84,8 @@ function checkSession() {
     if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
         return gapi.auth2.getAuthInstance().signIn();
     }
+    // Return true when already signed in
+    return true;
 }
 
 export const createGroupFolder = (semesterName, groupName, theme, studentYear, facilitatorId, year, facilitatorEmail) => {
@@ -101,6 +120,10 @@ export const copyFile = (fileId, parentFolderId, name) => {
 }
 
 export const getFolderFiles = (parentId) => {
+    if (!parentId || parentId === 'undefined' || parentId === 'null') {
+        return Promise.reject(new Error('Invalid parent folder ID. The group folder may not be properly set up.'));
+    }
+    
     return gapi.client.drive.files.list({
         q: `'${parentId}' in parents and trashed = false`,
         pageSize: 10,
