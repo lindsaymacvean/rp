@@ -134,19 +134,13 @@ globalThis.logout = Logout;
             }
             
             if (!group.folderId) {
-                // Temporary: Always show create directory option for testing (remove in production)
-                console.log('Group has no folderId, showing create directory option');
-                showCreateDirectoryOption();
-                return;
-                
-                // Original logic (uncomment when ready for production):
-                // if (isLeadFacilitator) {
-                //     console.log('Showing create directory option for lead facilitator');
-                //     showCreateDirectoryOption();
-                //     return; // Don't throw error, show the create directory option instead
-                // } else {
-                //     throw new Error('Group folder not found. Please contact the administrator to set up the group folder.');
-                // }
+                if (isLeadFacilitator) {
+                    console.log('Showing create directory option for lead facilitator');
+                    showCreateDirectoryOption();
+                    return; // Don't throw error, show the create directory option instead
+                } else {
+                    throw new Error('Group folder not found. Please contact the administrator to set up the group folder.');
+                }
             }
     
             const weekFolders = await getFolderFiles(group.folderId);
@@ -160,17 +154,6 @@ globalThis.logout = Logout;
     
             const openDirectoryTemplate = Handlebars.compile(document.querySelector("#openDirectoryTemplate").innerHTML);
             document.querySelector("#openDirectory").outerHTML = openDirectoryTemplate({ IsLeadFacilitator });
-            
-            // Add test button for lead facilitators (remove this in production)
-            if (IsLeadFacilitator()) {
-                const testButton = document.createElement('div');
-                testButton.innerHTML = `
-                    <button class="btn btn-warning btn-sm mt-2" onclick="testCreateDirectory()">
-                        <i class="fas fa-bug me-1"></i>Test Create Directory (Debug)
-                    </button>
-                `;
-                document.querySelector("#openDirectory").appendChild(testButton);
-            }
     
         } catch (error) {
             console.error('Error in init function:', error);
@@ -274,6 +257,13 @@ globalThis.logout = Logout;
         
         stopLoading();
         
+        // Set up the open directory section for lead facilitators
+        const openDirectoryTemplate = Handlebars.compile(document.querySelector("#openDirectoryTemplate").innerHTML);
+        const openDirectoryElement = document.querySelector("#openDirectory");
+        if (openDirectoryElement) {
+            openDirectoryElement.outerHTML = openDirectoryTemplate({ IsLeadFacilitator });
+        }
+        
         const createDirectoryHTML = `
             <div class="alert alert-warning" role="alert">
                 <h4 class="alert-heading">Group Directory Not Found</h4>
@@ -355,18 +345,35 @@ globalThis.logout = Logout;
             
             // Save folder ID to group
             console.log('Step 4: Saving folder ID to group...');
-            await saveFolderIdToGroup(parentFolderId, group);
-            console.log('Step 4: Folder ID saved to group');
+            console.log('Step 4: parentFolderId:', parentFolderId);
+            console.log('Step 4: group:', group);
+            try {
+                await saveFolderIdToGroup(parentFolderId, group);
+                console.log('Step 4: Folder ID saved to group successfully');
+            } catch (saveError) {
+                console.error('Step 4: Failed to save folder ID to group:', saveError);
+                throw new Error(`Failed to save folder ID to group: ${saveError.message}`);
+            }
             
             // Share with domain
             console.log('Step 5: Sharing with domain...');
-            await shareFileWithDomain(parentFolderId);
-            console.log('Step 5: Shared with domain successfully');
+            try {
+                await shareFileWithDomain(parentFolderId);
+                console.log('Step 5: Shared with domain successfully');
+            } catch (shareError) {
+                console.error('Step 5: Failed to share with domain:', shareError);
+                throw new Error(`Failed to share with domain: ${shareError.message}`);
+            }
             
             // Transfer ownership
             console.log('Step 6: Transferring ownership...');
-            await transferOwnership(parentFolderId, 'readableproject@dyslexia.ie');
-            console.log('Step 6: Ownership transferred successfully');
+            try {
+                await transferOwnership(parentFolderId, 'readableproject@dyslexia.ie');
+                console.log('Step 6: Ownership transferred successfully');
+            } catch (transferError) {
+                console.error('Step 6: Failed to transfer ownership:', transferError);
+                throw new Error(`Failed to transfer ownership: ${transferError.message}`);
+            }
             
             // Success message
             document.querySelector("#weeksList").innerHTML = `
